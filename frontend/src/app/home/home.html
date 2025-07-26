@@ -1,1 +1,44 @@
-<p>home works!</p>
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Search Component with integrated title -->
+            <app-search [blogs]="blogs" (blogsFiltered)="onBlogsFiltered($event)"
+                (searchQueryChange)="onSearchQueryChange($event)">
+            </app-search>
+
+            <!-- Blog Carousel with filtered results -->
+            <app-blog [blogs]="displayedBlogs"></app-blog>
+
+            <!-- Search Results Info -->
+            <!-- @if (currentSearchQuery && currentSearchQuery.length > 0) {
+            <div class="search-results-info text-center mt-4">
+                <div class="alert alert-info d-inline-flex align-items-center gap-2">
+                    <mat-icon>info</mat-icon>
+                    <span>
+                        Showing {{ displayedBlogs.length }} result(s) for
+                        <strong>"{{ currentSearchQuery }}"</strong>
+                    </span>
+                    <button mat-icon-button (click)="clearSearch()" class="ms-2">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </div>
+            </div>
+            } -->
+
+            <!-- Empty State -->
+            <!-- @if (displayedBlogs.length === 0 && currentSearchQuery) {
+            <div class="empty-state text-center py-5">
+                <div class="empty-content">
+                    <mat-icon class="empty-icon">search_off</mat-icon>
+                    <h3>No blogs match your search</h3>
+                    <p>Try adjusting your search terms or browse our featured content below.</p>
+                    <button mat-raised-button color="primary" (click)="clearSearch()">
+                        <mat-icon>refresh</mat-icon>
+                        Show All Blogs
+                    </button>
+                </div>
+            </div>
+            } -->
+        </div>
+    </div>
+</div>

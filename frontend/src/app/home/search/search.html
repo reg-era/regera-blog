@@ -1,0 +1,115 @@
+<div class="search-container">
+    <div class="search-header text-center mb-3">
+        <p class="search-subtitle">Discover amazing content from our blogers</p>
+    </div>
+
+    <div class="search-wrapper">
+        <mat-form-field class="search-field" appearance="outline">
+            <mat-label>Find your blog</mat-label>
+            <input matInput [(ngModel)]="searchQuery" (input)="onSearchInput($event)" (focus)="onSearchFocus()"
+                (blur)="onSearchBlur()" placeholder="Search by title, author, or content..." #searchInput>
+            <mat-icon matPrefix class="search-icon">search</mat-icon>
+            @if (searchQuery && searchQuery.length > 0) {
+            <button matSuffix mat-icon-button (click)="clearSearch()" class="clear-btn">
+                <mat-icon>close</mat-icon>
+            </button>
+            }
+        </mat-form-field>
+
+        <!-- Search Suggestions Dropdown -->
+        @if (showSuggestions && suggestions.length > 0) {
+        <div class="suggestions-dropdown" [@slideDown]>
+            <div class="suggestions-header">
+                <span class="suggestions-title">
+                    <mat-icon>lightbulb</mat-icon>
+                    Suggestions
+                </span>
+                <span class="suggestions-count">{{ suggestions.length }} found</span>
+            </div>
+
+            <div class="suggestions-list">
+                @for (suggestion of suggestions; track suggestion.blog.id + suggestion.type) {
+                <div class="suggestion-item" matRipple [matRippleColor]="'rgba(103, 58, 183, 0.1)'"
+                    (click)="selectSuggestion(suggestion)">
+
+                    <div class="suggestion-icon">
+                        @switch (suggestion.type) {
+                        @case ('title') {
+                        <mat-icon class="title-icon">title</mat-icon>
+                        }
+                        @case ('author') {
+                        <mat-icon class="author-icon">person</mat-icon>
+                        }
+                        @case ('content') {
+                        <mat-icon class="content-icon">article</mat-icon>
+                        }
+                        @case ('tag') {
+                        <mat-icon class="tag-icon">label</mat-icon>
+                        }
+                        }
+                    </div>
+
+                    <div class="suggestion-content">
+                        <div class="suggestion-text" [innerHTML]="suggestion.highlightedText || suggestion.text"></div>
+                        <div class="suggestion-meta">
+                            @switch (suggestion.type) {
+                            @case ('title') {
+                            <span>in "{{ suggestion.blog.title }}" by {{ suggestion.blog.author }}</span>
+                            }
+                            @case ('author') {
+                            <span>Author • {{ getAuthorPostCount(suggestion.blog.author) }} posts</span>
+                            }
+                            @case ('content') {
+                            <span>from "{{ suggestion.blog.title }}"</span>
+                            }
+                            @case ('tag') {
+                            <span>Tag in {{ suggestion.blog.title }}</span>
+                            }
+                            }
+                        </div>
+                    </div>
+
+                    <div class="suggestion-stats">
+                        <span class="likes">
+                            <mat-icon>favorite</mat-icon>
+                            {{ suggestion.blog.likes }}
+                        </span>
+                    </div>
+                </div>
+                }
+            </div>
+
+            @if (suggestions.length >= 5) {
+            <div class="suggestions-footer">
+                Keep typing for more specific results...
+            </div>
+            }
+        </div>
+        }
+
+        <!-- No Results Message -->
+        @if (showSuggestions && suggestions.length === 0 && searchQuery && searchQuery.length > 0) {
+        <div class="no-results" [@slideDown]>
+            <div class="no-results-content">
+                <mat-icon class="no-results-icon">search_off</mat-icon>
+                <h4>No blogs found</h4>
+                <p>Try different keywords or browse all posts below</p>
+                <button mat-stroked-button color="primary" (click)="clearSearch()">
+                    <mat-icon>refresh</mat-icon>
+                    Show All Posts
+                </button>
+            </div>
+        </div>
+        }
+
+        <!-- Search Hint -->
+        @if (!searchQuery || searchQuery.length === 0) {
+        <div class="search-hint" [@fadeIn]>
+            <div class="hint-content">
+                <mat-icon>tips_and_updates</mat-icon>
+                <span>Try searching for topics like "JavaScript", "Design", or author names</span>
+            </div>
+        </div>
+        }
+    </div>
+</div>
