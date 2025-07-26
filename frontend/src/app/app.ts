@@ -28,9 +28,45 @@ export class App {
 
   constructor(public router: Router) { }
 
-  opened = false;
+  getNavigation(): Map<string, string> {
+    const res = new Map<string, string>();
+    const currentUrl = this.router.url;
 
-  // Signal-based auth flag (e.g., tied to a real auth service)
+    const isAuthenticated = this.isAuthenticated();
+    const isAdmin = this.isAdmin();
+
+    if (isAuthenticated) {
+      if (currentUrl !== '/newblog') {
+        res.set('/newblog', 'New Blog');
+      }
+      if (currentUrl !== '/profile') {
+        res.set('/profile', 'Profile');
+      }
+      if (isAdmin) {
+        res.set('/admin', 'Dashboard');
+      }
+      return res;
+    }
+
+    switch (currentUrl) {
+      case '/login':
+        res.set('/register', 'Register');
+        break;
+      case '/register':
+        res.set('/login', 'Login');
+        break;
+      default:
+        res.set('/login', 'Login');
+        res.set('/register', 'Register');
+        break;
+    }
+
+    return res;
+  }
+
+  isAdmin(): boolean {
+    return false;
+  }
   isAuthenticated(): boolean {
     return true;
   }

@@ -11,9 +11,10 @@ export const routes: Routes = [
     { path: '', component: Home },
     { path: 'login', component: Login },
     { path: 'register', component: Register },
-    // { path: 'admin/:id', component: undefined },
     { path: 'bloger/:id', component: Bloger },
+    { path: 'profile', component: Bloger },
     { path: 'blog/:id', component: Blog },
     { path: 'newblog', component: Newblog },
+    // { path: 'admin/:id', component: undefined },
     { path: '**', component: Notfound },
 ];

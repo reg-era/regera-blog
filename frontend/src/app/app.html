@@ -1,41 +1,22 @@
 <mat-sidenav-container class="sidenav-container">
-  <mat-sidenav #drawer class="sidenav" mode="side" [(opened)]="opened" [fixedInViewport]="true">
-    @if (isAuthenticated()) {
+  <!-- Define the sidenav with a reference variable `drawer` -->
+  <mat-sidenav #drawer mode="over" class="hide-desktop">
     <mat-nav-list>
-      <a mat-list-item href="/login">Login</a>
-      <a mat-list-item href="/register">Register</a>
+      @for (link of getNavigation(); track link[0]) {
+      <a mat-list-item [routerLink]=link[0] (click)="drawer.close()">{{ link[1] }}</a>
+      }
     </mat-nav-list>
-    } @else {
-    <mat-nav-list>
-      <a mat-list-item href="/newblog">New Blog</a>
-      <a mat-list-item>Logout</a>
-    </mat-nav-list>
-    }
   </mat-sidenav>
 
   <mat-sidenav-content>
-    <mat-toolbar color="primary" class="mat-elevation-z4">
+    <mat-toolbar color="primary">
+      <!-- This button toggles the sidenav -->
       <button mat-icon-button (click)="drawer.toggle()" class="hide-desktop">
         <mat-icon>menu</mat-icon>
       </button>
       <span class="spacer"></span>
-      <nav class="hide-mobile">
-        @if (isAuthenticated()) {
-        <mat-nav-list>
-          <button mat-button>Login</button>
-          <button mat-button>Register</button>
-        </mat-nav-list>
-        } @else {
-        <mat-nav-list>
-          <button mat-button>New Blog</button>
-          <button mat-button>Logout</button>
-        </mat-nav-list>
-        }
-
-      </nav>
     </mat-toolbar>
 
-    <!-- Page content here -->
     <div class="content">
       <router-outlet></router-outlet>
     </div>
