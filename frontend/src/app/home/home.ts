@@ -12,14 +12,11 @@ export interface SearchSuggestion {
 
 @Component({
   selector: 'app-home',
-  imports: [BlogCarouselComponent, Search, MatIcon],
+  imports: [BlogCarouselComponent, Search],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
 export class Home {
-  currentSearchQuery = '';
-  displayedBlogs: Blog[] = [];
-
   blogs: Blog[] = [
     {
       id: 1,
@@ -30,7 +27,6 @@ export class Home {
       likes: 234,
       comments: 18,
       publishDate: new Date('2024-01-15'),
-      readTime: 5
     },
     {
       id: 2,
@@ -41,7 +37,6 @@ export class Home {
       likes: 189,
       comments: 25,
       publishDate: new Date('2024-01-12'),
-      readTime: 8
     },
     {
       id: 3,
@@ -52,7 +47,6 @@ export class Home {
       likes: 342,
       comments: 41,
       publishDate: new Date('2024-01-10'),
-      readTime: 6
     },
     {
       id: 4,
@@ -63,7 +57,6 @@ export class Home {
       likes: 156,
       comments: 12,
       publishDate: new Date('2024-01-08'),
-      readTime: 7
     },
     {
       id: 5,
@@ -74,7 +67,6 @@ export class Home {
       likes: 278,
       comments: 33,
       publishDate: new Date('2024-01-05'),
-      readTime: 4
     },
     {
       id: 6,
@@ -85,26 +77,6 @@ export class Home {
       likes: 445,
       comments: 67,
       publishDate: new Date('2024-01-03'),
-      readTime: 9
     }
   ];
-  constructor() {
-    // Initialize with all blogs
-    this.displayedBlogs = [...this.blogs];
-  }
-
-  onBlogsFiltered(filteredBlogs: Blog[]) {
-    this.displayedBlogs = filteredBlogs;
-  }
-
-  onSearchQueryChange(query: string) {
-    this.currentSearchQuery = query;
-  }
-
-  clearSearch() {
-    this.currentSearchQuery = '';
-    this.displayedBlogs = [...this.blogs];
-    // You can also emit an event to clear the search component's input
-    // or use ViewChild to access the search component directly
-  }
 }

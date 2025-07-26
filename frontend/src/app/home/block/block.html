@@ -14,12 +14,6 @@
                 </mat-card-title>
                 <mat-card-subtitle class="card-subtitle">
                     by {{ blog.author }}
-                    @if (blog.readTime) {
-                    <span class="read-time ms-2">
-                        <mat-icon class="time-icon">schedule</mat-icon>
-                        {{ blog.readTime }} min read
-                    </span>
-                    }
                 </mat-card-subtitle>
             </mat-card-header>
 
@@ -34,12 +28,10 @@
                 <p class="blog-excerpt">
                     {{ truncateText(blog.blog, 120) }}
                 </p>
-                @if (blog.publishDate) {
                 <div class="publish-date text-muted">
                     <mat-icon class="date-icon">today</mat-icon>
                     {{ formatDate(blog.publishDate) }}
                 </div>
-                }
             </mat-card-content>
 
             <!-- Card Actions -->

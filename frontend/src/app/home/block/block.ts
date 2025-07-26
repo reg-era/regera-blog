@@ -13,8 +13,8 @@ export interface Blog {
   blog: string;
   likes: number;
   comments: number;
-  publishDate?: Date;
-  readTime?: number;
+  publishDate: Date;
+  tags?: string[];
 }
 
 @Component({
