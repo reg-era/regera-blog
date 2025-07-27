@@ -1,0 +1,16 @@
+<nav class="nav-buttons">
+    @if(router.url != '/'){
+    <button mat-button routerLink="/"><mat-icon>home</mat-icon>Home</button>
+    }
+    @if (isValidUser()){
+    <button mat-button routerLink="/profile"><mat-icon>person</mat-icon>Profile</button>
+    @if(isAdmin()){
+    <button mat-button routerLink="/dashboard"><mat-icon>dashboard</mat-icon> Dashboard</button>
+    }
+    <button mat-button routerLink="/newblog"><mat-icon>create</mat-icon>New Blog</button>
+    <button mat-button><mat-icon>exit_to_app</mat-icon>Logout</button>
+    }@else {
+    <button mat-button routerLink="/login"><mat-icon>login</mat-icon>Login</button>
+    <button mat-button routerLink="/register"><mat-icon>person_add</mat-icon>Register</button>
+    }
+</nav>

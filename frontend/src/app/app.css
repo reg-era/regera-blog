@@ -1,54 +1,16 @@
-.sidenav-container {
+.content {
+    padding: 0;
+}
+
+.main-container {
     height: 100vh;
 }
 
-.sidenav {
-    width: 200px;
-}
-
-.mat-toolbar {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-}
-
-.toolbar-title {
-    font-size: 20px;
-    font-weight: bold;
-}
-
-.spacer {
-    flex: 1 1 auto;
-}
-
-.hide-mobile {
-    display: none;
-}
-
-.hide-desktop {
-    display: inline-block;
-}
-
-.auth-nav {
-    margin: 10px;
-    display: flex;
-    gap: 1rem;
-}
-
-@media (min-width: 768px) {
-    .hide-mobile {
-        display: inline-block;
-    }
-
-    .hide-desktop {
-        display: none;
-    }
-
-    mat-sidenav {
-        display: none;
-    }
-}
-
-.content {
-    padding: 0;
+.custom-sidenav {
+    width: 250px;
+    background: #f5f5f5;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
 }

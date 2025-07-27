@@ -1,24 +1,18 @@
-<mat-sidenav-container class="sidenav-container">
-  <!-- Define the sidenav with a reference variable `drawer` -->
-  <mat-sidenav #drawer mode="over" class="hide-desktop">
-    <mat-nav-list>
-      @for (link of getNavigation(); track link[0]) {
-      <a mat-list-item [routerLink]=link[0] (click)="drawer.close()">{{ link[1] }}</a>
+<mat-drawer-container class="main-container" autosize>
+  <mat-drawer #drawer class="custom-sidenav" mode="side" [opened]="showNavBar">
+    <app-navbar></app-navbar>
+  </mat-drawer>
+
+  <div class="content">
+    <button mat-raised-button color="primary" (click)="showNavBar = !showNavBar">
+      @if(showNavBar){
+      <mat-icon>close</mat-icon>
+      }@else{
+      <mat-icon>menu</mat-icon>
       }
-    </mat-nav-list>
-  </mat-sidenav>
+    </button>
 
-  <mat-sidenav-content>
-    <mat-toolbar color="primary">
-      <!-- This button toggles the sidenav -->
-      <button mat-icon-button (click)="drawer.toggle()" class="hide-desktop">
-        <mat-icon>menu</mat-icon>
-      </button>
-      <span class="spacer"></span>
-    </mat-toolbar>
+    <router-outlet></router-outlet>
+  </div>
 
-    <div class="content">
-      <router-outlet></router-outlet>
-    </div>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+</mat-drawer-container>
