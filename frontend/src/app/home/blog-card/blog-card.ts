@@ -18,7 +18,7 @@ export interface Blog {
 }
 
 @Component({
-  selector: 'app-blog',
+  selector: 'app-blog-card',
   standalone: true,
   imports: [
     CommonModule,
@@ -27,11 +27,11 @@ export interface Blog {
     MatIconModule,
     MatRippleModule
   ],
-  templateUrl: './block.html',
-  styleUrl: './block.scss'
+  templateUrl: './blog-card.html',
+  styleUrl: './blog-card.scss'
 })
 export class BlogCarouselComponent {
-  @Input() blogs: Blog[] = [];
+  @Input() blog!: Blog;
 
   getAuthorInitials(name: string): string {
     return name.split(' ')

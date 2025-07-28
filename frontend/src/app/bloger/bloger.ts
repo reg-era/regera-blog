@@ -4,8 +4,9 @@ import { Component } from '@angular/core';
   selector: 'app-bloger',
   imports: [],
   templateUrl: './bloger.html',
-  styleUrl: './bloger.css'
+  styleUrl: './bloger.scss'
 })
+
 export class Bloger {
 
 }

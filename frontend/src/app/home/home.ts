@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { BlogCarouselComponent, Blog } from './block/block';
+import { BlogCarouselComponent, Blog } from './blog-card/blog-card';
 import { Search } from './search/search';
 import { MatIcon } from '@angular/material/icon';
 
