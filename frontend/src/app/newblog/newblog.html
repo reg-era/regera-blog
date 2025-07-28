@@ -1,1 +1,49 @@
-<p>newblog works!</p>
+<mat-card class="blog-form-card">
+    <mat-card-title>New Blog</mat-card-title>
+
+    <form [formGroup]="blogForm" (ngSubmit)="submitForm()">
+        <!-- Title -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Title</mat-label>
+            <input matInput placeholder="Enter blog title" formControlName="title" />
+            @if(blogForm.get('title')?.hasError('required')){
+            <mat-error>Title is required</mat-error>
+            }
+        </mat-form-field>
+
+        <!-- Cover Image -->
+        <div class="cover-image-upload">
+            <input type="file" accept="image/*" (change)="onImageSelected($event)" />
+            @if(imagePreview) {
+            <img [src]="imagePreview" alt="Cover Preview" class="image-preview" />
+            }
+        </div>
+
+        <!-- Blog Content -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Blog Content</mat-label>
+            <textarea matInput rows="8" placeholder="Write your blog..." formControlName="content"></textarea>
+            @if(blogForm.get('content')?.hasError('required')){
+            <mat-error>Content is required</mat-error>
+            }
+        </mat-form-field>
+
+        <!-- Tags -->
+        <div class="custom-tags">
+            @for(tag of tags; track tag) {
+            <div class="tag">
+                {{ tag }}
+                <button mat-icon-button color="warn" (click)="removeTag(tag)">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+            }
+
+            <input class="tag-input" placeholder="Add tag" [formControl]="tagControl"
+                (keydown.enter)="addTagFromControl()" (blur)="addTagFromControl()" />
+        </div>
+
+        <!-- Submit -->
+        <button mat-raised-button color="primary" type="submit">Publish Blog</button>
+    </form>
+</mat-card>
