@@ -1,1 +1,31 @@
-<p>blog works!</p>
+<!-- blogger-profile.component.html -->
+
+<div class="blogger-profile">
+
+    <!-- 👤 Header Section -->
+    <section class="blogger-header mat-elevation-z2">
+        <div class="avatar">
+            <img [src]="blogger.avatarUrl" alt="Blogger Avatar" />
+        </div>
+        <div class="blogger-info">
+            <h1>{{ blogger.name }}</h1>
+            <p class="bio">{{ blogger.bio }}</p>
+            <p class="since">Joined on {{ blogger.registeredAt.toISOString() }}</p>
+
+            <button mat-raised-button color="primary" (click)="toggleFollow()">
+                {{ isFollowing ? 'Unfollow' : 'Follow' }} • {{ blogger.followers + (isFollowing ? 1 : 0) }}
+            </button>
+        </div>
+    </section>
+
+    <!-- 📰 Blog Posts Section -->
+    <section class="blogger-posts">
+        <h2>{{ blogger.name }}'s Posts</h2>
+        <div class="blog-list">
+            @for(blog of blogger.blogs;track blog.id){
+            <app-blog-card [blog]="blog"></app-blog-card>
+            }
+        </div>
+    </section>
+
+</div>

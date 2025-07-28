@@ -30,7 +30,7 @@ export interface Blog {
   templateUrl: './blog-card.html',
   styleUrl: './blog-card.scss'
 })
-export class BlogCarouselComponent {
+export class BlogCard {
   @Input() blog!: Blog;
 
   getAuthorInitials(name: string): string {

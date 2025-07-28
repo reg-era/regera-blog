@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { BlogCarouselComponent, Blog } from './blog-card/blog-card';
+import { BlogCard, Blog } from './blog-card/blog-card';
 import { Search } from './search/search';
 import { MatIcon } from '@angular/material/icon';
 
@@ -12,7 +12,7 @@ export interface SearchSuggestion {
 
 @Component({
   selector: 'app-home',
-  imports: [BlogCarouselComponent, Search],
+  imports: [BlogCard, Search],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })

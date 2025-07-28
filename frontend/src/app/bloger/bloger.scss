@@ -1,59 +1,53 @@
-.blog-layout {
+/* blogger-profile.component.scss */
+
+.blogger-profile {
     display: flex;
-    flex-direction: row;
-    gap: 2rem;
-    align-items: flex-start;
+    flex-direction: column;
     padding: 2rem;
-
-    @media (max-width: 768px) {
-        flex-direction: column;
-    }
+    gap: 2rem;
 }
 
-.blog-container {
-    flex: 3;
-}
-
-.blog-sidebar {
-    flex: 1;
-    position: sticky;
-    top: 2rem;
+.blogger-header {
     display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    max-height: 90vh;
-    overflow-y: auto;
-
-    @media (max-width: 768px) {
-        position: static;
-        order: 2;
-    }
-}
-
-.likes {
-    display: flex;
+    gap: 2rem;
+    padding: 1.5rem;
+    border-radius: 8px;
+    background: #fafafa;
     align-items: center;
-    gap: 0.5rem;
-    font-weight: 600;
+    flex-wrap: wrap;
 }
 
-.comments-section {
+.avatar img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.blogger-info {
+    flex: 1;
+    min-width: 200px;
+}
+
+.bio {
+    font-style: italic;
+    margin: 0.5rem 0;
+}
+
+.since {
+    font-size: 0.9rem;
+    color: gray;
+    margin-bottom: 1rem;
+}
+
+.blogger-posts {
+    h2 {
+        margin-bottom: 1rem;
+    }
+}
+
+.blog-list {
     display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.comment {
-    padding: 0.5rem;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.comment-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.comment-input {
-    width: 100%;
+    flex-wrap: wrap;
+    gap: 1.5rem;
 }
