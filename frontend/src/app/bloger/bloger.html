@@ -57,7 +57,7 @@
         <h2>{{ blogger.name }}'s Posts</h2>
         <div class="blog-list">
             @for(blog of blogger.blogs;track blog.id){
-            <app-blog-card [blog]="blog"></app-blog-card>
+            <app-blog-card [owner]="true" [blog]="blog"></app-blog-card>
             }
         </div>
     </section>

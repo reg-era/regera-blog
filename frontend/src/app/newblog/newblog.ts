@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -6,6 +6,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { ActivatedRoute } from '@angular/router';
 
 
 @Component({
@@ -20,7 +21,10 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './newblog.html',
   styleUrl: './newblog.css'
 })
-export class Newblog {
+export class Newblog implements OnInit {
+  onEditing: boolean = false;
+  blogEditing: number = 0;
+
   blogForm: FormGroup;
   imagePreview: string | ArrayBuffer | null = null;
   tags: string[] = [];
@@ -29,14 +33,31 @@ export class Newblog {
 
   addDescControl = new FormControl('');
 
-
-  constructor(private fb: FormBuilder) {
+  constructor(private route: ActivatedRoute, private fb: FormBuilder) {
     this.blogForm = this.fb.group({
       title: ['', Validators.required],
       coverImage: [null],
       content: ['', Validators.required],
       description: ['', Validators.required],
     });
+  }
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      this.blogEditing = params['blog'];
+      if (this.blogEditing && this.blogEditing != 0 && this.validateBlog(this.blogEditing)) {
+        this.onEditing = true;
+      } else if (this.blogEditing && this.blogEditing != 0) {
+        console.log("invalid editing blog permission");
+      }
+    });
+  }
+
+  validateBlog(id: number): boolean {
+    this.blogForm.get('content')?.setValue('New Default Value content');
+    this.blogForm.get('description')?.setValue('New Default Value desription');
+
+    return true;
   }
 
   onImageSelected(event: Event): void {

@@ -32,6 +32,10 @@ export interface Blog {
 })
 export class BlogCard {
   @Input() blog!: Blog;
+  @Input() owner!: boolean;
+
+  onDelete(blog: Blog) { }
+  onEdit(blog: Blog) { }
 
   getAuthorInitials(name: string): string {
     return name.split(' ')

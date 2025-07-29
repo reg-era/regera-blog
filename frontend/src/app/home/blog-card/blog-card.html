@@ -1,6 +1,17 @@
 <mat-card class="blog-card mat-elevation-z6" matRipple [matRippleDisabled]="false"
     [matRippleColor]="'rgba(255,255,255,0.1)'">
 
+    @if(owner){
+    <div class="owner-actions">
+        <button mat-icon-button color="primary" class="edit-btn" (click)="onEdit(blog)">
+            <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" class="delete-btn" (click)="onDelete(blog)">
+            <mat-icon>delete</mat-icon>
+        </button>
+    </div>
+    }
+
     <!-- Card Header with Author Info -->
     <mat-card-header class="card-header">
         <div mat-card-avatar class="author-avatar">
