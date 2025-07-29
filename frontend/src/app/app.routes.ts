@@ -6,6 +6,7 @@ import { Bloger } from './bloger/bloger';
 import { Blog } from './blog/blog';
 import { Newblog } from './newblog/newblog';
 import { Notfound } from './notfound/notfound';
+import { Dashboard } from './dashboard/dashboard';
 
 export const routes: Routes = [
     { path: '', component: Home },
@@ -15,6 +16,6 @@ export const routes: Routes = [
     { path: 'profile', component: Bloger },
     { path: 'blog/:id', component: Blog },
     { path: 'newblog', component: Newblog },
-    // { path: 'admin/:id', component: undefined },
+    { path: 'dashboard', component: Dashboard },
     { path: '**', component: Notfound },
 ];
