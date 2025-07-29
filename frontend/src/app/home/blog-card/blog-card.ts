@@ -28,7 +28,7 @@ export interface Blog {
     MatRippleModule
   ],
   templateUrl: './blog-card.html',
-  styleUrl: './blog-card.scss'
+  styleUrl: './blog-card.css'
 })
 export class BlogCard {
   @Input() blog!: Blog;

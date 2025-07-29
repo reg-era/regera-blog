@@ -1,16 +1,48 @@
-.content {
-    padding: 0;
-}
+/* app.component.css or app.component.scss */
 
 .main-container {
     height: 100vh;
+    background-color: var(--bg);
+    color: var(--text);
+    transition: background-color var(--transition), color var(--transition);
 }
 
 .custom-sidenav {
     width: 250px;
-    background: #f5f5f5;
-    border-top-right-radius: 15px;
-    border-bottom-right-radius: 15px;
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
+    background-color: var(--card);
+    border-right: 1px solid var(--border);
+    padding: 1rem;
+    transition: background-color var(--transition);
 }
+
+.theme-toggle-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
+}
+
+.theme-toggle {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text);
+    transition: color var(--transition);
+}
+
+.theme-toggle:hover {
+    opacity: 0.8;
+}
+
+.content {
+    padding: 1rem 2rem;
+    margin-left: 0;
+    transition: margin-left var(--transition);
+}
+
+/* @media (min-width: 768px) {
+    .content {
+        margin-left: 250px;
+    }
+} */

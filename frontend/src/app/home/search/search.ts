@@ -45,7 +45,7 @@ export interface SearchSuggestion {
     MatRippleModule
   ],
   templateUrl: './search.html',
-  styleUrl: './search.scss'
+  styleUrl: './search.css'
 })
 export class Search {
   test: SearchSuggestion[] = [

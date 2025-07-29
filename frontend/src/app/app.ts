@@ -26,5 +26,12 @@ import { Navbar } from './navbar/navbar';
 })
 export class App {
   protected readonly title = signal('frontend');
+
+  currentTheme: 'light' | 'dark' = 'light';
   showNavBar = false;
+
+  toggleTheme() {
+    this.currentTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+    document.body.classList.toggle("dark")
+  }
 }

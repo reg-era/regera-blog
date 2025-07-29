@@ -16,7 +16,7 @@ export interface Blog {
   selector: 'app-bloger',
   imports: [BlogCard],
   templateUrl: './bloger.html',
-  styleUrl: './bloger.scss'
+  styleUrl: './bloger.css'
 })
 
 export class Bloger {
@@ -31,6 +31,10 @@ export class Bloger {
     blogs: this.getBlogs(),
   };
 
+  reportUser() {
+    // Your report logic here: open modal, send report, etc.
+    alert(`Reporting user: ${this.blogger.name}`);
+  }
   toggleFollow() {
     this.isFollowing = !this.isFollowing;
   }

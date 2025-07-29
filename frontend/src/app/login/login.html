@@ -30,8 +30,11 @@
         </mat-form-field>
 
         <!-- Submit Button -->
-        <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid">
-            Login
+        <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid || isLoading">
+            <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" diameter="20"
+                strokeWidth="3"></mat-progress-spinner>
+            <span *ngIf="!isLoading">Login</span>
         </button>
+
     </form>
 </div>

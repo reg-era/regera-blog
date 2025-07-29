@@ -30,13 +30,22 @@
 
     <!-- Sidebar / Comments Section -->
     <aside class="blog-sidebar">
-        <div class="likes">
-            <mat-icon>favorite</mat-icon> {{ blog.likes }} likes
+
+        <!-- Follow + Likes -->
+        <div class="interaction-header">
+            <button mat-raised-button color="accent" (click)="toggleLike()">
+                {{ isLiking ? 'UnLike' : 'Like' }} • {{ blog.likes + (isLiking ? 1 : 0) }}
+            </button>
+            <div class="likes">
+                <mat-icon>favorite</mat-icon> {{ blog.likes }} likes
+            </div>
         </div>
 
-        <div class="comments-section">
+        <!-- Sticky Comments Section -->
+        <div class="comments-section fixed-comments">
             <h3>Comments</h3>
-            @for(comment of blog.commentsArr;track comment.id){
+
+            @for (comment of blog.commentsArr; track comment.id) {
             <div class="comment">
                 <strong>{{ comment.user }}</strong>
                 <p>{{ comment.text }}</p>

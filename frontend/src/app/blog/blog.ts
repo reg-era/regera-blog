@@ -9,7 +9,7 @@ import { MatInputModule } from '@angular/material/input';
   selector: 'app-blog',
   imports: [MatCardModule, MatIconModule, MatFormField, MatLabel, MatInputModule],
   templateUrl: './blog.html',
-  styleUrl: './blog.scss'
+  styleUrl: './blog.css'
 })
 
 export class Blog {
@@ -33,6 +33,11 @@ export class Blog {
 
 
   newComment = '';
+  isLiking = true;
+
+  toggleLike() {
+    this.isLiking = !this.isLiking;
+  }
 
   setComment(e: KeyboardEvent) {
     const input = e.target as HTMLTextAreaElement;

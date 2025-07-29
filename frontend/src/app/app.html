@@ -3,6 +3,12 @@
     <app-navbar></app-navbar>
   </mat-drawer>
 
+  <div class="theme-toggle-container">
+    <button class="theme-toggle" (click)="toggleTheme()">
+      {{ currentTheme === 'light' ? '🌙' : '☀️' }}
+    </button>
+  </div>
+
   <div class="content">
     <button mat-raised-button color="primary" (click)="showNavBar = !showNavBar">
       @if(showNavBar){

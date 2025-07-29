@@ -5,6 +5,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 
 @Component({
   selector: 'app-login',
@@ -15,7 +17,8 @@ import { MatIconModule } from '@angular/material/icon';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './login.html',
   styleUrl: './login.css'
@@ -33,10 +36,18 @@ export class Login implements OnInit {
     });
   }
 
+  isLoading = false;
+
   onSubmit() {
-    if (this.loginForm.valid) {
-      const { email, password } = this.loginForm.value;
-      console.log('Login submitted:', { email, password });
-    }
+    if (this.loginForm.invalid) return;
+
+    this.isLoading = true;
+
+    // Simulate login API call
+    setTimeout(() => {
+      this.isLoading = false;
+      // handle success or error
+    }, 1500);
   }
+
 }

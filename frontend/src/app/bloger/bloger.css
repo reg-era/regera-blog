@@ -1,0 +1,101 @@
+/* profile.component.css */
+
+.blogger-profile {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+/* Header section */
+.blogger-header {
+  position: relative;
+  background-color: var(--card);
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.blogger-info {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Blogger info */
+.blogger-info h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+
+.report-btn {
+  position: absolute;
+  background-color: rgb(255, 166, 49);
+  top: 1rem;
+  right: 1rem;
+  min-width: 100px;
+  font-weight: 600;
+}
+
+.bio {
+  font-size: 1rem;
+  opacity: 0.85;
+  margin-bottom: 0.5rem;
+}
+
+.since {
+  font-size: 0.9rem;
+  color: var(--text);
+  opacity: 0.7;
+  margin-bottom: 1rem;
+}
+
+/* Follow button */
+button[mat-raised-button] {
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.5rem 1.25rem;
+}
+
+/* Posts list */
+.blogger-posts {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.blogger-posts h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.blog-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  .blogger-header {
+    padding: 1.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .blogger-info h1 {
+    font-size: 1.5rem;
+  }
+
+  .blogger-posts h2 {
+    font-size: 1.25rem;
+  }
+}

@@ -14,7 +14,7 @@ export interface SearchSuggestion {
   selector: 'app-home',
   imports: [BlogCard, Search],
   templateUrl: './home.html',
-  styleUrl: './home.scss',
+  styleUrl: './home.css',
 })
 export class Home {
   blogs: Blog[] = [

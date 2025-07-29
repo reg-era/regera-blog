@@ -18,15 +18,16 @@ import { MatIconModule } from '@angular/material/icon';
     MatInputModule,
   ],
   templateUrl: './newblog.html',
-  styleUrl: './newblog.scss'
+  styleUrl: './newblog.css'
 })
 export class Newblog {
   blogForm: FormGroup;
   imagePreview: string | ArrayBuffer | null = null;
   tags: string[] = [];
   tagInput: string = '';
-  
-  tagControl = new FormControl('');
+  description = "";
+
+  addDescControl = new FormControl('');
 
 
   constructor(private fb: FormBuilder) {
@@ -34,6 +35,7 @@ export class Newblog {
       title: ['', Validators.required],
       coverImage: [null],
       content: ['', Validators.required],
+      description: ['', Validators.required],
     });
   }
 
@@ -62,7 +64,7 @@ export class Newblog {
     this.tags = this.tags.filter(t => t !== tag);
   }
 
-  addTagFromControl() {
+  addDescFromControl() {
     const value = this.tagInput.trim();
     if (value && !this.tags.includes(value)) {
       this.tags.push(value);
