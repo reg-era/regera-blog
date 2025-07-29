@@ -2,6 +2,41 @@
 
 <div class="blogger-profile">
 
+    @if(showReport){
+    <div class="confirmator-overlay">
+        <div class="confirmator-box mat-elevation-z8">
+            <p class="message">Are you sure you want to report {{ blogger.name }}?</p>
+            <div class="report-reasons">
+                @for(reason of availableReasons;track reason){
+                <label>
+                    <input type="checkbox" [value]="reason" (change)="toggleReason(reason, $event)" />
+                    {{ reason }}
+                </label>
+                }
+            </div>
+
+            <div class="report-details">
+                <textarea placeholder="Optional details..." [(ngModel)]="reportMessage"></textarea>
+            </div>
+
+            <!-- Actions -->
+            <div class="actions">
+                <button mat-raised-button color="warn" (click)="confirmReport()">Confirm</button>
+                <button mat-stroked-button color="primary" (click)="showReport = false">Cancel</button>
+            </div>
+        </div>
+    </div>
+    }
+
+    @if(showToast()) {
+    <div class="toster-container">
+        <mat-card class="toast-card mat-elevation-z8">
+            <mat-icon class="toast-icon">info</mat-icon>
+            <span class="toast-message">{{ toastMessage() }}</span>
+        </mat-card>
+    </div>
+    }
+
     <section class="blogger-header mat-elevation-z2">
         <div class="blogger-info">
             <h1>{{ blogger.name }}</h1>
@@ -13,7 +48,7 @@
             </button>
         </div>
 
-        <button mat-stroked-button color="warn" class="report-btn" (click)="reportUser()">
+        <button mat-stroked-button color="warn" class="report-btn" (click)="this.showReport = true">
             Report
         </button>
     </section>

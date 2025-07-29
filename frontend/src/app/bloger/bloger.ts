@@ -1,5 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { BlogCard } from '../home/blog-card/blog-card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatListModule } from '@angular/material/list';
+import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
 
 export interface Blog {
   id: number;
@@ -14,14 +19,12 @@ export interface Blog {
 }
 @Component({
   selector: 'app-bloger',
-  imports: [BlogCard],
+  imports: [FormsModule, BlogCard, MatCardModule, MatIconModule, MatFormFieldModule, MatListModule],
   templateUrl: './bloger.html',
   styleUrl: './bloger.css'
 })
 
 export class Bloger {
-  isFollowing = false;
-
   blogger = {
     name: 'Jane Dev',
     avatarUrl: 'https://i.pravatar.cc/150?img=12',
@@ -31,10 +34,53 @@ export class Bloger {
     blogs: this.getBlogs(),
   };
 
-  reportUser() {
-    // Your report logic here: open modal, send report, etc.
-    alert(`Reporting user: ${this.blogger.name}`);
+  availableReasons = [
+    'Spam or misleading',
+    'Harassment or hate speech',
+    'Inappropriate content',
+    'Fake identity',
+    'Other'
+  ];
+
+  isFollowing = false;
+  selectedReasons: string[] = [];
+  reportMessage: string = '';
+  reportDetails: string = '';
+  showReport = false;
+  showToast = signal(false);
+  toastMessage = signal<string>('');
+
+  toggleReason(reason: string, event: Event): void {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    if (isChecked) {
+      this.selectedReasons.push(reason);
+    } else {
+      this.selectedReasons = this.selectedReasons.filter(r => r !== reason);
+    }
   }
+
+  confirmReport(): void {
+    const reportPayload = {
+      reasons: this.selectedReasons,
+      message: this.reportMessage
+    };
+
+    console.log('Submitting Report:', reportPayload);
+    this.displayToast(true);
+  }
+
+  displayToast(sucess: boolean) {
+    this.showReport = false;
+
+    this.showToast.set(true);
+    this.toastMessage.set(sucess ? 'Reporting profile' : 'Faile reporting profile');
+
+    setTimeout(() => {
+      this.showToast.set(false);
+      this.toastMessage.set('');
+    }, 3000);
+  }
+
   toggleFollow() {
     this.isFollowing = !this.isFollowing;
   }

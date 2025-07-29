@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { AuthService } from '../auth-service';
+import { AuthService } from '../../services/auth-service';
 import { Router, RouterLink } from '@angular/router';
 
 @Component({

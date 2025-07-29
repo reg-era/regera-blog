@@ -9,7 +9,7 @@ export class AuthService {
 
   constructor() {
     // Check localStorage or cookies for persisted login
-    const storedToken ="sdf" //localStorage.getItem('auth_token');
+    const storedToken = "sdf" //localStorage.getItem('auth_token');
     this.isLoggedInSubject.next(!!storedToken);
   }
 
@@ -23,13 +23,17 @@ export class AuthService {
     return this.isLoggedInSubject.value;
   }
 
-  login(token: string) {
+  login(token: string): void {
     localStorage.setItem('auth_token', token);
     this.isLoggedInSubject.next(true);
   }
 
-  logout() {
+  logout(): void {
     localStorage.removeItem('auth_token');
     this.isLoggedInSubject.next(false);
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('auth_token');
   }
 }
