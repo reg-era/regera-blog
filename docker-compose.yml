@@ -1,0 +1,30 @@
+services:
+  db:
+    image: postgres:15
+    container_name: blog-postgres
+    environment:
+      POSTGRES_USER: bloguser
+      POSTGRES_PASSWORD: blogpass
+      POSTGRES_DB: blogdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backend/postgresconfig.sh:/docker-entrypoint-initdb.d/postgresconfig.sh:ro
+
+  backend:
+    build:
+        # context: ./backend
+        dockerfile: ./Dockerfile.backend 
+    container_name: blog-backend
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/blogdb
+      SPRING_DATASOURCE_USERNAME: bloguser
+      SPRING_DATASOURCE_PASSWORD: blogpass
+    ports:
+      - "8080:8080"
+
+volumes:
+  pgdata:
