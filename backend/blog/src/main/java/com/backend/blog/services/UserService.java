@@ -17,7 +17,7 @@ public class UserService {
         if(userRepository.existsByEmail(user.getEmail())){
             throw new IllegalArgumentException("Email already used");
         }
-        return userRepository.save(user);
+        return user ;//userRepository.save(user);
     }
 
     public Optional<User> findByUsername(String username){

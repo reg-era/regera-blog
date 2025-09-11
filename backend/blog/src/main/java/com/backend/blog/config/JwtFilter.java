@@ -2,6 +2,7 @@ package com.backend.blog.config;
 
 import com.backend.blog.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -27,10 +28,11 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
+            String token = authHeader.substring("Bearer ".length());
             try {
                 Claims claims = jwtUtil.validateToken(token);
                 request.setAttribute("username", claims.getSubject());
+                request.setAttribute("id", claims.get("id"));
                 request.setAttribute("role", claims.get("role"));
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

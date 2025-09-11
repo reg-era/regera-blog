@@ -20,8 +20,7 @@ public class Blog {
     @Column(nullable=false, columnDefinition="TEXT")
     private String content;
 
+    @Column(columnDefinition="TIMESTAMP")
     private LocalDateTime createdAt = LocalDateTime.now();
-    private LocalDateTime updatedAt;
 
-    // Getters/Setters
 }

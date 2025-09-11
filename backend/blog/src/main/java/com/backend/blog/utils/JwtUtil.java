@@ -10,19 +10,20 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private final String SECRET = "YourSuperSecretKeyForJwtGeneration1234!"; // 32+ chars for HS256
+    private final String SECRET = "YourSuperSecretKeyForJwtGeneration1234!"; // HS256 RSA ECDSA
     private final long EXPIRATION = 1000 * 60 * 60 * 24; // 24h
 
     private Key key() {
         return Keys.hmacShaKeyFor(SECRET.getBytes());
     }
 
-    public String generateToken(String username, String role) {
+    public String generateToken(int id, String username, String role) {
         return Jwts.builder()
                 .setSubject(username)
+                .claim("id", id)
                 .claim("role", role)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
+                .setExpiration(new Date(System.currentTimeMillis() + this.EXPIRATION))
                 .signWith(key(), SignatureAlgorithm.HS256)
                 .compact();
     }

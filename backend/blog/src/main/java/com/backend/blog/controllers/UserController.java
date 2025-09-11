@@ -2,7 +2,15 @@ package com.backend.blog.controllers;
 
 import com.backend.blog.entities.User;
 import com.backend.blog.services.UserService;
+
+import jakarta.validation.Valid;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequestMapping("/api/users")
@@ -14,8 +22,26 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public User register(@RequestBody User user) {
-        return userService.createUser(user);
+    public ResponseEntity<Map<String, String>> register(@Valid @RequestBody User registerReq) {
+        Map<String, String> res = new HashMap<String, String>();
+
+        if (registerReq.getUsername().equals("existingUser")) {
+            res.put("message", "Username already exists");
+            return ResponseEntity.badRequest().body(res);
+        }
+
+        return ResponseEntity.ok(res);
+    }
+
+    @GetMapping("/login")
+    public ResponseEntity<Map<String, String>> getMethodName(@Valid @RequestBody User loginReq) {
+        Map<String, String> res = new HashMap<String, String>();
+        String jwtToken = "oxygen";
+
+        loginReq.getUsername();
+
+        res.put("token", jwtToken);
+        return ResponseEntity.ok(res);
     }
 
     @GetMapping("/{username}")

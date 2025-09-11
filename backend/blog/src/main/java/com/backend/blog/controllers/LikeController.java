@@ -1,3 +1,1 @@
-public class LikeController {
-    
-}
+package com.backend.blog.controllers;

@@ -1,3 +1,1 @@
-public class BlogController {
-    
-}
+package com.backend.blog.controllers;

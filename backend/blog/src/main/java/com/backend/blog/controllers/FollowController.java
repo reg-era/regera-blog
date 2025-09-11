@@ -1,3 +1,1 @@
-public class FollowController {
-    
-}
+package com.backend.blog.controllers;
