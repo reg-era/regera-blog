@@ -1,10 +1,17 @@
 package com.backend.blog.entities;
 
+import java.util.regex.Pattern;
+
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users")
 public class User {
+
+    public static enum Role {
+        BLOGGER, ADMIN
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -15,11 +22,20 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "password_hash")
     private String passwordHash;
 
+    @Transient
+    private String password;
+
     @Column(nullable = false)
-    private String role; // BLOGGER, ADMIN
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.BLOGGER;
+
+    @Transient
+    private static final Pattern EMAIL_PATTERN = Pattern.compile(
+            "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$",
+            Pattern.CASE_INSENSITIVE);
 
     public Long getId() {
         return id;
@@ -33,11 +49,28 @@ public class User {
         return email;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
     public String getPasswordHash() {
         return passwordHash;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    public boolean isValidEmail() {
+        if (this.email == null)
+            return false;
+        String trimmed = this.email.trim();
+        if (trimmed.length() == 0)
+            return false;
+        return EMAIL_PATTERN.matcher(trimmed).matches();
     }
 }

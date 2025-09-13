@@ -11,4 +11,5 @@ public class HelloController {
     public Map<String, String> welcome() {
         return Map.of("message", "Welcome to Regera Server");
     }
+
 }

@@ -4,6 +4,10 @@ import com.backend.blog.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import jakarta.servlet.FilterChain;
@@ -12,6 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -31,9 +36,22 @@ public class JwtFilter extends OncePerRequestFilter {
             String token = authHeader.substring("Bearer ".length());
             try {
                 Claims claims = jwtUtil.validateToken(token);
-                request.setAttribute("username", claims.getSubject());
+
+                String username = claims.getSubject();
+                String role = claims.get("role", String.class);
+
+                request.setAttribute("username", username);
                 request.setAttribute("id", claims.get("id"));
-                request.setAttribute("role", claims.get("role"));
+                request.setAttribute("role", role);
+
+                // Convert role to GrantedAuthority for Spring Security
+                List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+
+                // Create authentication token and set in SecurityContext
+                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username, null,
+                        authorities);
+                SecurityContextHolder.getContext().setAuthentication(auth);
+
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("Invalid or expired JWT token");
@@ -42,4 +60,5 @@ public class JwtFilter extends OncePerRequestFilter {
         }
         filterChain.doFilter(request, response);
     }
+
 }

@@ -2,25 +2,56 @@ package com.backend.blog.services;
 
 import com.backend.blog.entities.User;
 import com.backend.blog.repositories.UserRepository;
-import org.springframework.stereotype.Service;
+
 import java.util.Optional;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository){
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public User createUser(User user){
-        if(userRepository.existsByEmail(user.getEmail())){
+    public User createUser(User user) {
+        if (!user.isValidEmail())
+            throw new IllegalArgumentException("Invalid Email");
+
+        user.setPasswordHash(user.getPassword());
+
+        if (userRepository.existsByUsername(user.getUsername()))
+            throw new IllegalArgumentException("Username already used");
+
+        if (userRepository.existsByEmail(user.getEmail()))
             throw new IllegalArgumentException("Email already used");
-        }
-        return user ;//userRepository.save(user);
+
+        this.userRepository.save(user);
+        return user;
     }
 
-    public Optional<User> findByUsername(String username){
-        return userRepository.findByUsername(username);
+    public User fetchUser(String username) {
+        Optional<User> user = this.userRepository.findByUsername(username);
+
+        if (!user.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found: " + username);
+
+        return user.get();
     }
+
+    public User fetchUser(String username, String email) {
+        Optional<User> user = this.userRepository.findByUsername(username);
+        if (!user.isPresent())
+            user = this.userRepository.findByEmail(email);
+
+        if (!user.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found: " + username);
+        }
+
+        return user.get();
+    }
+
 }
