@@ -51,4 +51,8 @@ public class BlogService {
     public void updateBlog(Blog blog) {
     }
 
+    public boolean existBlog(Long blogId){
+        return true;
+    }
+
 }
