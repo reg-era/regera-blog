@@ -26,7 +26,7 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> register(@Valid @RequestBody User registerReq) {
-        User created = userService.createUser(registerReq);
+        User created = this.userService.createUser(registerReq);
 
         String token = JwtUtil.generateToken(created.getId(), created.getUsername(), created.getRole().name());
 
@@ -42,7 +42,7 @@ public class UserController {
     public ResponseEntity<Map<String, String>> getMethodName(@Valid @RequestBody User loginReq) {
         Map<String, String> res = new HashMap<String, String>();
 
-        User user = userService.fetchUser(loginReq.getUsername(), loginReq.getEmail());
+        User user = this.userService.fetchUser(loginReq.getUsername(), loginReq.getEmail());
 
         if (!user.getPasswordHash().equals(loginReq.getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
@@ -59,7 +59,7 @@ public class UserController {
 
     @GetMapping("/{username}")
     public ResponseEntity<User> getByUsername(@PathVariable String username) {
-        User user = userService.fetchUser(username);
+        User user = this.userService.fetchUser(username);
         user.setPasswordHash(null);
         return ResponseEntity.ok(user);
     }

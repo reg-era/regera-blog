@@ -4,6 +4,7 @@ import com.backend.blog.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -44,18 +45,15 @@ public class JwtFilter extends OncePerRequestFilter {
                 request.setAttribute("id", claims.get("id"));
                 request.setAttribute("role", role);
 
-                // Convert role to GrantedAuthority for Spring Security
                 List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
 
-                // Create authentication token and set in SecurityContext
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username, null,
                         authorities);
                 SecurityContextHolder.getContext().setAuthentication(auth);
 
             } catch (Exception e) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("Invalid or expired JWT token");
-                return;
+                SecurityContextHolder.clearContext();
+                throw new BadCredentialsException("Invalid or expired JWT token");
             }
         }
         filterChain.doFilter(request, response);
