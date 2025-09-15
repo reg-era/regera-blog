@@ -56,7 +56,7 @@ public class CommentController {
         User author = this.userService.fetchUser(username);
 
         Comment comment = new Comment();
-        comment.setAuthor(author);
+        comment.setUser(author);
         comment.setBlog(this.blogService.readBlog(blogId));
         comment.setContent(content.trim());
 

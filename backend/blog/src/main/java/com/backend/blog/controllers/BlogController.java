@@ -52,7 +52,7 @@ public class BlogController {
                 blog.getId(),
                 blog.getTitle(),
                 blog.getContent(),
-                blog.getAuthor().getUsername(),
+                blog.getUser().getUsername(),
                 blog.getCreatedAt());
 
         return ResponseEntity.ok(dto);
@@ -69,7 +69,7 @@ public class BlogController {
         User author = this.userService.fetchUser(user);
 
         Blog blog = new Blog();
-        blog.setAuthor(author);
+        blog.setUser(author);
         blog.setTitle(title);
         blog.setContent(content);
 

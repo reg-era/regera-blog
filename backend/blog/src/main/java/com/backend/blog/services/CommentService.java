@@ -28,7 +28,7 @@ public class CommentService {
 
         List<CommentDto> res = commentRepository.findByBlogId(blogId, pageable).stream()
                 .map(comm -> new CommentDto(comm.getId(),
-                        comm.getAuthor().getUsername(),
+                        comm.getUser().getUsername(),
                         comm.getBlog().getId(),
                         comm.getContent(),
                         comm.getCreatedAt()))

@@ -1,8 +1,8 @@
--- Comments table
-CREATE TABLE IF NOT EXISTS comments (
+-- Notifications table
+CREATE TABLE IF NOT EXISTS notifications (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    blog_id BIGINT NOT NULL REFERENCES blogs(id) ON DELETE CASCADE,
     content TEXT NOT NULL,
+    seen BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );

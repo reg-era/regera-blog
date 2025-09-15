@@ -31,14 +31,14 @@ public class FollowService {
         User follower = this.userRepository.findById(followerId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Follower not found"));
 
-        Optional<Follow> existingFollow = this.followRepository.findByAuthorIdAndFollowerId(authorId, followerId);
+        Optional<Follow> existingFollow = this.followRepository.findByUser_IdAndFollower_Id(authorId, followerId);
 
         if (existingFollow.isPresent()) {
             this.followRepository.delete(existingFollow.get());
             return false;
         } else {
             Follow follow = new Follow();
-            follow.setAuthor(author);
+            follow.setUserId(author);
             follow.setFollower(follower);
             this.followRepository.save(follow);
             return true;
@@ -59,6 +59,6 @@ public class FollowService {
         if (!this.userRepository.existsById(followerId))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Follower not found");
 
-        return this.followRepository.existsByAuthorIdAndFollowerId(authorId, followerId);
+        return this.followRepository.existsByUser_IdAndFollower_Id(authorId, followerId);
     }
 }

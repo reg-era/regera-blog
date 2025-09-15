@@ -19,12 +19,13 @@ public class Blog {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id", nullable = false)
-    private User author;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(nullable = false)
     private String title;
 
+    @Column(nullable = true)
     private String cover;
 
     @Column(nullable = false)
@@ -37,8 +38,8 @@ public class Blog {
         return id;
     }
 
-    public User getAuthor() {
-        return author;
+    public User getUser() {
+        return user;
     }
 
     public String getTitle() {
@@ -57,8 +58,8 @@ public class Blog {
         return createdAt;
     }
 
-    public void setAuthor(User author) {
-        this.author = author;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public void setTitle(String title) {

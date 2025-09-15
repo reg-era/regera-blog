@@ -7,9 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.backend.blog.entities.Follow;
 
 public interface FollowRepository extends JpaRepository<Follow, Long> {
-    Optional<Follow> findByAuthorIdAndFollowerId(Long authorId, Long followerId);
+    Optional<Follow> findByUser_IdAndFollower_Id(Long userId, Long followerId);
 
-    boolean existsByAuthorIdAndFollowerId(Long authorId, Long followerId);
+    boolean existsByUser_IdAndFollower_Id(Long userId, Long followerId);
 
     long countByFollowerId(Long followerId);
 }

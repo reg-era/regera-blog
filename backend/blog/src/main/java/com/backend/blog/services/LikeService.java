@@ -41,7 +41,7 @@ public class LikeService {
         User user = this.userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-        Optional<Like> existingLike = likeRepository.findByBlogIdAndAuthorId(blogId, userId);
+        Optional<Like> existingLike = likeRepository.findByBlogIdAndUserId(blogId, userId);
 
         if (existingLike.isPresent()) {
             this.likeRepository.delete(existingLike.get());
@@ -49,7 +49,7 @@ public class LikeService {
         } else {
             Like like = new Like();
             like.setBlog(blog);
-            like.setAuthor(user);
+            like.setUser(user);
             this.likeRepository.save(like);
             return true;
         }

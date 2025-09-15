@@ -22,8 +22,8 @@ public class Report {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "reporter_id", nullable = false)
-    private User reporter;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reported_user_id")
@@ -57,12 +57,12 @@ public class Report {
         return id;
     }
 
-    public User getReporter() {
-        return reporter;
+    public User getUser() {
+        return user;
     }
 
-    public void setReporter(User reporter) {
-        this.reporter = reporter;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public User getReportedUser() {

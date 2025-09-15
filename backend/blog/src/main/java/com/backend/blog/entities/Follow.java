@@ -21,7 +21,7 @@ public class Follow {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User author;
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "follower_id", nullable = false)
@@ -34,8 +34,8 @@ public class Follow {
         return id;
     }
 
-    public User getAuthor() {
-        return author;
+    public User getUser() {
+        return user;
     }
 
     public User getFollower() {
@@ -46,8 +46,8 @@ public class Follow {
         return createdAt;
     }
 
-    public void setAuthor(User author) {
-        this.author = author;
+    public void setUserId(User user) {
+        this.user = user;
     }
 
     public void setFollower(User follower) {

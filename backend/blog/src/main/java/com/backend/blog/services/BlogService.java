@@ -26,7 +26,7 @@ public class BlogService {
                         blog.getId(),
                         blog.getTitle(),
                         blog.getContent(),
-                        blog.getAuthor().getUsername(),
+                        blog.getUser().getUsername(),
                         blog.getCreatedAt()))
                 .toList();
     }

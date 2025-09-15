@@ -45,7 +45,7 @@ public class ReportService {
             report.setReportedBlog(reportedBlog);
         }
 
-        report.setReporter(reporter);
+        report.setUser(reporter);
 
         reportRepository.save(report);
     }
@@ -56,8 +56,8 @@ public class ReportService {
 
         List<ReportDto> res = this.reportRepository.findAll(pageable).stream()
                 .map(rep -> new ReportDto(rep.getId(),
-                        rep.getReporter().getId(),
-                        rep.getReporter().getUsername(),
+                        rep.getUser().getId(),
+                        rep.getUser().getUsername(),
                         rep.getIsUserReport(),
                         rep.getTargetId(),
                         rep.getContent(),
