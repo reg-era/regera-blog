@@ -1,0 +1,49 @@
+/* navbar.component.css */
+
+.nav-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.nav-buttons button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+
+    font-weight: 500;
+    color: var(--text);
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    text-align: left;
+    transition: background-color var(--transition), color var(--transition);
+}
+
+.nav-buttons button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.dark .nav-buttons button:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.nav-buttons .active-link {
+    background-color: var(--accent);
+    color: #fff;
+}
+
+.nav-buttons .active-link mat-icon {
+    color: #fff;
+}
+
+mat-icon {
+    font-size: 20px;
+    color: var(--text);
+    transition: color var(--transition);
+}
+
+::ng-deep .mat-button {
+    font-weight: 500;
+    text-transform: none;
+}

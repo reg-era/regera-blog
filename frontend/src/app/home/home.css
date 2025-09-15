@@ -1,0 +1,43 @@
+/* home.component.css */
+
+.container-fluid {
+  padding: 2rem 1rem;
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+/* Optional container if you want to limit max-width like blogs */
+.row {
+  max-width: 1024px;
+  margin: 0 auto;
+}
+
+.card-container {
+  margin-top: 2rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+}
+
+.blog-cards {
+  display: flex;
+  gap: 1rem;
+  scroll-snap-type: x mandatory;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.blog-cards::-webkit-scrollbar {
+  height: 6px;
+}
+
+.blog-cards::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 3px;
+}
+
+/* Responsive gap */
+@media (max-width: 768px) {
+  .blog-cards {
+    gap: 0.75rem;
+  }
+}

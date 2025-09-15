@@ -1,0 +1,141 @@
+/* search.component.css */
+
+.search-container {
+  margin-bottom: 2rem;
+}
+
+.search-header {
+  margin-bottom: 1rem;
+}
+
+.blog-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+}
+
+/* Search bar appearance */
+.search-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.search-field {
+  width: 100%;
+}
+
+.search-icon {
+  color: var(--text);
+  margin-right: 0.5rem;
+}
+
+.clear-btn {
+  color: var(--text);
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline {
+  color: var(--border);
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline-thick {
+  color: var(--accent);
+}
+
+/* Suggestions Dropdown */
+.suggestions-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+  z-index: 999;
+  max-height: 300px;
+  overflow-y: auto;
+  transition: background-color var(--transition);
+}
+
+/* Each suggestion */
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background-color var(--transition);
+}
+
+.suggestion-item:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.dark .suggestion-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.suggestion-icon mat-icon {
+  font-size: 24px;
+  color: var(--accent);
+}
+
+.suggestion-content {
+  flex: 1;
+}
+
+.suggestion-text {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.suggestion-meta {
+  font-size: 0.85rem;
+  color: var(--text);
+  opacity: 0.7;
+  margin-top: 2px;
+}
+
+.suggestion-stats {
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--text);
+  opacity: 0.8;
+}
+
+.suggestion-stats mat-icon {
+  font-size: 18px;
+}
+
+/* No results box */
+.no-results {
+  margin-top: 0.5rem;
+  padding: 1rem;
+  border-radius: 12px;
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  text-align: center;
+  color: var(--text);
+}
+
+.no-results-icon {
+  font-size: 2rem;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+
+.no-results h4 {
+  margin: 0.5rem 0 0.25rem;
+}
+
+.no-results p {
+  font-size: 0.9rem;
+  color: var(--text);
+  opacity: 0.7;
+}

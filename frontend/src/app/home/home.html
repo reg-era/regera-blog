@@ -1,1 +1,19 @@
-<p>home works!</p>
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Search Component with integrated title -->
+            <app-search />
+
+            <!-- Blog Carousel with filtered results -->
+
+            <div class="card-container">
+                <div class="blog-cards" #carouselTrack>
+                    @for (blog of blogs; track blog.id) {
+                    <app-blog-card [blog]="blog"></app-blog-card>
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

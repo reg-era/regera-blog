@@ -1,0 +1,75 @@
+<div class="dashboard-container">
+    <div class="top-section">
+
+        <!-- 🔍 Blog URL Section -->
+        <mat-card class="dashboard-card">
+            <h3>Search Blog by URL</h3>
+
+            <div class="input-group">
+                <input matInput type="text" placeholder="https://example.com/blog/123" class="unstyled-input" />
+
+                @if (blogUrl) {
+                <button mat-icon-button (click)="blogUrl = ''" aria-label="Clear blog URL">
+                    <mat-icon>clear</mat-icon>
+                </button>
+                }
+            </div>
+
+            <button mat-raised-button color="primary" (click)="validateBlogUrl()" [disabled]="!blogUrl">
+                Validate
+            </button>
+        </mat-card>
+
+        <!-- 👤 User URL Section -->
+        <mat-card class="dashboard-card">
+            <h3>Search User by URL</h3>
+
+            <div class="input-group">
+                <input matInput type="text" placeholder="https://example.com/user/abc" class="unstyled-input" />
+
+                @if (userUrl) {
+                <button mat-icon-button (click)="userUrl = ''" aria-label="Clear user URL">
+                    <mat-icon>clear</mat-icon>
+                </button>
+                }
+            </div>
+
+            <div class="btn-actions">
+                <button mat-raised-button color="primary" (click)="validateUserUrl()" [disabled]="!userUrl">
+                    Validate
+                </button>
+                <button mat-raised-button color="warn" (click)="banUser()" [disabled]="!userUrl">
+                    Ban User
+                </button>
+            </div>
+        </mat-card>
+    </div>
+
+    <!-- 🚨 Reported Messages -->
+    <mat-card class="dashboard-card reports-section">
+        <h3>Reported Messages</h3>
+
+        <div class="report-list">
+            @for (report of reports; track report.id) {
+            <div class="report-card">
+                <div class="left">
+                    <mat-icon color="warn">report_problem</mat-icon>
+                </div>
+                <div class="middle">
+                    <div class="report-message">{{ report.message }}</div>
+                    <div class="report-meta">
+                        From: {{ report.user }} • {{ report.date }}
+                    </div>
+                    <div class="report-target">Reported: {{ report.reported }}</div>
+                </div>
+                <div class="right">
+                    <button mat-stroked-button color="warn" (click)="clearReport(report.id)">
+                        Clear
+                    </button>
+                </div>
+            </div>
+            }
+        </div>
+    </mat-card>
+
+</div>

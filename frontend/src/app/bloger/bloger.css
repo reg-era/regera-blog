@@ -1,0 +1,211 @@
+/* profile.component.css */
+
+.blogger-profile {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+/* Header section */
+.blogger-header {
+  position: relative;
+  background-color: var(--card);
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.blogger-info {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Blogger info */
+.blogger-info h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+
+.report-btn {
+  position: absolute;
+  background-color: rgb(255, 166, 49);
+  top: 1rem;
+  right: 1rem;
+  min-width: 100px;
+  font-weight: 600;
+}
+
+.bio {
+  font-size: 1rem;
+  opacity: 0.85;
+  margin-bottom: 0.5rem;
+}
+
+.since {
+  font-size: 0.9rem;
+  color: var(--text);
+  opacity: 0.7;
+  margin-bottom: 1rem;
+}
+
+/* Follow button */
+button[mat-raised-button] {
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.5rem 1.25rem;
+}
+
+/* Posts list */
+.blogger-posts {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.blogger-posts h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.blog-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  .blogger-header {
+    padding: 1.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .blogger-info h1 {
+    font-size: 1.5rem;
+  }
+
+  .blogger-posts h2 {
+    font-size: 1.25rem;
+  }
+}
+
+
+.confirmator-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.confirmator-box {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  min-width: 300px;
+  max-width: 90%;
+  text-align: center;
+  background-color: var(--mat-background, white);
+  color: var(--mat-on-surface, #000);
+
+  .message {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .actions {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 1rem;
+  }
+}
+
+.confirmator-box {
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+}
+
+.report-reasons {
+  text-align: left;
+  margin: 15px 0;
+}
+
+.report-reasons label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.report-details textarea {
+  width: 100%;
+  height: 80px;
+  resize: none;
+  padding: 8px;
+  margin-top: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.toster-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 2000;
+  animation: slideIn 0.3s ease-out;
+}
+
+.toast-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background-color: #2b2d42;
+  color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  min-width: 280px;
+  max-width: 400px;
+}
+
+.toast-icon {
+  color: #ffd166;
+  font-size: 24px;
+}
+
+.toast-message {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  word-wrap: break-word;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+}

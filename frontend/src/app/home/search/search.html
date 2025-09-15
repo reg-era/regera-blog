@@ -1,0 +1,74 @@
+<div class="search-container">
+    <div class="search-header text-center mb-3">
+        <h1 class="blog-title">Discover amazing content from our blogers</h1>
+    </div>
+
+    <div class="search-wrapper">
+        <mat-form-field class="search-field" appearance="outline">
+            <mat-label>Find your blog</mat-label>
+            <input matInput (input)="onSearchInput($event)" (blur)="clearSearch()"
+                placeholder="Search by title or author" #searchInput>
+            <mat-icon matPrefix class="search-icon">search</mat-icon>
+            @if (searchQuery && searchQuery.length > 0) {
+            <button matSuffix mat-icon-button (click)="clearSearch()" class="clear-btn">
+                <mat-icon>close</mat-icon>
+            </button>
+            }
+        </mat-form-field>
+
+        <!-- Search Suggestions Dropdown -->
+        @if (showSuggestions && suggestions.length > 0) {
+        <div class="suggestions-dropdown">
+            <div class="suggestions-list">
+                @for (suggestion of suggestions; track suggestion.id) {
+                <div class="suggestion-item" matRipple [matRippleColor]="'rgba(103, 58, 183, 0.1)'"
+                    (click)="selectSuggestion(suggestion)">
+
+                    <div class="suggestion-icon">
+                        @if('title' in suggestion.target){
+                        <mat-icon class="title-icon">title</mat-icon>
+                        }@else{
+                        <mat-icon class="author-icon">person</mat-icon>
+                        }
+                    </div>
+
+                    <div class="suggestion-content">
+                        <div class="suggestion-text" [innerHTML]="suggestion.highlightedText || suggestion.text"></div>
+                        <div class="suggestion-meta">
+                            @if ( 'title' in suggestion.target) {
+                            <span>in "{{ suggestion.target.title }}" by {{ suggestion.target.author }}</span>
+                            } @else {
+                            <span>Author • {{ suggestion.target.username }} posts</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="suggestion-stats">
+                        <span class="likes">
+                            @if ('likes' in suggestion.target) {
+                            <mat-icon>favorite</mat-icon>
+                            {{ suggestion.target.likes }}
+                            }@else{
+                            <mat-icon>person</mat-icon>
+                            {{ suggestion.target.subscribers }}
+                            }
+                        </span>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+        }
+
+        <!-- No Results Message -->
+        @if (showSuggestions && suggestions.length === 0 && searchQuery && searchQuery.length > 0) {
+        <div class="no-results">
+            <div class="no-results-content">
+                <mat-icon class="no-results-icon">search_off</mat-icon>
+                <h4>No blogs found</h4>
+                <p>Try different keywords or browse all posts below</p>
+            </div>
+        </div>
+        }
+    </div>
+</div>

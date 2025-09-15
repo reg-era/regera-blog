@@ -1,1 +1,58 @@
-<p>newblog works!</p>
+<mat-card class="blog-form-card">
+    @if(onEditing){
+    <mat-card-title>Edit Blog</mat-card-title>
+    }@else {
+    <mat-card-title>New Blog</mat-card-title>
+    }
+
+    <form [formGroup]="blogForm" (ngSubmit)="submitForm()">
+        @if(!onEditing){
+        <!-- Title -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Title</mat-label>
+            <input matInput placeholder="Enter blog title" formControlName="title" />
+            @if(blogForm.get('title')?.hasError('required')){
+            <mat-error>
+                Title is required
+            </mat-error>
+            }
+        </mat-form-field>
+
+        <!-- Cover Image Upload -->
+        <div class="cover-image-upload">
+            <label class="upload-label">
+                <input type="file" accept="image/*" (change)="onImageSelected($event)" hidden />
+                <button mat-stroked-button color="primary" type="button">Choose Cover Image</button>
+            </label>
+
+            @if(imagePreview){
+            <div class="image-preview-wrapper">
+                <img [src]="imagePreview" alt="Cover Preview" class="image-preview" />
+            </div>
+            }
+        </div>
+        }
+
+        <!-- Short Description -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Short Description</mat-label>
+            <input matInput placeholder="Add a short summary..." formControlName="description" />
+        </mat-form-field>
+
+        <!-- Blog Content -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Blog Content</mat-label>
+            <textarea matInput rows="8" placeholder="Write your blog..." formControlName="content"></textarea>
+            @if(blogForm.get('content')?.hasError('required')){
+            <mat-error>
+                Content is required
+            </mat-error>
+            }
+        </mat-form-field>
+
+        <!-- Submit Button -->
+        <button mat-raised-button color="primary" type="submit" [disabled]="blogForm.invalid">
+            Publish Blog
+        </button>
+    </form>
+</mat-card>
