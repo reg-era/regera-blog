@@ -88,4 +88,9 @@ public class Blog {
         return originalFilename; // or full path/URL
     }
 
+    @Override
+    public String toString() {
+        return this.id + " " + this.title + " " + this.content;
+    }
+
 }

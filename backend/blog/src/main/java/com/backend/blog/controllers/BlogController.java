@@ -66,18 +66,14 @@ public class BlogController {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String user = auth.getPrincipal().toString();
-        System.out.println("adadasdsd:   " + user);
         User author = this.userService.fetchUser(user);
 
-        // Build blog entity
         Blog blog = new Blog();
         blog.setAuthor(author);
         blog.setTitle(title);
         blog.setContent(content);
 
-        // Handle uploaded cover file
         if (coverFile != null && !coverFile.isEmpty()) {
-            // save file somewhere (disk, S3, etc)
             String fileName = Blog.saveFile(coverFile);
             blog.setCover(fileName);
         }

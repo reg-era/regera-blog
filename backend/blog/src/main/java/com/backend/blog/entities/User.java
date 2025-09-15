@@ -73,4 +73,9 @@ public class User {
             return false;
         return EMAIL_PATTERN.matcher(trimmed).matches();
     }
+
+    @Override
+    public String toString() {
+        return this.id + " " + this.username + " " + this.email;
+    }
 }

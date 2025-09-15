@@ -23,12 +23,9 @@ public class CommentService {
     }
 
     public List<CommentDto> readComments(Long blogId, int offset) {
-        System.out.println("1");
         Sort sort = Sort.by("createdAt").descending();
-        System.out.println("2");
         Pageable pageable = PageRequest.of(offset, 5, sort);
 
-        System.out.println("3");
         List<CommentDto> res = commentRepository.findByBlogId(blogId, pageable).stream()
                 .map(comm -> new CommentDto(comm.getId(),
                         comm.getAuthor().getUsername(),
@@ -37,7 +34,6 @@ public class CommentService {
                         comm.getCreatedAt()))
                 .toList();
 
-        System.out.println("4");
         return res;
     }
 

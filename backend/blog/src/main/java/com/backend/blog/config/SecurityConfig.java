@@ -24,8 +24,12 @@ public class SecurityConfig {
 
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/api/users/**").permitAll()
-                        
+
                         .requestMatchers(HttpMethod.POST, "/api/**").hasRole("BLOGGER")
+                        .requestMatchers(HttpMethod.PUT, "/api/**").hasRole("BLOGGER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/**").hasRole("BLOGGER")
+
+                        .requestMatchers(HttpMethod.GET, "/api/notification").hasRole("BLOGGER")
                         .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
 
                         .anyRequest().authenticated())
