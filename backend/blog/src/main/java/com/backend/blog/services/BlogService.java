@@ -19,7 +19,7 @@ public class BlogService {
         this.blogRepository = blogRepository;
     }
 
-    public List<BlogDto> readLatestBlogs() {
+    public final List<BlogDto> readLatestBlogs() {
         return this.blogRepository.findTop5ByOrderByCreatedAtDesc()
                 .stream()
                 .map(blog -> new BlogDto(
@@ -52,7 +52,7 @@ public class BlogService {
     }
 
     public boolean existBlog(Long blogId){
-        return true;
+        return this.blogRepository.existsById(blogId);
     }
 
 }

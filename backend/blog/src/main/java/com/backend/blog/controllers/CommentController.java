@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,10 +46,9 @@ public class CommentController {
         return ResponseEntity.ok(comments);
     }
 
-    @PreAuthorize("hasRole('BLOGGER')")
     @PostMapping("/{blogId}")
     public ResponseEntity<Map<String, String>> makeComment(@PathVariable Long blogId, @RequestBody String content) {
-        if (this.blogService.existBlog(blogId))
+        if (!this.blogService.existBlog(blogId))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Blog not found");
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

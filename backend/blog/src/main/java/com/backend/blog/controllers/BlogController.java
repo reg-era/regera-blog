@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -39,13 +38,13 @@ public class BlogController {
         this.userService = userService;
     }
 
-    @GetMapping("/home")
+    @GetMapping
     public ResponseEntity<List<BlogDto>> getHomeBlog() {
         List<BlogDto> blogs = this.blogService.readLatestBlogs();
         return ResponseEntity.ok(blogs);
     }
 
-    @GetMapping("/home/{blogId}")
+    @GetMapping("/{blogId}")
     public ResponseEntity<BlogDto> readBlog(@PathVariable Long blogId) {
         Blog blog = this.blogService.readBlog(Long.valueOf(blogId));
 
@@ -60,7 +59,6 @@ public class BlogController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('BLOGGER')")
     public ResponseEntity<Map<String, Object>> makeBlog(
             @RequestParam("title") String title,
             @RequestParam("content") String content,
@@ -92,13 +90,11 @@ public class BlogController {
         return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
 
-    @PreAuthorize("hasRole('BLOGGER')")
     @PutMapping("/{blogId}")
     public ResponseEntity<Map<String, String>> updateBlog(@PathVariable String blogId, @RequestBody Blog blog) {
         return null;
     }
 
-    @PreAuthorize("hasRole('BLOGGER')")
     @DeleteMapping("/{blogId}")
     public ResponseEntity<Map<String, String>> removeBlog(@PathVariable String blogId) {
         return null;

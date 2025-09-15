@@ -1,10 +1,11 @@
 package com.backend.blog.config;
 
+import com.backend.blog.entities.User;
+import com.backend.blog.services.UserService;
 import com.backend.blog.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,9 +24,11 @@ import java.util.List;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final UserService userService;
 
-    public JwtFilter(JwtUtil jwtUtil) {
+    public JwtFilter(JwtUtil jwtUtil, UserService userService) {
         this.jwtUtil = jwtUtil;
+        this.userService = userService;
     }
 
     @Override
@@ -37,25 +40,25 @@ public class JwtFilter extends OncePerRequestFilter {
             String token = authHeader.substring("Bearer ".length());
             try {
                 Claims claims = jwtUtil.validateToken(token);
-
                 String username = claims.getSubject();
-                String role = claims.get("role", String.class);
 
-                request.setAttribute("username", username);
-                request.setAttribute("id", claims.get("id"));
-                request.setAttribute("role", role);
-
-                List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+                User user = this.userService.fetchUser(username);
+                List<GrantedAuthority> authorities = List
+                        .of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
 
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username, null,
                         authorities);
                 SecurityContextHolder.getContext().setAuthentication(auth);
 
+                request.setAttribute("user", user);
             } catch (Exception e) {
                 SecurityContextHolder.clearContext();
-                throw new BadCredentialsException("Invalid or expired JWT token");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("{\"error\": \"Invalid or expired JWT token\"}");
+                return;
             }
         }
+
         filterChain.doFilter(request, response);
     }
 

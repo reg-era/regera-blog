@@ -40,6 +40,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> getMethodName(@Valid @RequestBody User loginReq) {
+        System.out.println("get into login");
         Map<String, String> res = new HashMap<String, String>();
 
         User user = this.userService.fetchUser(loginReq.getUsername(), loginReq.getEmail());

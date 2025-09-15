@@ -23,17 +23,21 @@ public class CommentService {
     }
 
     public List<CommentDto> readComments(Long blogId, int offset) {
+        System.out.println("1");
         Sort sort = Sort.by("createdAt").descending();
+        System.out.println("2");
         Pageable pageable = PageRequest.of(offset, 5, sort);
 
+        System.out.println("3");
         List<CommentDto> res = commentRepository.findByBlogId(blogId, pageable).stream()
                 .map(comm -> new CommentDto(comm.getId(),
-                        comm.getAuthor(),
-                        comm.getBlog(),
+                        comm.getAuthor().getUsername(),
+                        comm.getBlog().getId(),
                         comm.getContent(),
                         comm.getCreatedAt()))
                 .toList();
 
+        System.out.println("4");
         return res;
     }
 
