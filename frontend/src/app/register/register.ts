@@ -28,7 +28,7 @@ export class Register implements OnInit {
   hidePassword = true;
   hideConfirmPassword = true;
   isLoading = false;
-    errorMessage: string | null = null;
+  errorMessage: string | null = null;
 
 
   registerForm!: FormGroup<RegisterFormModel>;

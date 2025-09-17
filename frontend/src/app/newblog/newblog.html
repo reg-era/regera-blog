@@ -21,15 +21,9 @@
         <!-- Cover Image Upload -->
         <div class="cover-image-upload">
             <label class="upload-label">
-                <input type="file" accept="image/*" (change)="onImageSelected($event)" hidden />
-                <button mat-stroked-button color="primary" type="button">Choose Cover Image</button>
+                <input #fileInput type="file" accept="image/*,video/*" (change)="onFileSelected($event)" hidden />
+                <button mat-stroked-button color="primary" type="button"  (click)="fileInput.click()">Choose Cover Image</button>
             </label>
-
-            @if(imagePreview){
-            <div class="image-preview-wrapper">
-                <img [src]="imagePreview" alt="Cover Preview" class="image-preview" />
-            </div>
-            }
         </div>
         }
 

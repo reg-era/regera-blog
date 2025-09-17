@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute } from '@angular/router';
+import { BlogFormModel, BlogService } from '../../services/blog-service';
 
 
 @Component({
@@ -22,21 +23,20 @@ import { ActivatedRoute } from '@angular/router';
   styleUrl: './newblog.css'
 })
 export class Newblog implements OnInit {
+  blogForm: FormGroup<BlogFormModel>;
+
   onEditing: boolean = false;
   blogEditing: number = 0;
+  errorMessage: string | null = null;
 
-  blogForm: FormGroup;
-  imagePreview: string | ArrayBuffer | null = null;
-  tags: string[] = [];
-  tagInput: string = '';
-  description = "";
-
-  addDescControl = new FormControl('');
-
-  constructor(private route: ActivatedRoute, private fb: FormBuilder) {
-    this.blogForm = this.fb.group({
+  constructor(
+    private route: ActivatedRoute,
+    private fromBuilder: FormBuilder,
+    private blogService: BlogService
+  ) {
+    this.blogForm = this.fromBuilder.group<BlogFormModel>({
       title: ['', Validators.required],
-      coverImage: [null],
+      media: [null],
       content: ['', Validators.required],
       description: ['', Validators.required],
     });
@@ -45,7 +45,7 @@ export class Newblog implements OnInit {
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       this.blogEditing = params['blog'];
-      if (this.blogEditing && this.blogEditing != 0 && this.validateBlog(this.blogEditing)) {
+      if (this.blogEditing && this.blogEditing != 0) {
         this.onEditing = true;
       } else if (this.blogEditing && this.blogEditing != 0) {
         console.log("invalid editing blog permission");
@@ -53,56 +53,24 @@ export class Newblog implements OnInit {
     });
   }
 
-  validateBlog(id: number): boolean {
-    this.blogForm.get('content')?.setValue('New Default Value content');
-    this.blogForm.get('description')?.setValue('New Default Value desription');
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
 
-    return true;
-  }
+    const file = input.files[0];
 
-  onImageSelected(event: Event): void {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (file) {
-      this.blogForm.patchValue({ coverImage: file });
-      this.blogForm.get('coverImage')?.updateValueAndValidity();
-
-      const reader = new FileReader();
-      reader.onload = () => (this.imagePreview = reader.result);
-      reader.readAsDataURL(file);
+    if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
+      this.errorMessage = 'Only images or videos are allowed!';
+      return;
     }
+
+    this.blogForm.get('media')?.setValue(file);
   }
 
-  addTag(event: any): void {
-    const input = event.target;
-    const value = input.value?.trim();
-    if (value && !this.tags.includes(value)) {
-      this.tags.push(value);
-    }
-    input.value = '';
-  }
-
-  removeTag(tag: string): void {
-    this.tags = this.tags.filter(t => t !== tag);
-  }
-
-  addDescFromControl() {
-    const value = this.tagInput.trim();
-    if (value && !this.tags.includes(value)) {
-      this.tags.push(value);
-    }
-    this.tagInput = '';
-  }
-
-  submitForm(): void {
-    if (this.blogForm.valid) {
-      const formData = {
-        ...this.blogForm.value,
-        tags: this.tags
-      };
-      console.log('Blog Submitted:', formData);
-      // TODO: Send data to backend
-    } else {
-      this.blogForm.markAllAsTouched();
+  async submitForm() {
+    const response = await this.blogService.sendBlog(this.blogForm.getRawValue());
+    if (!response.success) {
+      this.errorMessage = response.message || 'Oops something is wrong';
     }
   }
 }

@@ -42,6 +42,10 @@ export class AuthService {
     return this.authStatus.value;
   }
 
+  getToken(): string | null {
+    return localStorage.getItem('auth_token');
+  }
+
   checkAuth() {
     afterNextRender(async () => {
       const token = localStorage.getItem("auth_token");
