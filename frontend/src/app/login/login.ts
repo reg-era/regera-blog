@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { afterNextRender, Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -7,6 +7,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CredentialService, LoginFormModel } from '../../services/credential-service';
+import { CheckAuthentication } from '../../utils/auth-utils';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -28,11 +30,19 @@ export class Login implements OnInit {
   loginForm!: FormGroup;
   errorMessage: string | null = null;
   isLoading = false;
+  _Refresh = true;
 
   constructor(
     private formBuilder: FormBuilder,
-    private credentialService: CredentialService
-  ) { }
+    private credentialService: CredentialService,
+    private router: Router
+  ) {
+    afterNextRender(async () => {
+      const auth = await CheckAuthentication();
+      if (auth.valid) this.router.navigate(['/']);
+      this._Refresh = false;
+    })
+  }
 
   ngOnInit() {
     this.loginForm = this.formBuilder.group({

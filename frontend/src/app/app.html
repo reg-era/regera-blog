@@ -1,6 +1,35 @@
 <mat-drawer-container class="main-container" autosize>
   <mat-drawer #drawer class="custom-sidenav" mode="side" [opened]="showNavBar">
-    <app-navbar></app-navbar>
+    <nav class="nav-buttons">
+      @if(router.url != '/'){
+      <button mat-button routerLink="/" [class.active-link]="router.url === '/'">
+        <mat-icon>home</mat-icon>Home
+      </button>
+      }
+      @if (isBlogger){
+      <button mat-button routerLink="/profile" [class.active-link]="router.url === '/profile'">
+        <mat-icon>person</mat-icon>Profile
+      </button>
+      @if(isAdmin){
+      <button mat-button routerLink="/dashboard" [class.active-link]="router.url === '/dashboard'">
+        <mat-icon>dashboard</mat-icon>Dashboard
+      </button>
+      }
+      <button mat-button routerLink="/newblog" [class.active-link]="router.url === '/newblog'">
+        <mat-icon>create</mat-icon>New Blog
+      </button>
+      <button mat-button (click)="logout()">
+        <mat-icon>exit_to_app</mat-icon>Logout
+      </button>
+      }@else {
+      <button mat-button routerLink="/login" [class.active-link]="router.url === '/login'">
+        <mat-icon>login</mat-icon>Login
+      </button>
+      <button mat-button routerLink="/register" [class.active-link]="router.url === '/register'">
+        <mat-icon>person_add</mat-icon>Register
+      </button>
+      }
+    </nav>
   </mat-drawer>
 
   <div class="theme-toggle-container">

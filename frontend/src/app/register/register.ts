@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { afterNextRender, Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators, FormGroup, ReactiveFormsModule, ControlConfig, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -7,6 +7,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CredentialService, RegisterFormModel } from '../../services/credential-service';
+import { Router } from '@angular/router';
+import { CheckAuthentication } from '../../utils/auth-utils';
 
 @Component({
   selector: 'app-register',
@@ -29,14 +31,23 @@ export class Register implements OnInit {
   hideConfirmPassword = true;
   isLoading = false;
   errorMessage: string | null = null;
+  _Refresh = true;
 
 
   registerForm!: FormGroup<RegisterFormModel>;
 
   constructor(
     private formBuilder: FormBuilder,
-    private credentialService: CredentialService
-  ) { }
+    private credentialService: CredentialService,
+    private router: Router
+
+  ) {
+    afterNextRender(async () => {
+      const auth = await CheckAuthentication();
+      if (auth.valid) this.router.navigate(['/']);
+      this._Refresh = false;
+    })
+  }
 
   ngOnInit(): void {
     this.registerForm = this.formBuilder.nonNullable.group<RegisterFormModel>({

@@ -1,4 +1,7 @@
 <div class="register-page">
+    @if(_Refresh){
+    <mat-spinner></mat-spinner>
+    } @else{
     <form class="register-form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="fill" class="full-width">
             <mat-label>Username</mat-label>
@@ -50,4 +53,5 @@
         </div>
 
     </form>
+    }
 </div>

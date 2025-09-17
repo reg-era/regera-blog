@@ -1,4 +1,7 @@
 <div class="login-container">
+    @if(_Refresh){
+    <mat-spinner></mat-spinner>
+    } @else{
     <h2>Login</h2>
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
@@ -41,4 +44,5 @@
         </div>
 
     </form>
+    }
 </div>

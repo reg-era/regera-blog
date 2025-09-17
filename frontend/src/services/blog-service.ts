@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { AuthService } from './auth-service';
 import { Router } from '@angular/router';
 
 
@@ -12,7 +11,7 @@ export interface BlogFormModel {
 
 @Injectable({ providedIn: 'root' })
 export class BlogService {
-    constructor(private authService: AuthService, private router: Router) { }
+    constructor(private router: Router) { }
 
     async sendBlog(blog: BlogFormModel, method: string = 'POST'): Promise<{ success: boolean; message?: string }> {
         try {
@@ -45,7 +44,6 @@ export class BlogService {
         } catch (error) {
             console.error("Error sending blog: ", error);
             return { success: false, message: 'Sorry something is wrong' };
-
         }
 
     }
