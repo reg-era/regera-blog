@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from './auth-service';
 
 export interface RegisterFormModel {
   username: string | any;
@@ -19,7 +20,7 @@ export interface LoginFormModel {
   providedIn: 'root'
 })
 export class CredentialService {
-  constructor(private router: Router) { }
+  constructor(private router: Router, private authService: AuthService) { }
 
   async RegisterService(form: RegisterFormModel): Promise<{ success: boolean; message?: string }> {
     try {
@@ -59,7 +60,7 @@ export class CredentialService {
 
       if (res.ok) {
         const { token } = await res.json();
-        localStorage.setItem('auth_token', token);
+        this.authService.register(token);
         this.router.navigate(['/']);
         return { success: true };
       } else {
@@ -73,7 +74,6 @@ export class CredentialService {
   }
 
   async LogoutService() {
-    localStorage.removeItem('auth_token');
-    this.router.navigate(['/']);
+    this.authService.logout();
   }
 }

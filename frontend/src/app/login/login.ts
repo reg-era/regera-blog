@@ -27,6 +27,7 @@ export class Login implements OnInit {
   hidePassword = true;
   loginForm!: FormGroup;
   errorMessage: string | null = null;
+  isLoading = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -37,10 +38,8 @@ export class Login implements OnInit {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-    }, { updateOn: 'submit' });
+    });
   }
-
-  isLoading = false;
 
   async onSubmit() {
     if (this.loginForm.invalid) return;

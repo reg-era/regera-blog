@@ -16,14 +16,16 @@ export class Navbar {
   constructor(
     public router: Router,
     public authService: AuthService,
-    private credentialService: CredentialService
+    private credentialService: CredentialService,
+    private authenticationService: AuthService
   ) { }
 
   isAdmin(): boolean {
     return true;
   }
+
   isValidUser(): boolean {
-    return true;
+    return this.authenticationService.isAuthenticated();
   }
 
   async logout() {

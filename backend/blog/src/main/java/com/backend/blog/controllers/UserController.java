@@ -4,6 +4,7 @@ import com.backend.blog.entities.User;
 import com.backend.blog.services.UserService;
 import com.backend.blog.utils.JwtUtil;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 import java.util.HashMap;
@@ -44,12 +45,23 @@ public class UserController {
 
         User user = this.userService.fetchUser(loginReq.getUsername(), loginReq.getEmail());
 
-        if (!user.getPasswordHash().equals(loginReq.getPassword())) 
+        if (!user.getPasswordHash().equals(loginReq.getPassword()))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
 
         String token = JwtUtil.generateToken(user.getId(), user.getUsername(), user.getRole().name());
 
         res.put("token", token);
+        res.put("username", user.getUsername());
+        res.put("role", user.getRole().name());
+
+        return ResponseEntity.ok(res);
+    }
+
+    @GetMapping("/ping")
+    public ResponseEntity<Map<String, String>> pingUser(HttpServletRequest request) {
+        User user = (User) request.getAttribute("user");
+
+        Map<String, String> res = new HashMap<String, String>();
         res.put("username", user.getUsername());
         res.put("role", user.getRole().name());
 
