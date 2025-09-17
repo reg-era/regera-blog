@@ -68,6 +68,14 @@ public class UserController {
         return ResponseEntity.ok(res);
     }
 
+    @GetMapping
+    public ResponseEntity<User> getBySelf(HttpServletRequest request) {
+        User user = (User) request.getAttribute("user");
+        User userInfo = this.userService.fetchUser(user.getUsername());
+        user.setPasswordHash(null);
+        return ResponseEntity.ok(userInfo);
+    }
+
     @GetMapping("/{username}")
     public ResponseEntity<User> getByUsername(@PathVariable String username) {
         User user = this.userService.fetchUser(username);

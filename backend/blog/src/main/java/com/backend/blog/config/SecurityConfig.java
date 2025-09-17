@@ -44,7 +44,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
                         .requestMatchers("/").permitAll()
-                        .requestMatchers("/api/users/ping").authenticated()
+                        .requestMatchers("/api/users/ping","/api/users").authenticated()
                         .requestMatchers("/api/users/**").permitAll()
 
                         .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
