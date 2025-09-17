@@ -13,10 +13,10 @@
             <mat-error *ngIf="registerForm.get('email')?.hasError('email')">Invalid email address</mat-error>
         </mat-form-field>
 
-        <!-- <mat-form-field appearance="fill" class="full-width">
+        <mat-form-field appearance="fill" class="full-width">
             <mat-label>Bio</mat-label>
-            <test matInput formControlName="bio" />
-        </mat-form-field> -->
+            <input matInput formControlName="bio" />
+        </mat-form-field>
 
         <mat-form-field appearance="fill" class="full-width">
             <mat-label>Password</mat-label>
@@ -44,6 +44,10 @@
                 strokeWidth="3"></mat-progress-spinner>
             <span *ngIf="!isLoading">Register</span>
         </button>
+
+        <div *ngIf="errorMessage" class="error-message">
+            {{ errorMessage }}
+        </div>
 
     </form>
 </div>

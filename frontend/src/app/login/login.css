@@ -45,3 +45,8 @@ form {
   color: white; /* or 'accent' which maps to your theme */
 }
 
+.error-message {
+  color: red;
+  margin-bottom: 10px;
+  font-weight: 500;
+}

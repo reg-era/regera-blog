@@ -6,7 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
+import { CredentialService, LoginFormModel } from '../../services/credential-service';
 
 @Component({
   selector: 'app-login',
@@ -26,28 +26,39 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 export class Login implements OnInit {
   hidePassword = true;
   loginForm!: FormGroup;
+  errorMessage: string | null = null;
 
-  constructor(private fb: FormBuilder) { }
+  constructor(
+    private formBuilder: FormBuilder,
+    private credentialService: CredentialService
+  ) { }
 
   ngOnInit() {
-    this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+    this.loginForm = this.formBuilder.group({
+      email: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-    });
+    }, { updateOn: 'submit' });
   }
 
   isLoading = false;
 
-  onSubmit() {
+  async onSubmit() {
     if (this.loginForm.invalid) return;
-
     this.isLoading = true;
 
-    // Simulate login API call
-    setTimeout(() => {
-      this.isLoading = false;
-      // handle success or error
-    }, 1500);
+    const form: LoginFormModel = {
+      username: this.loginForm.get('email')?.value,
+      email: this.loginForm.get('email')?.value,
+      password: this.loginForm.get('password')?.value,
+    }
+
+    const response = await this.credentialService.LoginService(form);
+
+    if (!response.success) {
+      this.errorMessage = response.message || 'Oops something is wrong';
+    }
+    this.isLoading = false;
+    this.loginForm.reset();
   }
 
 }

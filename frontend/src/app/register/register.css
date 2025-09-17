@@ -31,3 +31,9 @@ button[type="submit"] {
     font-weight: 600;
     border-radius: 8px;
 }
+
+.error-message {
+    color: red;
+    margin-bottom: 10px;
+    font-weight: 500;
+}

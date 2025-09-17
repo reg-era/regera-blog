@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, Validators, FormGroup, ReactiveFormsModule, ControlConfig, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { CredentialService, RegisterFormModel } from '../../services/credential-service';
 
 @Component({
   selector: 'app-register',
@@ -26,33 +27,46 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 export class Register implements OnInit {
   hidePassword = true;
   hideConfirmPassword = true;
-  registerForm!: FormGroup;
   isLoading = false;
+    errorMessage: string | null = null;
 
-  constructor(private fb: FormBuilder) { }
+
+  registerForm!: FormGroup<RegisterFormModel>;
+
+  constructor(
+    private formBuilder: FormBuilder,
+    private credentialService: CredentialService
+  ) { }
 
   ngOnInit(): void {
-    this.registerForm = this.fb.group({
-      username: ['', [Validators.required]],
+    this.registerForm = this.formBuilder.nonNullable.group<RegisterFormModel>({
+      username: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(15)]],
       email: ['', [Validators.required, Validators.email]],
-      // bio: ["", []],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', [Validators.required]]
+      bio: ['', [Validators.maxLength(100)]],
+      password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(50)]],
+      confirmPassword: ['', [Validators.required]],
     }, {
       validators: this.passwordsMatchValidator
     });
   }
 
-  passwordsMatchValidator(form: FormGroup) {
-    const password = form.get('password')?.value;
-    const confirm = form.get('confirmPassword')?.value;
-    return password === confirm ? null : { passwordMismatch: true };
-  }
+  passwordsMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+    const password = control.get('password')?.value;
+    const confirm = control.get('confirmPassword')?.value;
 
-  onSubmit() {
+    return password === confirm ? null : { passwordMismatch: true };
+  };
+
+  async onSubmit() {
     if (this.registerForm.valid) {
-      const { username, email, password } = this.registerForm.value;
-      console.log('Registration submitted:', { username, email, password });
+      this.isLoading = true;
+
+      const response = await this.credentialService.RegisterService(this.registerForm.getRawValue());
+      if (!response.success) {
+        this.errorMessage = response.message || 'Oops something is wrong';
+      }
+      this.isLoading = false;
+      this.registerForm.reset();
     }
   }
 

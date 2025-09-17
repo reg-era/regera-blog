@@ -36,5 +36,9 @@
             <span *ngIf="!isLoading">Login</span>
         </button>
 
+        <div *ngIf="errorMessage" class="error-message">
+            {{ errorMessage }}
+        </div>
+
     </form>
 </div>

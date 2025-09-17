@@ -16,7 +16,7 @@
     <button mat-button routerLink="/newblog" [class.active-link]="router.url === '/newblog'">
         <mat-icon>create</mat-icon>New Blog
     </button>
-    <button mat-button> <!-- *(click)="logout()" -->
+    <button mat-button (click)="logout()"> 
         <mat-icon>exit_to_app</mat-icon>Logout
     </button>
     }@else {
