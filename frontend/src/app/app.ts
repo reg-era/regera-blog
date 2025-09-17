@@ -1,4 +1,4 @@
-import { afterNextRender, Component, inject, runInInjectionContext, signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
@@ -36,15 +36,9 @@ export class App {
     public router: Router,
     private credentialService: CredentialService
   ) {
-    afterNextRender(async () => {
-      this.checkAuth();
-    })
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => {
-        this.isAdmin = false;
-        this.isBlogger = false;
-
         this.checkAuth()
       });
   }

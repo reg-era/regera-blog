@@ -1,4 +1,4 @@
-import { afterNextRender, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -36,15 +36,12 @@ export class Login implements OnInit {
     private formBuilder: FormBuilder,
     private credentialService: CredentialService,
     private router: Router
-  ) {
-    afterNextRender(async () => {
-      const auth = await CheckAuthentication();
-      if (auth.valid) this.router.navigate(['/']);
-      this._Refresh = false;
-    })
-  }
+  ) { }
 
-  ngOnInit() {
+  async ngOnInit() {
+    const auth = await CheckAuthentication();
+    if (auth.valid) this.router.navigate(['/']);
+    this._Refresh = false;
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(6)]],

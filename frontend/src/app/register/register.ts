@@ -1,4 +1,4 @@
-import { afterNextRender, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators, FormGroup, ReactiveFormsModule, ControlConfig, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -40,16 +40,12 @@ export class Register implements OnInit {
     private formBuilder: FormBuilder,
     private credentialService: CredentialService,
     private router: Router
+  ) { }
 
-  ) {
-    afterNextRender(async () => {
-      const auth = await CheckAuthentication();
-      if (auth.valid) this.router.navigate(['/']);
-      this._Refresh = false;
-    })
-  }
-
-  ngOnInit(): void {
+  async ngOnInit() {
+    const auth = await CheckAuthentication();
+    if (auth.valid) this.router.navigate(['/']);
+    this._Refresh = false;
     this.registerForm = this.formBuilder.nonNullable.group<RegisterFormModel>({
       username: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(15)]],
       email: ['', [Validators.required, Validators.email]],
