@@ -1,6 +1,9 @@
 package com.backend.blog.entities;
 
+import java.time.LocalDateTime;
 import java.util.regex.Pattern;
+
+import com.backend.blog.dto.UserDto;
 
 import jakarta.persistence.*;
 
@@ -22,6 +25,9 @@ public class User {
     @Column
     private String picture;
 
+    @Column
+    private String bio;
+
     @Column(unique = true, nullable = false)
     private String email;
 
@@ -34,6 +40,9 @@ public class User {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role = Role.BLOGGER;
+
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Transient
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
@@ -64,6 +73,22 @@ public class User {
         return role;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
     }
@@ -84,5 +109,16 @@ public class User {
     @Override
     public String toString() {
         return this.id + " " + this.username + " " + this.email;
+    }
+
+    public UserDto toDto(boolean isFollowing) {
+        return new UserDto(
+                this.username,
+                this.picture,
+                this.email,
+                this.bio,
+                this.role.toString(),
+                this.createdAt,
+                isFollowing);
     }
 }

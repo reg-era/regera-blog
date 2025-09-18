@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     picture VARCHAR(255) NOT NULL,
+    bio TEXT,
     role VARCHAR(20) NOT NULL CHECK (role IN ('BLOGGER', 'ADMIN')),
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );

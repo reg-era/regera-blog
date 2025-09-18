@@ -9,6 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.backend.blog.dto.BlogDto;
 import com.backend.blog.entities.Blog;
+import com.backend.blog.entities.User;
 import com.backend.blog.repositories.BlogRepository;
 import com.backend.blog.repositories.CommentRepository;
 import com.backend.blog.repositories.LikeRepository;
@@ -39,13 +40,13 @@ public class BlogService {
                             blog.getDescription(),
                             blog.getUser().getUsername(),
                             blog.getCover(), blog.getMedia(),
-                            comments, like,
+                            comments, like, false,
                             blog.getCreatedAt());
                 })
                 .toList();
     }
 
-    public BlogDto readBlog(Long blogId) {
+    public BlogDto readBlog(Long blogId, User user) {
         Optional<Blog> blog = this.blogRepository.findById(blogId);
 
         if (!blog.isPresent())
@@ -53,6 +54,7 @@ public class BlogService {
 
         Long comments = this.commentRepository.countByBlogId(blog.get().getId());
         Long like = this.likeRepository.countByBlogId(blog.get().getId());
+        boolean isLiking = (user != null) ? this.likeRepository.existsByBlogIdAndUserId(blogId, user.getId()) : false;
 
         return new BlogDto(
                 blog.get().getId(),
@@ -61,7 +63,7 @@ public class BlogService {
                 blog.get().getDescription(),
                 blog.get().getUser().getUsername(),
                 blog.get().getCover(), blog.get().getMedia(),
-                comments, like,
+                comments, like, isLiking,
                 blog.get().getCreatedAt());
     }
 

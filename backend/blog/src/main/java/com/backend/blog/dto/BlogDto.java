@@ -15,6 +15,7 @@ public record BlogDto(
                 String media,
                 Long likes,
                 Long comments,
+                boolean isLiking,
                 LocalDateTime createdAt) {
 
         public Blog toBlog(User user) {

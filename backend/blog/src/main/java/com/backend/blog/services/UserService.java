@@ -1,6 +1,7 @@
 package com.backend.blog.services;
 
 import com.backend.blog.entities.User;
+import com.backend.blog.repositories.FollowRepository;
 import com.backend.blog.repositories.UserRepository;
 
 import java.util.Optional;
@@ -12,9 +13,11 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final FollowRepository followRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, FollowRepository followRepository) {
         this.userRepository = userRepository;
+        this.followRepository = followRepository;
     }
 
     public User createUser(User user) {
@@ -53,6 +56,10 @@ public class UserService {
         }
 
         return user.get();
+    }
+
+    public boolean isFollowing(User user, Long otherId) {
+        return this.followRepository.existsByUser_IdAndFollower_Id(user.getId(), otherId);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.backend.blog.controllers;
 
+import com.backend.blog.dto.UserDto;
 import com.backend.blog.entities.User;
 import com.backend.blog.services.UserService;
 import com.backend.blog.utils.JwtUtil;
@@ -69,18 +70,18 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<User> getBySelf(HttpServletRequest request) {
+    public ResponseEntity<UserDto> getBySelf(HttpServletRequest request) {
         User user = (User) request.getAttribute("user");
         User userInfo = this.userService.fetchUser(user.getUsername());
-        user.setPasswordHash(null);
-        return ResponseEntity.ok(userInfo);
+        return ResponseEntity.ok(userInfo.toDto(false));
     }
 
     @GetMapping("/{username}")
-    public ResponseEntity<User> getByUsername(@PathVariable String username) {
-        User user = this.userService.fetchUser(username);
-        user.setPasswordHash(null);
-        return ResponseEntity.ok(user);
+    public ResponseEntity<UserDto> getByUsername(@PathVariable String username, HttpServletRequest request) {
+        User user = (User) request.getAttribute("user");
+        User other = this.userService.fetchUser(username);
+        boolean isFollowing = user != null ? this.userService.isFollowing(user, other.getId()) : false;
+        return ResponseEntity.ok(other.toDto(isFollowing));
     }
 
 }

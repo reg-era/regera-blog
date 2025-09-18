@@ -7,8 +7,6 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,17 +25,17 @@ import com.backend.blog.services.BlogService;
 import com.backend.blog.services.MediaService;
 import com.backend.blog.services.UserService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("/api/blogs")
 public class BlogController {
 
     private final BlogService blogService;
-    private final UserService userService;
     private final MediaService mediaService;
 
     public BlogController(BlogService blogService, UserService userService, MediaService mediaService) {
         this.blogService = blogService;
-        this.userService = userService;
         this.mediaService = mediaService;
     }
 
@@ -48,8 +46,9 @@ public class BlogController {
     }
 
     @GetMapping("/{blogId}")
-    public ResponseEntity<BlogDto> readBlog(@PathVariable Long blogId) {
-        BlogDto blog = this.blogService.readBlog(Long.valueOf(blogId));
+    public ResponseEntity<BlogDto> readBlog(@PathVariable Long blogId, HttpServletRequest request) {
+        User user = (User) request.getAttribute("user");
+        BlogDto blog = this.blogService.readBlog(Long.valueOf(blogId), user);
         return ResponseEntity.ok(blog);
     }
 
@@ -58,14 +57,13 @@ public class BlogController {
             @RequestParam String title,
             @RequestParam String description,
             @RequestParam String content,
-            @RequestParam(required = false) MultipartFile media) throws IOException {
+            @RequestParam(required = false) MultipartFile media,
+            HttpServletRequest request) throws IOException {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String user = auth.getPrincipal().toString();
-        User author = this.userService.fetchUser(user);
+        User user = (User) request.getAttribute("user");
 
         Blog blog = new Blog();
-        blog.setUser(author);
+        blog.setUser(user);
         blog.setTitle(title);
         blog.setDescription(description);
         blog.setContent(content);

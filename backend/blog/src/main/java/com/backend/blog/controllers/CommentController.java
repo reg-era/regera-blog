@@ -6,8 +6,6 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +18,9 @@ import org.springframework.web.server.ResponseStatusException;
 import com.backend.blog.entities.User;
 import com.backend.blog.services.BlogService;
 import com.backend.blog.services.CommentService;
-import com.backend.blog.services.UserService;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 import com.backend.blog.dto.CommentDto;
 import com.backend.blog.entities.Comment;
 
@@ -29,12 +29,10 @@ import com.backend.blog.entities.Comment;
 public class CommentController {
     private final CommentService commentService;
     private final BlogService blogService;
-    private final UserService userService;
 
-    public CommentController(CommentService commentService, BlogService blogService, UserService userService) {
+    public CommentController(CommentService commentService, BlogService blogService) {
         this.commentService = commentService;
         this.blogService = blogService;
-        this.userService = userService;
     }
 
     @GetMapping("/{blogId}")
@@ -47,17 +45,16 @@ public class CommentController {
     }
 
     @PostMapping("/{blogId}")
-    public ResponseEntity<Map<String, String>> makeComment(@PathVariable Long blogId, @RequestBody String content) {
+    public ResponseEntity<Map<String, String>> makeComment(@PathVariable Long blogId, @RequestBody String content,
+            HttpServletRequest request) {
+        User user = (User) request.getAttribute("user");
+
         if (!this.blogService.existBlog(blogId))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Blog not found");
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-        User author = this.userService.fetchUser(username);
-
         Comment comment = new Comment();
-        comment.setUser(author);
-        comment.setBlog(this.blogService.readBlog(blogId).toBlog(author));
+        comment.setUser(user);
+        comment.setBlog(this.blogService.readBlog(blogId, user).toBlog(user));
         comment.setContent(content.trim());
 
         this.commentService.createComment(comment);
