@@ -41,10 +41,11 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable()).cors(cor -> {
         })
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/media/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
                         .requestMatchers("/").permitAll()
-                        .requestMatchers("/api/users/ping","/api/users").authenticated()
+                        .requestMatchers("/api/users/ping", "/api/users").authenticated()
                         .requestMatchers("/api/users/**").permitAll()
 
                         .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()

@@ -22,6 +22,7 @@ public class UserService {
             throw new IllegalArgumentException("Invalid Email");
 
         user.setPasswordHash(user.getPassword());
+        user.setPicture("/media/images/default-profile.jpg");
 
         if (userRepository.existsByUsername(user.getUsername()))
             throw new IllegalArgumentException("Username already used");

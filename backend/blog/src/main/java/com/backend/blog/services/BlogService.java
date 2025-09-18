@@ -51,7 +51,7 @@ public class BlogService {
     public void updateBlog(Blog blog) {
     }
 
-    public boolean existBlog(Long blogId){
+    public boolean existBlog(Long blogId) {
         return this.blogRepository.existsById(blogId);
     }
 

@@ -2,13 +2,7 @@ package com.backend.blog.entities;
 
 import jakarta.persistence.*;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
-
-import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name = "blogs")
@@ -25,8 +19,14 @@ public class Blog {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = true)
+    @Column
+    private String description;
+
+    @Column
     private String cover;
+
+    @Column
+    private String media;
 
     @Column(nullable = false)
     private String content;
@@ -74,19 +74,18 @@ public class Blog {
         this.cover = cover;
     }
 
+    public void setMedia(String media) {
+        this.media = media;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Transient
     public boolean isValidBlog() {
         return title != null && !title.isEmpty()
                 && content != null && !content.isEmpty();
-    }
-
-    public static String saveFile(MultipartFile file) throws IOException {
-        String uploadsDir = "/uploads/";
-        String originalFilename = file.getOriginalFilename();
-        Path path = Paths.get(uploadsDir + originalFilename);
-        Files.createDirectories(path.getParent());
-        Files.write(path, file.getBytes());
-        return originalFilename; // or full path/URL
     }
 
     @Override

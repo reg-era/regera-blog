@@ -19,6 +19,9 @@ public class User {
     @Column(unique = true, nullable = false)
     private String username;
 
+    @Column
+    private String picture;
+
     @Column(unique = true, nullable = false)
     private String email;
 
@@ -63,6 +66,10 @@ public class User {
 
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
     }
 
     public boolean isValidEmail() {

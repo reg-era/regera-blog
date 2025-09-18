@@ -90,6 +90,21 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>6.2.0.Final</version> <!-- Or the latest version -->
 		</dependency>
+
+		<!-- Core JCodec -->
+		<dependency>
+			<groupId>org.jcodec</groupId>
+			<artifactId>jcodec</artifactId>
+			<version>0.2.5</version>
+		</dependency>
+
+		<!-- JavaSE support (includes AWTUtil) -->
+		<dependency>
+			<groupId>org.jcodec</groupId>
+			<artifactId>jcodec-javase</artifactId>
+			<version>0.2.5</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

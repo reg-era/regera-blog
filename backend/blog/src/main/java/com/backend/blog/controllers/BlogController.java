@@ -24,6 +24,7 @@ import com.backend.blog.dto.BlogDto;
 import com.backend.blog.entities.Blog;
 import com.backend.blog.entities.User;
 import com.backend.blog.services.BlogService;
+import com.backend.blog.services.MediaService;
 import com.backend.blog.services.UserService;
 
 @RestController
@@ -32,10 +33,12 @@ public class BlogController {
 
     private final BlogService blogService;
     private final UserService userService;
+    private final MediaService mediaService;
 
-    public BlogController(BlogService blogService, UserService userService) {
+    public BlogController(BlogService blogService, UserService userService, MediaService mediaService) {
         this.blogService = blogService;
         this.userService = userService;
+        this.mediaService = mediaService;
     }
 
     @GetMapping
@@ -60,9 +63,10 @@ public class BlogController {
 
     @PostMapping
     public ResponseEntity<Map<String, Object>> makeBlog(
-            @RequestParam("title") String title,
-            @RequestParam("content") String content,
-            @RequestParam(value = "cover", required = false) MultipartFile coverFile) throws IOException {
+            @RequestParam String title,
+            @RequestParam String description,
+            @RequestParam String content,
+            @RequestParam(required = false) MultipartFile media) throws IOException {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String user = auth.getPrincipal().toString();
@@ -71,11 +75,16 @@ public class BlogController {
         Blog blog = new Blog();
         blog.setUser(author);
         blog.setTitle(title);
+        blog.setDescription(description);
         blog.setContent(content);
 
-        if (coverFile != null && !coverFile.isEmpty()) {
-            String fileName = Blog.saveFile(coverFile);
-            blog.setCover(fileName);
+        if (media == null || media.isEmpty()) {
+            blog.setCover(this.mediaService.DEFAULT_BLOG);
+            blog.setMedia(this.mediaService.DEFAULT_BLOG);
+        } else {
+            MediaService.InnerMediaService path = this.mediaService.downloadMedia(media);
+            blog.setCover(path.cover());
+            blog.setMedia(path.media());
         }
 
         Blog saved = this.blogService.createBlog(blog);
