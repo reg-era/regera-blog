@@ -7,7 +7,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CredentialService, LoginFormModel } from '../../services/credential-service';
-import { CheckAuthentication } from '../../utils/auth-utils';
 import { Router } from '@angular/router';
 
 @Component({
@@ -38,9 +37,11 @@ export class Login implements OnInit {
     private router: Router
   ) { }
 
-  async ngOnInit() {
-    const auth = await CheckAuthentication();
-    if (auth.valid) this.router.navigate(['/']);
+  ngOnInit() {
+    this.credentialService.CheckAuthentication().subscribe(auth => {
+        if (auth.valid) this.router.navigate(['/']);
+      this._Refresh = false;
+    })
     this._Refresh = false;
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required]],

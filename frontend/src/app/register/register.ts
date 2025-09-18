@@ -8,7 +8,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CredentialService, RegisterFormModel } from '../../services/credential-service';
 import { Router } from '@angular/router';
-import { CheckAuthentication } from '../../utils/auth-utils';
 
 @Component({
   selector: 'app-register',
@@ -42,10 +41,11 @@ export class Register implements OnInit {
     private router: Router
   ) { }
 
-  async ngOnInit() {
-    const auth = await CheckAuthentication();
-    if (auth.valid) this.router.navigate(['/']);
-    this._Refresh = false;
+  ngOnInit() {
+    this.credentialService.CheckAuthentication().subscribe(auth => {
+      if (auth.valid) this.router.navigate(['/']);
+      this._Refresh = false;
+    })
     this.registerForm = this.formBuilder.nonNullable.group<RegisterFormModel>({
       username: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(15)]],
       email: ['', [Validators.required, Validators.email]],

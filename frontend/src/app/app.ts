@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, signal, ViewChild } from '@angular/core';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,7 +7,6 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { CommonModule } from '@angular/common';
 import { CredentialService } from '../services/credential-service';
-import { CheckAuthentication } from '../utils/auth-utils';
 import { filter } from 'rxjs';
 
 @Component({
@@ -34,7 +33,7 @@ export class App {
 
   constructor(
     public router: Router,
-    private credentialService: CredentialService
+    private credentialService: CredentialService,
   ) {
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
@@ -43,12 +42,13 @@ export class App {
       });
   }
 
-  async checkAuth() {
-    const res = await CheckAuthentication();
-    if (res.valid) {
-      this.isBlogger = true;
-      this.isAdmin = res.role == 'ADMIN';
-    }
+  checkAuth() {
+    this.credentialService.CheckAuthentication().subscribe(auth => {
+      if (auth.valid) {
+        this.isBlogger = true;
+        this.isAdmin = auth.role == 'ADMIN';
+      }
+    })
   }
 
   toggleTheme() {

@@ -6,8 +6,9 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BlogFormModel, BlogService } from '../../services/blog-service';
+import { CredentialService } from '../../services/credential-service';
 
 
 @Component({
@@ -32,7 +33,9 @@ export class Newblog implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private fromBuilder: FormBuilder,
-    private blogService: BlogService
+    private blogService: BlogService,
+    private credentialService: CredentialService,
+    private router: Router
   ) {
     this.blogForm = this.fromBuilder.group<BlogFormModel>({
       title: ['', Validators.required],
@@ -42,7 +45,11 @@ export class Newblog implements OnInit {
     });
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
+    this.credentialService.CheckAuthentication().subscribe(auth => {
+      if (!auth.valid) this.router.navigate(['/']);
+    })
+
     this.route.queryParams.subscribe(params => {
       this.blogEditing = params['blog'];
       if (this.blogEditing && this.blogEditing != 0) {

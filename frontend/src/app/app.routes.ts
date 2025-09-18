@@ -5,7 +5,6 @@ import { Register } from './register/register';
 import { Bloger } from './bloger/bloger';
 import { Blog } from './blog/blog';
 import { Newblog } from './newblog/newblog';
-import { Notfound } from './notfound/notfound';
 import { Dashboard } from './dashboard/dashboard';
 
 export const routes: Routes = [
@@ -17,5 +16,5 @@ export const routes: Routes = [
     { path: 'blog/:id', component: Blog },
     { path: 'newblog', component: Newblog },
     { path: 'dashboard', component: Dashboard },
-    { path: '**', component: Notfound },
+    { path: '**', component: Home },
 ];
