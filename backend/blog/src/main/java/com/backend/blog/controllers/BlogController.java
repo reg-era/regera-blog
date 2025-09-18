@@ -49,16 +49,8 @@ public class BlogController {
 
     @GetMapping("/{blogId}")
     public ResponseEntity<BlogDto> readBlog(@PathVariable Long blogId) {
-        Blog blog = this.blogService.readBlog(Long.valueOf(blogId));
-
-        BlogDto dto = new BlogDto(
-                blog.getId(),
-                blog.getTitle(),
-                blog.getContent(),
-                blog.getUser().getUsername(),
-                blog.getCreatedAt());
-
-        return ResponseEntity.ok(dto);
+        BlogDto blog = this.blogService.readBlog(Long.valueOf(blogId));
+        return ResponseEntity.ok(blog);
     }
 
     @PostMapping

@@ -10,34 +10,59 @@ import org.springframework.web.server.ResponseStatusException;
 import com.backend.blog.dto.BlogDto;
 import com.backend.blog.entities.Blog;
 import com.backend.blog.repositories.BlogRepository;
+import com.backend.blog.repositories.CommentRepository;
+import com.backend.blog.repositories.LikeRepository;
 
 @Service
 public class BlogService {
     private final BlogRepository blogRepository;
+    private final CommentRepository commentRepository;
+    private final LikeRepository likeRepository;
 
-    public BlogService(BlogRepository blogRepository) {
+    public BlogService(BlogRepository blogRepository, CommentRepository commentRepository,
+            LikeRepository likeRepository) {
         this.blogRepository = blogRepository;
+        this.commentRepository = commentRepository;
+        this.likeRepository = likeRepository;
     }
 
     public final List<BlogDto> readLatestBlogs() {
         return this.blogRepository.findTop5ByOrderByCreatedAtDesc()
                 .stream()
-                .map(blog -> new BlogDto(
-                        blog.getId(),
-                        blog.getTitle(),
-                        blog.getContent(),
-                        blog.getUser().getUsername(),
-                        blog.getCreatedAt()))
+                .map(blog -> {
+                    Long comments = this.commentRepository.countByBlogId(blog.getId());
+                    Long like = this.likeRepository.countByBlogId(blog.getId());
+                    return new BlogDto(
+                            blog.getId(),
+                            blog.getTitle(),
+                            blog.getContent(),
+                            blog.getDescription(),
+                            blog.getUser().getUsername(),
+                            blog.getCover(), blog.getMedia(),
+                            comments, like,
+                            blog.getCreatedAt());
+                })
                 .toList();
     }
 
-    public Blog readBlog(Long blogId) {
+    public BlogDto readBlog(Long blogId) {
         Optional<Blog> blog = this.blogRepository.findById(blogId);
 
         if (!blog.isPresent())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Blog not found");
 
-        return blog.get();
+        Long comments = this.commentRepository.countByBlogId(blog.get().getId());
+        Long like = this.likeRepository.countByBlogId(blog.get().getId());
+
+        return new BlogDto(
+                blog.get().getId(),
+                blog.get().getTitle(),
+                blog.get().getContent(),
+                blog.get().getDescription(),
+                blog.get().getUser().getUsername(),
+                blog.get().getCover(), blog.get().getMedia(),
+                comments, like,
+                blog.get().getCreatedAt());
     }
 
     public Blog createBlog(Blog blog) {

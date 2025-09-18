@@ -34,6 +34,27 @@ public class Blog {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    public Blog() {
+    }
+
+    public Blog(Long id,
+            User user,
+            String title,
+            String description,
+            String cover,
+            String media,
+            String content,
+            LocalDateTime createdAt) {
+        this.id = id;
+        this.user = user;
+        this.title = title;
+        this.description = description;
+        this.cover = cover;
+        this.media = media;
+        this.content = content;
+        this.createdAt = createdAt;
+    }
+
     public Long getId() {
         return id;
     }
@@ -54,8 +75,16 @@ public class Blog {
         return content;
     }
 
+    public String getMedia() {
+        return media;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public void setUser(User user) {

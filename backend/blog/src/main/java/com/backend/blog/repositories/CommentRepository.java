@@ -9,4 +9,6 @@ import com.backend.blog.entities.Comment;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findByBlogId(Long blogId, Pageable pageable);
+
+    Long countByBlogId(Long BlogId);
 }
