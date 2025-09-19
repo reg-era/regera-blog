@@ -1,26 +1,26 @@
 <div class="blog-layout">
+    @if(_Refresh){
+    <mat-spinner></mat-spinner>
+    }@else{
     <!-- Main Blog Content -->
     <div class="blog-container">
         <section class="author-section">
-            <h1>{{ blog.author }}</h1>
-            <h2>Posted on {{ formatDate(blog.publishDate) }}</h2>
+            <h1>{{ blog.authorName }}</h1>
+            <h2>Posted on {{ formatDate(blog.createdAt) }}</h2>
         </section>
 
         <section class="content-section">
             <h1 class="blog-title">{{ blog.title }}</h1>
 
             <section class="media-section">
-                @if (blog.media.type){
-                <ng-container image>
-                    <img [src]="blog.media.src" alt="blog cover" class="media-image" />
+                @if (blog.isVideo){
+                <ng-container video>
+                    <video [src]="blog.media" controls playsinline></video>
                 </ng-container>
                 }@else {
-                <ng-template>
-                    <div class="media-video-container">
-                        <iframe [src]="blog.media.src" frameborder="0" allowfullscreen>
-                        </iframe>
-                    </div>
-                </ng-template>
+                <ng-container image>
+                    <img [src]="blog.media" alt="blog cover" class="media-image" />
+                </ng-container>
                 }
             </section>
 
@@ -34,7 +34,7 @@
         <!-- Follow + Likes -->
         <div class="interaction-header">
             <button mat-raised-button color="accent" (click)="toggleLike()">
-                {{ isLiking ? 'UnLike' : 'Like' }} • {{ blog.likes + (isLiking ? 1 : 0) }}
+                {{ blog.isLiking ? 'UnLike' : 'Like' }} • {{ blog.likes + (blog.isLiking ? 1 : 0) }}
             </button>
             <div class="likes">
                 <mat-icon>favorite</mat-icon> {{ blog.likes }} likes
@@ -45,12 +45,12 @@
         <div class="comments-section fixed-comments">
             <h3>Comments</h3>
 
-            @for (comment of blog.commentsArr; track comment.id) {
-            <div class="comment">
-                <strong>{{ comment.user }}</strong>
-                <p>{{ comment.text }}</p>
-            </div>
-            }
+            <!-- @for (comment of blog.commentsArr; track comment.id) { -->
+            <!-- <div class="comment"> -->
+            <!-- <strong>{{ comment.user }}</strong> -->
+            <!-- <p>{{ comment.text }}</p> -->
+            <!-- </div> -->
+            <!-- } -->
 
             <div class="comment-form">
                 <mat-form-field appearance="outline" class="comment-input">
@@ -60,4 +60,5 @@
             </div>
         </div>
     </aside>
+    }
 </div>

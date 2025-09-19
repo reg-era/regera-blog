@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, map, Observable, of } from 'rxjs';
+import { environment } from '../environments/environment.development';
 
 export interface RegisterFormModel {
   username: string | any;
@@ -26,7 +27,7 @@ export class CredentialService {
 
   async RegisterService(form: RegisterFormModel): Promise<{ success: boolean; message?: string }> {
     try {
-      const res = await fetch("http://127.0.0.1:8080/api/users/register", {
+      const res = await fetch(`${environment.apiURL}/api/users/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -52,7 +53,7 @@ export class CredentialService {
 
   async LoginService(form: LoginFormModel): Promise<{ success: boolean; message?: string }> {
     try {
-      const res = await fetch("http://127.0.0.1:8080/api/users/login", {
+      const res = await fetch(`${environment.apiURL}/api/users/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -91,7 +92,7 @@ export class CredentialService {
     });
 
     return this.http.get<{ username: string, role: string }>(
-      'http://127.0.0.1:8080/api/users/ping',
+      `${environment.apiURL}/api/users/ping`,
       { headers }
     ).pipe(
       map(data => ({ valid: true, ...data })), // map response to desired format

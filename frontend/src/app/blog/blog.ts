@@ -1,42 +1,52 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { BlogObject, BlogService } from '../../services/blog-service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-blog',
-  imports: [MatCardModule, MatIconModule, MatFormField, MatLabel, MatInputModule],
+  imports: [MatProgressSpinner, MatCardModule, MatIconModule, MatFormField, MatLabel, MatInputModule],
   templateUrl: './blog.html',
   styleUrl: './blog.css'
 })
 
-export class Blog {
-  blog = {
-    id: 1,
-    title: "The Future of Web Design: Trends to Watch in 2024",
-    author: "Sarah Johnson",
-    media: {
-      type: "image",
-      src: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop",
-    },
-    content: "Exploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital designExploring the latest trends and technologies that are shaping the future of web design and user experience. From AI-powered design tools to immersive 3D interfaces, discover what's coming next in the world of digital design.",
-    likes: 234,
-    comments: 18,
-    publishDate: new Date('2024-01-15'),
-    commentsArr: [
-      { id: 1, user: 'John', text: 'Great read!' },
-      { id: 2, user: 'Lily', text: 'Thanks for sharing!' }
-    ],
+export class Blog implements OnInit {
+  blog: BlogObject = {
+    authorName: '', content: '', comments: 0, likes: 0, cover: '', createdAt: '', description: '', id: 0, isLiking: false, media: '', title: '', isVideo: false
   };
 
-
+  _Refresh = true;
   newComment = '';
-  isLiking = true;
+
+  constructor(private cdr: ChangeDetectorRef, private router: Router, private route: ActivatedRoute, private blogService: BlogService) { }
+
+  async ngOnInit() {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id) {
+      this.router.navigate(['/']);
+      return;
+    }
+
+    const parsedId = Number.parseInt(id, 10);
+    if (Number.isNaN(parsedId) || parsedId <= 0) {
+      this.router.navigate(['/']);
+      return;
+    }
+
+    this.blog = (await this.blogService.getBlog(parsedId)).data!;
+    console.log(this.blog.isVideo);
+
+    this._Refresh = false;
+    this.cdr.markForCheck();
+  }
 
   toggleLike() {
-    this.isLiking = !this.isLiking;
+    this.blog.isLiking = !this.blog.isLiking;
   }
 
   setComment(e: KeyboardEvent) {
@@ -52,15 +62,15 @@ export class Blog {
 
   submitComment() {
     if (!this.newComment.trim()) return;
-    this.blog.commentsArr.push({ id: this.blog.commentsArr.length, user: 'Guest', text: this.newComment });
+    // this.blog.commentsArr.push({ id: this.blog.commentsArr.length, user: 'Guest', text: this.newComment });
     this.newComment = '';
   }
 
-  formatDate(date: Date): string {
+  formatDate(date: string): string {
     return new Intl.DateTimeFormat('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric'
-    }).format(date);
+    }).format(date == '' ? new Date() : new Date(date));
   }
 }

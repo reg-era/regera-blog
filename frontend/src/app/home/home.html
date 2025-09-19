@@ -6,6 +6,9 @@
 
             <!-- Blog Carousel with filtered results -->
 
+            @if (_Refresh) {
+            <mat-spinner></mat-spinner>
+            } @else{
             <div class="card-container">
                 <div class="blog-cards" #carouselTrack>
                     @for (blog of blogs; track blog.id) {
@@ -13,6 +16,7 @@
                     }
                 </div>
             </div>
+            }
 
         </div>
     </div>

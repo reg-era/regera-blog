@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { environment } from '../environments/environment.development';
+import { HttpClient } from '@angular/common/http';
+import { urlToBlobImageUrl } from '../utils/download-media';
 
 
 export interface BlogFormModel {
@@ -9,11 +12,26 @@ export interface BlogFormModel {
     media: string | any,
 }
 
+export interface BlogObject {
+    id: number;
+    title: string;
+    content: string;
+    description: string;
+    authorName: string;
+    cover: string;
+    media: string;
+    likes: number;
+    comments: number;
+    isLiking: boolean;
+    createdAt: string;
+    isVideo: boolean;
+}
+
 @Injectable({ providedIn: 'root' })
 export class BlogService {
     constructor(private router: Router) { }
 
-    async sendBlog(blog: BlogFormModel, method: string = 'POST'): Promise<{ success: boolean; message?: string }> {
+    async sendBlog(blog: BlogFormModel): Promise<{ success: boolean; message?: string }> {
         try {
             const formData = new FormData();
 
@@ -25,11 +43,11 @@ export class BlogService {
                 formData.append('media', blog.media);
             }
 
-            const res = await fetch('http://127.0.0.1:8080/api/blogs', {
+            const res = await fetch(`${environment.apiURL}/api/blogs`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('auth_token')}`
                 },
-                method: method,
+                method: 'POST',
                 body: formData,
             });
 
@@ -45,6 +63,51 @@ export class BlogService {
             console.error("Error sending blog: ", error);
             return { success: false, message: 'Sorry something is wrong' };
         }
-
     }
+
+    async getHomeBlogs(): Promise<{ success: boolean; data: BlogObject[] }> {
+        try {
+            const res = await fetch(`${environment.apiURL}/api/blogs`);
+
+            if (res.ok) {
+                const data: BlogObject[] = await res.json();
+                for (let blog of data) {
+                    blog.cover = await urlToBlobImageUrl(blog.cover);
+                }
+                return { success: true, data: data };
+            } else {
+                return { success: false, data: [] };
+            }
+        } catch (error) {
+            console.error("Error sending blog: ", error);
+            return { success: false, data: [] };
+        }
+    }
+
+    async getBlog(id: number): Promise<{ success: boolean; data?: BlogObject }> {
+        try {
+            const res = await fetch(`${environment.apiURL}/api/blogs/${id}`);
+
+            if (res.ok) {
+                const blog: BlogObject = await res.json();
+                blog.isVideo = false;
+
+                if (blog.media.endsWith('mp4')) {
+                    blog.isVideo = true
+                };
+
+                blog.cover = await urlToBlobImageUrl(blog.cover);
+                blog.media = await urlToBlobImageUrl(blog.media);
+
+                if (blog.cover == '/error-media.gif' || blog.media == '/error-media.gif') blog.isVideo = false;
+                return { success: true, data: blog };
+            } else {
+                return { success: false };
+            }
+        } catch (error) {
+            console.error("Error sending blog: ", error);
+            return { success: false };
+        }
+    }
+
 }

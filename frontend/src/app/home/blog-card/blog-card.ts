@@ -4,18 +4,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRippleModule } from '@angular/material/core';
-
-export interface Blog {
-  id: number;
-  title: string;
-  author: string;
-  cover: string;
-  blog: string;
-  likes: number;
-  comments: number;
-  publishDate: Date;
-  tags?: string[];
-}
+import { BlogObject } from '../../../services/blog-service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-blog-card',
@@ -31,11 +21,18 @@ export interface Blog {
   styleUrl: './blog-card.css'
 })
 export class BlogCard {
-  @Input() blog!: Blog;
+  @Input() blog!: BlogObject;
   @Input() owner!: boolean;
 
-  onDelete(blog: Blog) { }
-  onEdit(blog: Blog) { }
+  constructor(private router: Router) { }
+
+  onDelete(blog: BlogObject) { }
+
+  onEdit(blog: BlogObject) { }
+
+  goBlog() {
+    this.router.navigate([`/blog/${this.blog.id}`])
+  }
 
   getAuthorInitials(name: string): string {
     return name.split(' ')
@@ -57,11 +54,11 @@ export class BlogCard {
     return count.toString();
   }
 
-  formatDate(date: Date): string {
+  formatDate(date: string): string {
     return new Intl.DateTimeFormat('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric'
-    }).format(date);
+    }).format(new Date(date));
   }
 }

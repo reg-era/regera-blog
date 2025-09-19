@@ -81,7 +81,7 @@ public class MediaService {
             coverUrl = videoUrl;
         }
 
-        return new InnerMediaService(videoUrl, coverUrl);
+        return new InnerMediaService(coverUrl, videoUrl);
     }
 
     private void validateSize(MultipartFile file, long maxSize) {

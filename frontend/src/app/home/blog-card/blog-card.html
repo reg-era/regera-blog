@@ -1,5 +1,5 @@
 <mat-card class="blog-card mat-elevation-z6" matRipple [matRippleDisabled]="false"
-    [matRippleColor]="'rgba(255,255,255,0.1)'">
+    [matRippleColor]="'rgba(255,255,255,0.1)'" (click)="goBlog()">
 
     @if(owner){
     <div class="owner-actions">
@@ -15,13 +15,13 @@
     <!-- Card Header with Author Info -->
     <mat-card-header class="card-header">
         <div mat-card-avatar class="author-avatar">
-            <span>{{ getAuthorInitials(blog.author) }}</span>
+            <span>{{ getAuthorInitials(blog.authorName) }}</span>
         </div>
         <mat-card-title class="card-title">
             {{ blog.title }}
         </mat-card-title>
         <mat-card-subtitle class="card-subtitle">
-            by {{ blog.author }}
+            by {{ blog.authorName }}
         </mat-card-subtitle>
     </mat-card-header>
 
@@ -34,11 +34,11 @@
     <!-- Card Content -->
     <mat-card-content class="card-content">
         <p class="blog-excerpt">
-            {{ truncateText(blog.blog, 120) }}
+            {{ truncateText(blog.content, 120) }}
         </p>
         <div class="publish-date text-muted">
             <mat-icon class="date-icon">today</mat-icon>
-            {{ formatDate(blog.publishDate) }}
+            {{ formatDate(blog.createdAt) }}
         </div>
     </mat-card-content>
 
