@@ -1,7 +1,9 @@
 package com.backend.blog.controllers;
 
+import com.backend.blog.dto.BlogDto;
 import com.backend.blog.dto.UserDto;
 import com.backend.blog.entities.User;
+import com.backend.blog.services.BlogService;
 import com.backend.blog.services.UserService;
 import com.backend.blog.utils.JwtUtil;
 
@@ -9,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -21,9 +24,21 @@ import org.springframework.web.server.ResponseStatusException;
 public class UserController {
 
     private final UserService userService;
+    private final BlogService blogService;
 
-    public UserController(UserService userService) {
+    public class UserInfoResponce {
+        public UserDto profile;
+        public List<BlogDto> blogs;
+
+        public UserInfoResponce(UserDto profile, List<BlogDto> blogs) {
+            this.profile = profile;
+            this.blogs = blogs;
+        }
+    }
+
+    public UserController(UserService userService, BlogService blogService) {
         this.userService = userService;
+        this.blogService = blogService;
     }
 
     @PostMapping("/register")
@@ -70,18 +85,26 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<UserDto> getBySelf(HttpServletRequest request) {
+    public ResponseEntity<UserInfoResponce> getBySelf(HttpServletRequest request) {
         User user = (User) request.getAttribute("user");
         User userInfo = this.userService.fetchUser(user.getUsername());
-        return ResponseEntity.ok(userInfo.toDto(false));
+
+        List<BlogDto> blogs = this.blogService.readUserBlogs(userInfo.getUsername());
+        UserDto profile = userInfo.toDto(false);
+
+        return ResponseEntity.ok(new UserInfoResponce(profile, blogs));
     }
 
     @GetMapping("/{username}")
-    public ResponseEntity<UserDto> getByUsername(@PathVariable String username, HttpServletRequest request) {
+    public ResponseEntity<UserInfoResponce> getByUsername(@PathVariable String username, HttpServletRequest request) {
         User user = (User) request.getAttribute("user");
         User other = this.userService.fetchUser(username);
         boolean isFollowing = user != null ? this.userService.isFollowing(user, other.getId()) : false;
-        return ResponseEntity.ok(other.toDto(isFollowing));
+
+        List<BlogDto> blogs = this.blogService.readUserBlogs(other.getUsername());
+        UserDto profile = other.toDto(isFollowing);
+
+        return ResponseEntity.ok(new UserInfoResponce(profile, blogs));
     }
 
 }

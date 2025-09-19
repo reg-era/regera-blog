@@ -46,6 +46,25 @@ public class BlogService {
                 .toList();
     }
 
+    public final List<BlogDto> readUserBlogs(String username) {
+        return this.blogRepository.findByUserUsername(username)
+                .stream()
+                .map(blog -> {
+                    Long comments = this.commentRepository.countByBlogId(blog.getId());
+                    Long like = this.likeRepository.countByBlogId(blog.getId());
+                    return new BlogDto(
+                            blog.getId(),
+                            blog.getTitle(),
+                            blog.getContent(),
+                            blog.getDescription(),
+                            blog.getUser().getUsername(),
+                            blog.getCover(), blog.getMedia(),
+                            comments, like, false,
+                            blog.getCreatedAt());
+                })
+                .toList();
+    }
+
     public BlogDto readBlog(Long blogId, User user) {
         Optional<Blog> blog = this.blogRepository.findById(blogId);
 

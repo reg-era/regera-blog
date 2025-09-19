@@ -27,6 +27,23 @@ export interface BlogObject {
     isVideo: boolean;
 }
 
+export const createEmptyBlogObject = () => {
+    return {
+        id: 0,
+        title: '',
+        content: '',
+        description: '',
+        authorName: '',
+        cover: '',
+        media: '',
+        likes: 0,
+        comments: 0,
+        isLiking: false,
+        createdAt: '',
+        isVideo: false
+    }
+};
+
 @Injectable({ providedIn: 'root' })
 export class BlogService {
     constructor(private router: Router) { }
@@ -84,7 +101,7 @@ export class BlogService {
         }
     }
 
-    async getBlog(id: number): Promise<{ success: boolean; data?: BlogObject }> {
+    async getBlog(id: number): Promise<{ success: boolean; data: BlogObject }> {
         try {
             const res = await fetch(`${environment.apiURL}/api/blogs/${id}`);
 
@@ -102,11 +119,11 @@ export class BlogService {
                 if (blog.cover == '/error-media.gif' || blog.media == '/error-media.gif') blog.isVideo = false;
                 return { success: true, data: blog };
             } else {
-                return { success: false };
+                return { success: false, data: createEmptyBlogObject() };
             }
         } catch (error) {
             console.error("Error sending blog: ", error);
-            return { success: false };
+            return { success: false, data: createEmptyBlogObject() };
         }
     }
 

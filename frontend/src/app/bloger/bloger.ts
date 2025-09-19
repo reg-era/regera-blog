@@ -1,28 +1,28 @@
-import { Component, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, signal } from '@angular/core';
 import { BlogCard } from '../home/blog-card/blog-card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatListModule } from '@angular/material/list';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
-import { BlogObject } from '../../services/blog-service';
+import { BlogObject, createEmptyBlogObject } from '../../services/blog-service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { createEmptyUserObject, UserObject, UserService } from '../../services/user-service';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { CredentialService } from '../../services/credential-service';
 
 @Component({
   selector: 'app-bloger',
-  imports: [FormsModule, BlogCard, MatCardModule, MatIconModule, MatFormFieldModule, MatListModule],
+  imports: [MatProgressSpinner, FormsModule, BlogCard, MatCardModule, MatIconModule, MatFormFieldModule, MatListModule],
   templateUrl: './bloger.html',
   styleUrl: './bloger.css'
 })
 
-export class Bloger {
-  blogger = {
-    name: 'Jane Dev',
-    avatarUrl: 'https://i.pravatar.cc/150?img=12',
-    bio: 'Frontend engineer & tech blogger who loves Angular and design systems.',
-    registeredAt: new Date('2023-02-15'),
-    followers: 243,
-    blogs: this.getBlogs(),
-  };
+export class Bloger implements OnInit {
+  blogger: UserObject = createEmptyUserObject();
+  blogs: BlogObject[] = [];
+
+  isOwner = false;
 
   availableReasons = [
     'Spam or misleading',
@@ -31,14 +31,46 @@ export class Bloger {
     'Fake identity',
     'Other'
   ];
-
-  isFollowing = false;
   selectedReasons: string[] = [];
   reportMessage: string = '';
   reportDetails: string = '';
   showReport = false;
   showToast = signal(false);
   toastMessage = signal<string>('');
+
+  _Refresh = true;
+
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private router: Router,
+    private route: ActivatedRoute,
+    private userService: UserService,
+    private credentialService: CredentialService
+  ) { }
+
+  async ngOnInit() {
+    const username = this.route.snapshot.paramMap.get('username');
+    if (!username && this.router.url != '/profile') {
+      this.router.navigate(['/']);
+      return;
+    }
+
+    if (this.router.url == '/profile') {
+      this.isOwner = true;
+    } else {
+      const ping = this.credentialService.CheckAuthentication();
+      ping.subscribe(obj => {
+        if (username == obj.username) this.router.navigate(['/profile']);
+      })
+    }
+
+    const response = await this.userService.getBloger(username);
+    this.blogger = response.data.profile;
+    this.blogs = response.data.blogs;
+
+    this._Refresh = false;
+    this.cdr.markForCheck();
+  }
 
   toggleReason(reason: string, event: Event): void {
     const isChecked = (event.target as HTMLInputElement).checked;
@@ -72,10 +104,17 @@ export class Bloger {
   }
 
   toggleFollow() {
-    this.isFollowing = !this.isFollowing;
   }
 
   getBlogs(): BlogObject[] {
     return [];
+  }
+
+  formatDate(date: string): string {
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    }).format(date == '' ? new Date() : new Date(date));
   }
 }

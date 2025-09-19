@@ -9,5 +9,8 @@ import java.util.Optional;
 
 public interface BlogRepository extends JpaRepository<Blog, Long> {
     public Optional<Blog> findById(Long id);
+
     public List<Blog> findTop5ByOrderByCreatedAtDesc();
+
+    public List<Blog> findByUserUsername(String username);
 }

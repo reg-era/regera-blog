@@ -1,11 +1,13 @@
 <!-- blogger-profile.component.html -->
 
 <div class="blogger-profile">
-
+    @if(_Refresh){
+    <mat-spinner></mat-spinner>
+    }@else{
     @if(showReport){
     <div class="confirmator-overlay">
         <div class="confirmator-box mat-elevation-z8">
-            <p class="message">Are you sure you want to report {{ blogger.name }}?</p>
+            <p class="message">Are you sure you want to report {{ blogger.username }}?</p>
             <div class="report-reasons">
                 @for(reason of availableReasons;track reason){
                 <label>
@@ -39,27 +41,31 @@
 
     <section class="blogger-header mat-elevation-z2">
         <div class="blogger-info">
-            <h1>{{ blogger.name }}</h1>
+            <h1>{{ blogger.username }}</h1>
             <p class="bio">{{ blogger.bio }}</p>
-            <p class="since">Joined on {{ blogger.registeredAt.toISOString() }}</p>
+            <p class="since">Joined on {{ ( formatDate(blogger.createdAt)) }}</p>
 
+            @if(!isOwner){
             <button mat-raised-button color="primary" (click)="toggleFollow()">
-                {{ isFollowing ? 'Unfollow' : 'Follow' }} • {{ blogger.followers + (isFollowing ? 1 : 0) }}
+                <!-- {{ blogger.isFollowing ? 'Unfollow' : 'Follow' }} • {{ blogger.followers + (blogger.isFollowing ? 1 : 0) }} -->
             </button>
+            }
         </div>
 
+        @if(!isOwner){
         <button mat-stroked-button color="warn" class="report-btn" (click)="this.showReport = true">
             Report
         </button>
+        }
     </section>
 
     <section class="blogger-posts">
-        <h2>{{ blogger.name }}'s Posts</h2>
+        <h2>{{ blogger.username }}'s Posts</h2>
         <div class="blog-list">
-            @for(blog of blogger.blogs;track blog.id){
-            <app-blog-card [owner]="true" [blog]="blog"></app-blog-card>
+            @for(blog of blogs;track blog.id){
+            <app-blog-card [blog]="blog"></app-blog-card>
             }
         </div>
     </section>
-
+    }
 </div>

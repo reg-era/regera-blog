@@ -4,7 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRippleModule } from '@angular/material/core';
-import { BlogObject } from '../../../services/blog-service';
+import { BlogObject, createEmptyBlogObject } from '../../../services/blog-service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -22,9 +22,11 @@ import { Router } from '@angular/router';
 })
 export class BlogCard {
   @Input() blog!: BlogObject;
-  @Input() owner!: boolean;
+  isOwner: boolean = false;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router) {
+    if (this.router.url == '/profile') this.isOwner = true;
+  }
 
   onDelete(blog: BlogObject) { }
 

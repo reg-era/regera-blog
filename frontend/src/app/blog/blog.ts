@@ -4,7 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { BlogObject, BlogService } from '../../services/blog-service';
+import { BlogObject, BlogService, createEmptyBlogObject } from '../../services/blog-service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
@@ -16,9 +16,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 })
 
 export class Blog implements OnInit {
-  blog: BlogObject = {
-    authorName: '', content: '', comments: 0, likes: 0, cover: '', createdAt: '', description: '', id: 0, isLiking: false, media: '', title: '', isVideo: false
-  };
+  blog: BlogObject = createEmptyBlogObject();
 
   _Refresh = true;
   newComment = '';
@@ -38,10 +36,9 @@ export class Blog implements OnInit {
       return;
     }
 
-    this.blog = (await this.blogService.getBlog(parsedId)).data!;
-    console.log(this.blog.isVideo);
-
+    this.blog = (await this.blogService.getBlog(parsedId)).data;
     this._Refresh = false;
+
     this.cdr.markForCheck();
   }
 

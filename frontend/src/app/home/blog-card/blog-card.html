@@ -1,7 +1,7 @@
 <mat-card class="blog-card mat-elevation-z6" matRipple [matRippleDisabled]="false"
     [matRippleColor]="'rgba(255,255,255,0.1)'" (click)="goBlog()">
 
-    @if(owner){
+    @if(isOwner){
     <div class="owner-actions">
         <button mat-icon-button color="primary" class="edit-btn" (click)="onEdit(blog)">
             <mat-icon>edit</mat-icon>
