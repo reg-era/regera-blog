@@ -111,7 +111,7 @@ public class User {
         return this.id + " " + this.username + " " + this.email;
     }
 
-    public UserDto toDto(boolean isFollowing) {
+    public UserDto toDto(boolean isFollowing, Long followers) {
         return new UserDto(
                 this.username,
                 this.picture,
@@ -119,6 +119,6 @@ public class User {
                 this.bio,
                 this.role.toString(),
                 this.createdAt,
-                isFollowing);
+                isFollowing, followers);
     }
 }

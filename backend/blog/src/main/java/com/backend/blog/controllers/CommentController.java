@@ -1,8 +1,6 @@
 package com.backend.blog.controllers;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,7 +43,7 @@ public class CommentController {
     }
 
     @PostMapping("/{blogId}")
-    public ResponseEntity<Map<String, String>> makeComment(@PathVariable Long blogId, @RequestBody String content,
+    public ResponseEntity<CommentDto> makeComment(@PathVariable Long blogId, @RequestBody String content,
             HttpServletRequest request) {
         User user = (User) request.getAttribute("user");
 
@@ -57,10 +55,7 @@ public class CommentController {
         comment.setBlog(this.blogService.readBlog(blogId, user).toBlog(user));
         comment.setContent(content.trim());
 
-        this.commentService.createComment(comment);
-
-        Map<String, String> res = new HashMap<>();
-        res.put("message", "Comment added successfully");
+        CommentDto res = this.commentService.createComment(comment);
         return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
 

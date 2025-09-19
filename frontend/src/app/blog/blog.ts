@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { BlogObject, BlogService, createEmptyBlogObject } from '../../services/blog-service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { CommentObject, UserService } from '../../services/user-service';
 
 @Component({
   selector: 'app-blog',
@@ -17,11 +18,18 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 export class Blog implements OnInit {
   blog: BlogObject = createEmptyBlogObject();
+  comments: CommentObject[] = [];
 
   _Refresh = true;
   newComment = '';
 
-  constructor(private cdr: ChangeDetectorRef, private router: Router, private route: ActivatedRoute, private blogService: BlogService) { }
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private router: Router,
+    private route: ActivatedRoute,
+    private blogService: BlogService,
+    private userService: UserService
+  ) { }
 
   async ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -37,13 +45,19 @@ export class Blog implements OnInit {
     }
 
     this.blog = (await this.blogService.getBlog(parsedId)).data;
+    this.comments = (await this.blogService.getComments(parsedId, 0)).comment;
     this._Refresh = false;
 
     this.cdr.markForCheck();
   }
 
-  toggleLike() {
-    this.blog.isLiking = !this.blog.isLiking;
+  async toggleLike() {
+    const response = await this.userService.makeLike(this.blog.id);
+    if (response.success) {
+      this.blog.isLiking = response.data.status == 1;
+      this.blog.likes = response.data.likes;
+    }
+    this.cdr.markForCheck();
   }
 
   setComment(e: KeyboardEvent) {
@@ -57,10 +71,14 @@ export class Blog implements OnInit {
     }
   }
 
-  submitComment() {
+  async submitComment() {
     if (!this.newComment.trim()) return;
-    // this.blog.commentsArr.push({ id: this.blog.commentsArr.length, user: 'Guest', text: this.newComment });
+    const comment = await this.userService.makeComment(this.blog.id, this.newComment.trim());
+    if (comment.success) {
+      this.comments.push(comment.comment);
+    }
     this.newComment = '';
+    this.cdr.markForCheck();
   }
 
   formatDate(date: string): string {

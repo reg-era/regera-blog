@@ -34,7 +34,7 @@
         <!-- Follow + Likes -->
         <div class="interaction-header">
             <button mat-raised-button color="accent" (click)="toggleLike()">
-                {{ blog.isLiking ? 'UnLike' : 'Like' }} • {{ blog.likes + (blog.isLiking ? 1 : 0) }}
+                {{ blog.isLiking ? 'UnLike' : 'Like' }}
             </button>
             <div class="likes">
                 <mat-icon>favorite</mat-icon> {{ blog.likes }} likes
@@ -45,12 +45,12 @@
         <div class="comments-section fixed-comments">
             <h3>Comments</h3>
 
-            <!-- @for (comment of blog.commentsArr; track comment.id) { -->
-            <!-- <div class="comment"> -->
-            <!-- <strong>{{ comment.user }}</strong> -->
-            <!-- <p>{{ comment.text }}</p> -->
-            <!-- </div> -->
-            <!-- } -->
+            @for (comment of comments; track comment.id) {
+            <div class="comment">
+            <strong>{{ comment.author }}</strong>
+            <p>{{ comment.content }}</p>
+            </div>
+            }
 
             <div class="comment-form">
                 <mat-form-field appearance="outline" class="comment-input">

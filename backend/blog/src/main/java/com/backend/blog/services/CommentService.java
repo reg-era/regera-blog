@@ -37,12 +37,16 @@ public class CommentService {
         return res;
     }
 
-    public Comment createComment(Comment comment) {
+    public CommentDto createComment(Comment comment) {
         if (!comment.isValidComment()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid comment information");
         }
-
-        return this.commentRepository.save(comment);
+        Comment newComment = this.commentRepository.save(comment);
+        return new CommentDto(newComment.getId(),
+                newComment.getUser().getUsername(),
+                newComment.getBlog().getId(),
+                newComment.getContent(),
+                newComment.getCreatedAt());
     }
 
 }

@@ -4,6 +4,7 @@ import com.backend.blog.dto.BlogDto;
 import com.backend.blog.dto.UserDto;
 import com.backend.blog.entities.User;
 import com.backend.blog.services.BlogService;
+import com.backend.blog.services.FollowService;
 import com.backend.blog.services.UserService;
 import com.backend.blog.utils.JwtUtil;
 
@@ -25,6 +26,7 @@ public class UserController {
 
     private final UserService userService;
     private final BlogService blogService;
+    private final FollowService followService;
 
     public class UserInfoResponce {
         public UserDto profile;
@@ -36,9 +38,10 @@ public class UserController {
         }
     }
 
-    public UserController(UserService userService, BlogService blogService) {
+    public UserController(UserService userService, BlogService blogService, FollowService followService) {
         this.userService = userService;
         this.blogService = blogService;
+        this.followService = followService;
     }
 
     @PostMapping("/register")
@@ -90,7 +93,8 @@ public class UserController {
         User userInfo = this.userService.fetchUser(user.getUsername());
 
         List<BlogDto> blogs = this.blogService.readUserBlogs(userInfo.getUsername());
-        UserDto profile = userInfo.toDto(false);
+        Long followers = this.followService.countFollowing(userInfo.getUsername());
+        UserDto profile = userInfo.toDto(false, followers);
 
         return ResponseEntity.ok(new UserInfoResponce(profile, blogs));
     }
@@ -102,7 +106,8 @@ public class UserController {
         boolean isFollowing = user != null ? this.userService.isFollowing(user, other.getId()) : false;
 
         List<BlogDto> blogs = this.blogService.readUserBlogs(other.getUsername());
-        UserDto profile = other.toDto(isFollowing);
+        Long follwers = this.followService.countFollowing(other.getUsername());
+        UserDto profile = other.toDto(isFollowing, follwers);
 
         return ResponseEntity.ok(new UserInfoResponce(profile, blogs));
     }

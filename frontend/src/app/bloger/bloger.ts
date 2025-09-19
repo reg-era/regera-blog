@@ -103,7 +103,13 @@ export class Bloger implements OnInit {
     }, 3000);
   }
 
-  toggleFollow() {
+  async toggleFollow() {
+    const response = await this.userService.makeFollow(this.blogger.username);
+    if (response.success) {
+      this.blogger.isFollowing = response.data.status == 1;
+      this.blogger.followers = response.data.follows;
+    }
+    this.cdr.markForCheck();
   }
 
   getBlogs(): BlogObject[] {

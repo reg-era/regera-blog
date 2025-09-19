@@ -25,18 +25,18 @@ public class FollowController {
         this.followService = followService;
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<Map<String, Long>> getFollows(@PathVariable Long userId) {
-        Long follows = this.followService.countFollowing(userId);
+    @GetMapping("/{username}")
+    public ResponseEntity<Map<String, Long>> getFollows(@PathVariable String username) {
+        Long follows = this.followService.countFollowing(username);
         return ResponseEntity.ok(Map.of("follows", follows));
     }
 
-    @PostMapping("/{userId}")
-    public ResponseEntity<Map<String, Long>> toggleFollow(@PathVariable Long userId, HttpServletRequest request) {
+    @PostMapping("/{username}")
+    public ResponseEntity<Map<String, Long>> toggleFollow(@PathVariable String username, HttpServletRequest request) {
         User user = (User) request.getAttribute("user");
 
-        boolean isFollowing = this.followService.toggleFollow(user.getId(), userId);
-        Long follows = this.followService.countFollowing(userId);
+        boolean isFollowing = this.followService.toggleFollow(user.getId(), username);
+        Long follows = this.followService.countFollowing(username);
 
         Map<String, Long> response = new HashMap<>();
 

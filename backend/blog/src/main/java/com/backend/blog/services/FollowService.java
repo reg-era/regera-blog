@@ -21,17 +21,18 @@ public class FollowService {
         this.userRepository = userRepository;
     }
 
-    public boolean toggleFollow(Long authorId, Long followerId) {
-        if (authorId.equals(followerId)) {
+    public boolean toggleFollow(Long authorId, String followerName) {
+        User follower = this.userRepository.findByUsername(followerName)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Follower not found"));
+
+        if (authorId.equals(follower.getId())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User cannot follow themselves");
         }
 
         User author = this.userRepository.findById(authorId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Author not found"));
-        User follower = this.userRepository.findById(followerId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Follower not found"));
 
-        Optional<Follow> existingFollow = this.followRepository.findByUser_IdAndFollower_Id(authorId, followerId);
+        Optional<Follow> existingFollow = this.followRepository.findByUser_IdAndFollower_Id(authorId, follower.getId());
 
         if (existingFollow.isPresent()) {
             this.followRepository.delete(existingFollow.get());
@@ -45,8 +46,8 @@ public class FollowService {
         }
     }
 
-    public Long countFollowing(Long userId) {
-        return this.followRepository.countByFollowerId(userId);
+    public Long countFollowing(String username) {
+        return this.followRepository.countByFollowerUsername(username);
     }
 
     public boolean isFollowing(Long authorId, Long followerId) {

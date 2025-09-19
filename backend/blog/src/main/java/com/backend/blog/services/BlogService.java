@@ -82,7 +82,7 @@ public class BlogService {
                 blog.get().getDescription(),
                 blog.get().getUser().getUsername(),
                 blog.get().getCover(), blog.get().getMedia(),
-                comments, like, isLiking,
+                like, comments, isLiking,
                 blog.get().getCreatedAt());
     }
 

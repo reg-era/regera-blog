@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { environment } from '../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
 import { urlToBlobImageUrl } from '../utils/download-media';
+import { CommentObject } from './user-service';
 
 
 export interface BlogFormModel {
@@ -124,6 +125,21 @@ export class BlogService {
         } catch (error) {
             console.error("Error sending blog: ", error);
             return { success: false, data: createEmptyBlogObject() };
+        }
+    }
+
+    async getComments(blogId: number, offset: number): Promise<{ success: boolean, comment: CommentObject[] }> {
+        try {
+            const res = await fetch(`${environment.apiURL}/api/comments/${blogId}?offset=${offset}`);
+            if (res.ok) {
+                const comment: CommentObject[] = await res.json();
+                return { success: true, comment: comment };
+            } else {
+                return { success: false, comment: [] };
+            }
+        } catch (error) {
+            console.error("Error getting bloger: ", error);
+            return { success: false, comment: [] };
         }
     }
 

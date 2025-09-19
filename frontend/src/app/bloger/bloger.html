@@ -47,8 +47,12 @@
 
             @if(!isOwner){
             <button mat-raised-button color="primary" (click)="toggleFollow()">
-                <!-- {{ blogger.isFollowing ? 'Unfollow' : 'Follow' }} • {{ blogger.followers + (blogger.isFollowing ? 1 : 0) }} -->
+                {{ blogger.isFollowing ? 'Unfollow' : 'Follow' }} • {{ blogger.followers }}
             </button>
+            }@else{
+            <label mat-raised-button color="primary" disabled>
+                Followers • {{ blogger.followers }}
+            </label>
             }
         </div>
 
