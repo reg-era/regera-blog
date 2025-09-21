@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CredentialService, LoginFormModel } from '../../services/credential-service';
 import { Router } from '@angular/router';
@@ -19,10 +19,10 @@ import { Router } from '@angular/router';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
   ],
   templateUrl: './login.html',
-  styleUrl: './login.css'
+  styleUrl: './login.scss'
 })
 export class Login implements OnInit {
   hidePassword = true;
@@ -34,7 +34,7 @@ export class Login implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private credentialService: CredentialService,
-    private router: Router
+    public router: Router
   ) { }
 
   ngOnInit() {
