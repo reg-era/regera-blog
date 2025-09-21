@@ -1,0 +1,129 @@
+.container-fluid {
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+  }
+}
+
+.row {
+  position: relative;
+  z-index: 1;
+}
+
+// Card Container and Carousel
+.card-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 2rem 0;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100px;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  &::before {
+    left: 0;
+    background: linear-gradient(to right,
+        var(--bg) 0%,
+        transparent 100%);
+  }
+
+  &::after {
+    right: 0;
+    background: linear-gradient(to left,
+        var(--bg) 0%,
+        transparent 100%);
+  }
+}
+
+.blog-cards {
+  display: flex;
+  gap: 2rem;
+  animation: infiniteScroll 60s linear infinite;
+  will-change: transform;
+
+  // Duplicate the cards for seamless loop
+  &::after {
+    content: '';
+    flex: none;
+    width: 2rem; // Gap before loop restarts
+  }
+}
+
+@keyframes infiniteScroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%); // Move by half to create seamless loop
+  }
+}
+
+
+// Responsive Design
+@media (max-width: 768px) {
+  .container-fluid {
+    padding: 2rem 0;
+  }
+
+  app-search {
+    margin: 0 1rem 3rem 1rem;
+    max-width: none;
+  }
+
+  .card-container {
+    padding: 1rem 0;
+
+    &::before,
+    &::after {
+      width: 50px;
+    }
+  }
+
+  ::ng-deep app-blog-card {
+    width: 300px;
+  }
+
+  .blog-cards {
+    gap: 1.5rem;
+    animation-duration: 45s;
+  }
+}
+
+@media (max-width: 480px) {
+  ::ng-deep app-blog-card {
+    width: 280px;
+
+    .card-header .card-title {
+      font-size: 1.1rem;
+    }
+
+    .image-container {
+      height: 180px;
+      margin: 0 16px 16px;
+    }
+
+    .card-content,
+    .card-actions {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+  }
+}

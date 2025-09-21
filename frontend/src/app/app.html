@@ -1,57 +1,87 @@
 <mat-drawer-container class="main-container" autosize>
-  <mat-drawer #drawer class="custom-sidenav" mode="side" [opened]="showNavBar">
+  <mat-drawer #drawer class="custom-sidenav" mode="over" position="end" [opened]="showNavBar">
+
     <nav class="nav-buttons">
-      @if(router.url != '/'){
-      <button mat-button routerLink="/" [class.active-link]="router.url === '/'" (click)="showNavBar = false">
-        <mat-icon>home</mat-icon>Home
-      </button>
-      }
-      @if (isBlogger){
-      <button mat-button routerLink="/profile" [class.active-link]="router.url === '/profile'"
-        (click)="showNavBar = false">
-        <mat-icon>person</mat-icon>Profile
-      </button>
-      @if(isAdmin){
-      <button mat-button routerLink="/dashboard" [class.active-link]="router.url === '/dashboard'"
-        (click)="showNavBar = false">
-        <mat-icon>dashboard</mat-icon>Dashboard
-      </button>
-      }
-      <button mat-button routerLink="/newblog" [class.active-link]="router.url === '/newblog'"
-        (click)="showNavBar = false">
-        <mat-icon>create</mat-icon>New Blog
-      </button>
-      <button mat-button (click)="logout()" (click)="showNavBar = false">
-        <mat-icon>exit_to_app</mat-icon>Logout
-      </button>
-      }@else {
-      <button mat-button routerLink="/login" [class.active-link]="router.url === '/login'" (click)="showNavBar = false">
-        <mat-icon>login</mat-icon>Login
-      </button>
-      <button mat-button routerLink="/register" [class.active-link]="router.url === '/register'"
-        (click)="showNavBar = false">
-        <mat-icon>person_add</mat-icon>Register
-      </button>
-      }
+      <div class="main-nav">
+
+        @if (router.url != '/') {
+        <button class="nav-btn" [class.active-link]="router.url === '/'" routerLink="/" (click)="closeNavBar()"
+          matTooltip="Home" matTooltipPosition="left">
+          <mat-icon>home</mat-icon>
+        </button>
+        }
+
+        @if (isBlogger) {
+
+        @if (isAdmin) {
+        <button class="nav-btn" [class.active-link]="router.url === '/dashboard'" routerLink="/dashboard"
+          (click)="closeNavBar()" matTooltip="Dashboard" matTooltipPosition="left">
+          <mat-icon>dashboard</mat-icon>
+        </button>
+        }
+
+        <button class="nav-btn" [class.active-link]="router.url === '/profile'" routerLink="/profile"
+          (click)="closeNavBar()" matTooltip="Notification" matTooltipPosition="left">
+          <mat-icon>notifications</mat-icon>
+        </button>
+
+        <button class="nav-btn" [class.active-link]="router.url === '/profile'" routerLink="/profile"
+          (click)="closeNavBar()" matTooltip="Profile" matTooltipPosition="left">
+          <mat-icon>person</mat-icon>
+        </button>
+
+        <button class="nav-btn" [class.active-link]="router.url === '/newblog'" routerLink="/newblog"
+          (click)="closeNavBar()" matTooltip="Create New Blog" matTooltipPosition="left">
+          <mat-icon>create</mat-icon>
+        </button>
+
+        } @else {
+
+        <button class="nav-btn" [class.active-link]="router.url === '/login'" routerLink="/login"
+          (click)="closeNavBar()" matTooltip="Login" matTooltipPosition="left">
+          <mat-icon>login</mat-icon>
+        </button>
+
+        <button class="nav-btn" [class.active-link]="router.url === '/register'" routerLink="/register"
+          (click)="closeNavBar()" matTooltip="Register" matTooltipPosition="left">
+          <mat-icon>person_add</mat-icon>
+        </button>
+
+        }
+
+      </div>
+
+      <div class="bottom-actions">
+
+        <button class="theme-toggle" (click)="toggleTheme()"
+          matTooltip="{{ currentTheme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode' }}"
+          matTooltipPosition="left">
+            @if (currentTheme === 'light'){
+              <mat-icon>dark_mode</mat-icon>
+            }@else {
+              <mat-icon>light_mode</mat-icon>
+            }
+        </button>
+
+        @if (isBlogger) {
+        <button class="nav-btn logout-btn" (click)="logout(); closeNavBar()" matTooltip="Logout"
+          matTooltipPosition="left">
+          <mat-icon>logout</mat-icon>
+        </button>
+        }
+
+      </div>
+
     </nav>
   </mat-drawer>
 
-  <div class="theme-toggle-container">
-    <button class="theme-toggle" (click)="toggleTheme()">
-      {{ currentTheme === 'light' ? '🌙' : '☀️' }}
-    </button>
-  </div>
-
   <div class="content">
-    <button mat-raised-button color="primary" (click)="showNavBar = !showNavBar">
-      @if(showNavBar){
-      <mat-icon>close</mat-icon>
-      }@else{
-      <mat-icon>menu</mat-icon>
-      }
-    </button>
-
     <router-outlet></router-outlet>
   </div>
+
+  <button class="menu-toggle-fab" [class.menu-open]="showNavBar" (click)="toggleNavBar()"
+    matTooltip="{{ showNavBar ? 'Close Menu' : 'Open Menu' }}" matTooltipPosition="left">
+    <mat-icon>menu</mat-icon>
+  </button>
 
 </mat-drawer-container>
