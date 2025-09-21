@@ -1,52 +1,121 @@
-<mat-card class="blog-form-card">
-    @if(onEditing){
-    <mat-card-title>Edit Blog</mat-card-title>
-    }@else {
-    <mat-card-title>New Blog</mat-card-title>
-    }
+<div class="blog-form-container">
+  <mat-card class="blog-form-card">
+
+    <mat-card-title>
+      @if(onEditing) {
+      <mat-icon class="title-icon">edit</mat-icon>
+      Edit Blog
+      } @else {
+      <mat-icon class="title-icon">create</mat-icon>
+      Create New Blog
+      }
+    </mat-card-title>
 
     <form [formGroup]="blogForm" (ngSubmit)="submitForm()">
-        @if(!onEditing){
-        <!-- Title -->
-        <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Title</mat-label>
-            <input matInput placeholder="Enter blog title" formControlName="title" />
-            @if(blogForm.get('title')?.hasError('required')){
-            <mat-error>
-                Title is required
-            </mat-error>
-            }
-        </mat-form-field>
 
-        <!-- Cover Image Upload -->
-        <div class="cover-image-upload">
-            <label class="upload-label">
-                <input #fileInput type="file" accept="image/*,video/*" (change)="onFileSelected($event)" hidden />
-                <button mat-stroked-button color="primary" type="button"  (click)="fileInput.click()">Choose Cover Image</button>
-            </label>
+      @if(!onEditing) {
+      <!-- Title Field with Character Counter -->
+      <div class="form-group">
+        <mat-form-field appearance="outline" class="full-width">
+          <input matInput placeholder="Enter an engaging title for your blog..." formControlName="title"
+            maxlength="100" />
+          <mat-icon matSuffix class="field-icon">title</mat-icon>
+          @if(blogForm.get('title')?.hasError('required')) {
+          <mat-error>
+            <mat-icon>error</mat-icon>
+            Title is required
+          </mat-error>
+          }
+        </mat-form-field>
+        <div class="character-counter" [class.warning]="blogForm.get('title')?.value?.length > 80"
+          [class.danger]="blogForm.get('title')?.value?.length > 95">
+          {{ blogForm.get('title')?.value?.length || 0 }}/100 characters
         </div>
-        }
+      </div>
 
-        <!-- Short Description -->
-        <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Short Description</mat-label>
-            <input matInput placeholder="Add a short summary..." formControlName="description" />
-        </mat-form-field>
-
-        <!-- Blog Content -->
-        <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Blog Content</mat-label>
-            <textarea matInput rows="8" placeholder="Write your blog..." formControlName="content"></textarea>
-            @if(blogForm.get('content')?.hasError('required')){
-            <mat-error>
-                Content is required
-            </mat-error>
+      <!-- Enhanced Cover Image Upload -->
+      <div class="form-group">
+        <div class="cover-image-upload">
+          @if (!selectedFile) {
+          <div class="upload-area" (click)="fileInput.click()">
+            <mat-icon class="upload-icon">cloud_upload</mat-icon>
+            <div class="upload-text">Click to upload cover image</div>
+            <div class="upload-subtext">Supports JPG, PNG, GIF up to 10MB</div>
+          </div>
+          } @else {
+          <div class="file-preview">
+            @if (isImage(selectedFile)) {
+            <img [src]="imagePreview" alt="Cover preview" class="preview-image">
+            } @else {
+            <div class="file-info">
+              <mat-icon class="file-icon">videocam</mat-icon>
+              <span class="file-name">{{ selectedFile.name }}</span>
+            </div>
             }
-        </mat-form-field>
+            <button type="button" mat-button color="primary" (click)="fileInput.click()" class="change-file">
+              <mat-icon>swap_horiz</mat-icon>
+              Change File
+            </button>
+          </div>
+          }
+          <input #fileInput type="file" accept="image/*,video/*" (change)="onFileSelected($event)" hidden />
+        </div>
+      </div>
+      }
 
-        <!-- Submit Button -->
-        <button mat-raised-button color="primary" type="submit" [disabled]="blogForm.invalid">
-            Publish Blog
+      <!-- Short Description with Counter -->
+      <div class="form-group">
+        <mat-form-field appearance="outline" class="full-width">
+          <input matInput placeholder="Write a compelling summary that hooks your readers..."
+            formControlName="description" maxlength="200" />
+          <mat-icon matSuffix class="field-icon">description</mat-icon>
+        </mat-form-field>
+        <div class="character-counter" [class.warning]="blogForm.get('description')?.value?.length > 160"
+          [class.danger]="blogForm.get('description')?.value?.length > 190">
+          {{ blogForm.get('description')?.value?.length || 0 }}/200 characters
+        </div>
+      </div>
+
+      <!-- Blog Content with Enhanced Textarea -->
+      <div class="form-group">
+        <mat-form-field appearance="outline" class="full-width">
+          <textarea matInput rows="10" placeholder="Share your thoughts, experiences, and insights with the world..."
+            formControlName="content" class="content-textarea"></textarea>
+          <mat-icon matSuffix class="field-icon">article</mat-icon>
+          @if(blogForm.get('content')?.hasError('required')) {
+          <mat-error>
+            <mat-icon>error</mat-icon>
+            Content is required to publish your blog
+          </mat-error>
+          }
+        </mat-form-field>
+        <div class="character-counter">
+          {{ blogForm.get('content')?.value?.length || 0 }} characters
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button mat-raised-button type="submit" class="submit-button" [class.loading]="isSubmitting"
+          [disabled]="blogForm.invalid || isSubmitting">
+
+          @if (isSubmitting) {
+          <mat-spinner diameter="20"></mat-spinner>
+          <span class="button-text">Publishing...</span>
+          } @else {
+          <div class="button-content">
+            @if(onEditing) {
+            <mat-icon>save</mat-icon>
+            <span>Update Blog</span>
+            } @else {
+            <mat-icon>publish</mat-icon>
+            <span>Publish Blog</span>
+            }
+          </div>
+          }
         </button>
+      </div>
+
     </form>
-</mat-card>
+  </mat-card>
+</div>
