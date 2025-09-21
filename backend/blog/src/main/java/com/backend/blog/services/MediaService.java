@@ -35,8 +35,8 @@ public class MediaService {
 
     private final String basePath = new File("src/main/resources/static/media").getAbsolutePath();
 
-    public final String DEFAULT_BLOG = "/media/images/default-blog.jpg";
-    public final String DEFAULT_USER = "/media/images/default-profile.jpg";
+    public static final String DEFAULT_BLOG = "/media/images/default-blog.jpg";
+    public static final String DEFAULT_USER = "/media/images/default-profile.jpg";
 
     public InnerMediaService downloadMedia(MultipartFile media) {
         if (media == null || media.isEmpty()) {

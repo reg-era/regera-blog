@@ -47,6 +47,22 @@ export function createEmptyCommentObject() {
     }
 }
 
+export interface NotificationObject {
+    id: number,
+    user_id: number,
+    content: string,
+    createdAt: string,
+}
+
+export function createEmptyNotificationObject() {
+    return {
+        id: 0,
+        user_id: 0,
+        content: "",
+        createdAt: ""
+    }
+}
+
 @Injectable({ providedIn: 'root' })
 export class UserService {
     constructor(private router: Router) { }
@@ -139,6 +155,46 @@ export class UserService {
         } catch (error) {
             console.error("Error getting bloger: ", error);
             return { success: false, comment: createEmptyCommentObject() };
+        }
+    }
+
+    async getNotifications(): Promise<{ success: boolean, notification: NotificationObject[] }> {
+        try {
+            const res = await fetch(`${environment.apiURL}/api/notifications`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+                },
+            });
+
+            if (res.ok) {
+                const notif: NotificationObject[] = await res.json();
+                return { success: true, notification: notif };
+            } else {
+                return { success: false, notification: [createEmptyNotificationObject()] };
+            }
+        } catch (error) {
+            console.error("Error getting bloger: ", error);
+            return { success: false, notification: [createEmptyNotificationObject()] };
+        }
+    }
+
+    async deletetNotifications(id: number): Promise<boolean> {
+        try {
+            const res = await fetch(`${environment.apiURL}/api/notifications/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+                },
+                method: 'DELETE'
+            });
+
+            if (res.ok) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (error) {
+            console.error("Error getting bloger: ", error);
+            return false;
         }
     }
 }

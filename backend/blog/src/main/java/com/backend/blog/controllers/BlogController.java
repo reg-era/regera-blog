@@ -69,8 +69,8 @@ public class BlogController {
         blog.setContent(content);
 
         if (media == null || media.isEmpty()) {
-            blog.setCover(this.mediaService.DEFAULT_BLOG);
-            blog.setMedia(this.mediaService.DEFAULT_BLOG);
+            blog.setCover(MediaService.DEFAULT_BLOG);
+            blog.setMedia(MediaService.DEFAULT_BLOG);
         } else {
             MediaService.InnerMediaService path = this.mediaService.downloadMedia(media);
             blog.setCover(path.cover());

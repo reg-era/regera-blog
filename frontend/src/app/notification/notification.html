@@ -1,0 +1,49 @@
+<div class="notifications-page">
+  
+  <div class="page-header">
+    <h1>
+      <mat-icon>notifications</mat-icon>
+      Notifications
+    </h1>
+    <span class="notification-count">{{ notifications.length }} notifications</span>
+  </div>
+
+  @if (_Refresh) {
+    <div class="loading">
+      <mat-spinner></mat-spinner>
+      <p>Loading notifications...</p>
+    </div>
+  }
+
+  @else if (notifications.length > 0) {
+    <div class="notifications-list">
+      @for (notification of notifications; track notification.id) {
+        <div class="notification-bar">
+          
+          <div class="notification-content">
+            <p class="notification-text">{{ notification.content }}</p>
+            <span class="notification-time">{{ getTimeAgo(notification.createdAt) }}</span>
+          </div>
+          
+          <button 
+            class="delete-btn" 
+            mat-icon-button 
+            (click)="deleteNotification(notification.id)"
+            matTooltip="Delete notification">
+            <mat-icon>close</mat-icon>
+          </button>
+          
+        </div>
+      }
+    </div>
+  }
+
+  @else {
+    <div class="empty-state">
+      <mat-icon>notifications_none</mat-icon>
+      <h3>No notifications</h3>
+      <p>You're all caught up!</p>
+    </div>
+  }
+
+</div>

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.regex.Pattern;
 
 import com.backend.blog.dto.UserDto;
+import com.backend.blog.services.MediaService;
 
 import jakarta.persistence.*;
 
@@ -97,6 +98,10 @@ public class User {
         this.picture = picture;
     }
 
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     public boolean isValidEmail() {
         if (this.email == null)
             return false;
@@ -120,5 +125,16 @@ public class User {
                 this.role.toString(),
                 this.createdAt,
                 isFollowing, followers);
+    }
+
+    public static User createAdmin() {
+        User admin = new User();
+        admin.username = "admin";
+        admin.email = "admin@admin.ceo";
+        admin.passwordHash = "admin123";
+        admin.role = User.Role.ADMIN;
+        admin.picture = MediaService.DEFAULT_USER;
+        admin.bio = "This is the root admins for RegBlog";
+        return admin;
     }
 }
