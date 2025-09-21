@@ -65,6 +65,10 @@ export class Bloger implements OnInit {
     }
 
     const response = await this.userService.getBloger(username);
+    if (!response.success) {
+      this.router.navigate(['/profile']);
+      return;
+    }
     this.blogger = response.data.profile;
     this.blogs = response.data.blogs;
 

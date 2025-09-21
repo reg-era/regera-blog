@@ -44,8 +44,14 @@ export class Blog implements OnInit {
       return;
     }
 
-    this.blog = (await this.blogService.getBlog(parsedId)).data;
-    this.comments = (await this.blogService.getComments(parsedId, 0)).comment;
+    const resBlog = await this.blogService.getBlog(parsedId);
+    const resComm = await this.blogService.getComments(parsedId, 0);
+    if (!resBlog.success || resComm.success) {
+      this.router.navigate(['/']);
+      return;
+    }
+    this.blog = resBlog.data;
+    this.comments = resComm.comment;
     this._Refresh = false;
 
     this.cdr.markForCheck();

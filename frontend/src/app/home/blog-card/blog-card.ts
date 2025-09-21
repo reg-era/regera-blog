@@ -28,12 +28,15 @@ export class BlogCard {
     if (this.router.url == '/profile') this.isOwner = true;
   }
 
-  onDelete(blog: BlogObject) { }
+  onDelete(blog: BlogObject) {
+  }
 
-  onEdit(blog: BlogObject) { }
+  onEdit(blog: BlogObject) {
+    this.router.navigate([`/newblog/${this.blog.id}`])
+  }
 
   goBlog() {
-    this.router.navigate([`/blog/${this.blog.id}`])
+    // this.router.navigate([`/blog/${this.blog.id}`])
   }
 
   getAuthorInitials(name: string): string {

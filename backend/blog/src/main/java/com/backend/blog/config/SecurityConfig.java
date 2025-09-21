@@ -49,11 +49,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/users/**").permitAll()
 
                         .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/**").hasRole("BLOGGER")
-                        .requestMatchers(HttpMethod.PUT, "/api/**").hasRole("BLOGGER")
-                        .requestMatchers(HttpMethod.DELETE, "/api/**").hasRole("BLOGGER")
+                        .requestMatchers(HttpMethod.POST, "/api/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/**").authenticated()
 
-                        .requestMatchers(HttpMethod.GET, "/api/notification").hasRole("BLOGGER")
+                        .requestMatchers(HttpMethod.GET, "/api/notification").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
 
                         .anyRequest().authenticated())

@@ -84,18 +84,17 @@ export class Newblog implements OnInit, OnDestroy {
       if (!auth.valid) this.router.navigate(['/']);
     })
 
-    this.route.queryParams
-      .subscribe(params => {
-        this.blogEditing = parseInt(params['blog']) || 0;
+    this.route.paramMap.subscribe(params => {
+      this.blogEditing = parseInt(params.get('id') || '') || 0;
 
-        if (this.blogEditing > 0) {
-          this.onEditing = true;
-          this.loadBlogForEditing(this.blogEditing);
-        } else {
-          this.onEditing = false;
-          this.resetForm();
-        }
-      });
+      if (this.blogEditing > 0) {
+        this.onEditing = true;
+        this.loadBlogForEditing(this.blogEditing);
+      } else {
+        this.onEditing = false;
+        this.resetForm();
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -105,6 +104,7 @@ export class Newblog implements OnInit, OnDestroy {
   }
 
   private async loadBlogForEditing(blogId: number): Promise<void> {
+    console.log("editing :", blogId);
   }
 
   onFileSelected(event: Event): void {
