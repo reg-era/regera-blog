@@ -101,4 +101,23 @@ public class BlogService {
         return this.blogRepository.existsById(blogId);
     }
 
+    public List<BlogDto> searchForBlogs(String query) {
+        return this.blogRepository.searchBlogs(query)
+                .stream()
+                .map(blog -> {
+                    Long comments = this.commentRepository.countByBlogId(blog.getId());
+                    Long like = this.likeRepository.countByBlogId(blog.getId());
+                    return new BlogDto(
+                            blog.getId(),
+                            blog.getTitle(),
+                            blog.getContent(),
+                            blog.getDescription(),
+                            blog.getUser().getUsername(),
+                            blog.getCover(), blog.getMedia(),
+                            comments, like, false,
+                            blog.getCreatedAt());
+                })
+                .toList();
+    }
+
 }

@@ -1,9 +1,11 @@
 package com.backend.blog.services;
 
+import com.backend.blog.dto.UserDto;
 import com.backend.blog.entities.User;
 import com.backend.blog.repositories.FollowRepository;
 import com.backend.blog.repositories.UserRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
@@ -60,6 +62,24 @@ public class UserService {
 
     public boolean isFollowing(User user, Long otherId) {
         return this.followRepository.existsByUser_IdAndFollower_Id(user.getId(), otherId);
+    }
+
+    public List<UserDto> searchForUsers(String query) {
+        List<User> users = this.userRepository.searchUsers(query);
+        return users
+                .stream()
+                .map(user -> {
+                    return new UserDto(
+                            user.getUsername(),
+                            user.getPicture(),
+                            user.getEmail(),
+                            user.getBio(),
+                            user.getRole().toString(),
+                            user.getCreatedAt(),
+                            false,
+                            0L);
+                })
+                .toList();
     }
 
 }
