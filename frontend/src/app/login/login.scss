@@ -298,7 +298,7 @@
 
   &:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 12px 20px var(--text-muted);
 
     &::before {
       left: 100%;

@@ -23,7 +23,7 @@ import { Router } from '@angular/router';
 
   ],
   templateUrl: './register.html',
-  styleUrls: ['./register.css']
+  styleUrls: ['./register.scss']
 })
 export class Register implements OnInit {
   hidePassword = true;
