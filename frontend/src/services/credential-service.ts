@@ -83,7 +83,7 @@ export class CredentialService {
 
   CheckAuthentication(): Observable<{ valid: boolean, username: string, role: string }> {
     const token = localStorage.getItem('auth_token');
-    if (!token) {
+    if (!token || token === '') {
       return of({ valid: false, username: '', role: '' }); // return an Observable of default
     }
 
@@ -96,7 +96,10 @@ export class CredentialService {
       { headers }
     ).pipe(
       map(data => ({ valid: true, ...data })), // map response to desired format
-      catchError(() => of({ valid: false, username: '', role: '' })) // handle error
+      catchError(() => {
+        localStorage.removeItem('auth_token');
+        return of({ valid: false, username: '', role: '' });
+      }) // handle error
     );
   }
 }

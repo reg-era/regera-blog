@@ -16,6 +16,9 @@ run-backend:
 	mvn clean compile && \
 	mvn spring-boot:run
 
+run-frontend:
+	cd frontend && npm start
+
 docker-build:
 	cd backend && docker build -t $(APP_NAME):latest .
 

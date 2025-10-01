@@ -4,6 +4,8 @@ export async function urlToBlobImageUrl(imageUrl: string): Promise<string> {
   try {
     const response = await fetch(`${environment.apiURL}${imageUrl}`);
     if (!response.ok) {
+      console.log(response.status);
+
       return '/error-media.gif';
     }
     const blob = await response.blob();

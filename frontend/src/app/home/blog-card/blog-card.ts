@@ -36,7 +36,7 @@ export class BlogCard {
   }
 
   goBlog() {
-    // this.router.navigate([`/blog/${this.blog.id}`])
+    this.router.navigate([`/blog/${this.blog.id}`])
   }
 
   getAuthorInitials(name: string): string {

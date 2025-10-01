@@ -46,7 +46,7 @@ export class Blog implements OnInit {
 
     const resBlog = await this.blogService.getBlog(parsedId);
     const resComm = await this.blogService.getComments(parsedId, 0);
-    if (!resBlog.success || resComm.success) {
+    if (!resBlog.success || !resComm.success) {
       this.router.navigate(['/']);
       return;
     }
