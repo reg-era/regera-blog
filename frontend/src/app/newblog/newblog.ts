@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BlogFormModel, BlogService } from '../../services/blog-service';
+import { BlogFormModel, BlogObject, BlogService } from '../../services/blog-service';
 import { CredentialService } from '../../services/credential-service';
 import { ViewChild, ElementRef } from '@angular/core';
 import { Subject } from 'rxjs';
@@ -104,7 +104,15 @@ export class Newblog implements OnInit, OnDestroy {
   }
 
   private async loadBlogForEditing(blogId: number): Promise<void> {
-    console.log("editing :", blogId);
+    try {
+      const blogData: BlogObject = (await this.blogService.getBlog(blogId)).data;
+      console.log(blogData);
+      this.blogForm.get('title')?.setValue(blogData.title);
+      this.blogForm.get('description')?.setValue(blogData.description);
+      this.blogForm.get('content')?.setValue(blogData.content);
+    } catch {
+      console.log('Faild to get blog data');
+    }
   }
 
   onFileSelected(event: Event): void {

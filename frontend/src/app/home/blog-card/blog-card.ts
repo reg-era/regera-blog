@@ -18,7 +18,7 @@ import { Router } from '@angular/router';
     MatRippleModule
   ],
   templateUrl: './blog-card.html',
-  styleUrl: './blog-card.css'
+  styleUrl: './blog-card.scss'
 })
 export class BlogCard {
   @Input() blog!: BlogObject;
@@ -32,6 +32,7 @@ export class BlogCard {
   }
 
   onEdit(blog: BlogObject) {
+    localStorage.setItem(`blog-${this.blog.id}`, JSON.stringify(this.blog))
     this.router.navigate([`/newblog/${this.blog.id}`])
   }
 

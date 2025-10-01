@@ -13,7 +13,6 @@
 
     <form [formGroup]="blogForm" (ngSubmit)="submitForm()">
 
-      @if(!onEditing) {
       <!-- Title Field with Character Counter -->
       <div class="form-group">
         <mat-form-field appearance="outline" class="full-width">
@@ -32,6 +31,8 @@
           {{ blogForm.get('title')?.value?.length || 0 }}/100 characters
         </div>
       </div>
+
+      @if(!onEditing) {
 
       <!-- Enhanced Cover Image Upload -->
       <div class="form-group">

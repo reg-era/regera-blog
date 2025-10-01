@@ -13,7 +13,7 @@ import { CommentObject, UserService } from '../../services/user-service';
   selector: 'app-blog',
   imports: [MatProgressSpinner, MatCardModule, MatIconModule, MatFormField, MatLabel, MatInputModule],
   templateUrl: './blog.html',
-  styleUrl: './blog.css'
+  styleUrl: './blog.scss'
 })
 
 export class Blog implements OnInit {

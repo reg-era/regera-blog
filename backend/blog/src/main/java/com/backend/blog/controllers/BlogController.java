@@ -48,7 +48,7 @@ public class BlogController {
     @GetMapping("/{blogId}")
     public ResponseEntity<BlogDto> readBlog(@PathVariable Long blogId, HttpServletRequest request) {
         User user = (User) request.getAttribute("user");
-        BlogDto blog = this.blogService.readBlog(Long.valueOf(blogId), user);
+        BlogDto blog = this.blogService.readBlog(blogId, user);
         return ResponseEntity.ok(blog);
     }
 
