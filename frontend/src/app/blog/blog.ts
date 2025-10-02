@@ -9,6 +9,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { CommentObject, UserService } from '../../services/user-service';
 
+import MarkdownIt from 'markdown-it';
+import hljs from 'highlight.js';
+import DOMPurify from 'dompurify';
+
 @Component({
   selector: 'app-blog',
   imports: [MatProgressSpinner, MatCardModule, MatIconModule, MatFormField, MatLabel, MatInputModule],
@@ -23,13 +27,27 @@ export class Blog implements OnInit {
   _Refresh = true;
   newComment = '';
 
+  private md: MarkdownIt;
+
   constructor(
     private cdr: ChangeDetectorRef,
     private router: Router,
     private route: ActivatedRoute,
     private blogService: BlogService,
     private userService: UserService
-  ) { }
+  ) {
+    this.md = new MarkdownIt({
+      html: false,       // disable raw HTML in markdown for security
+      linkify: true,     // autolink URLs
+      typographer: true, // nice quotes, dashes
+      highlight: (code: string, lang: string) => {
+        if (lang && hljs.getLanguage(lang)) {
+          return `<pre><code class="hljs language-${lang}">${hljs.highlight(code, { language: lang }).value}</code></pre>`;
+        }
+        return `<pre><code class="hljs">${this.md.utils.escapeHtml(code)}</code></pre>`;
+      },
+    });
+  }
 
   async ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -93,5 +111,13 @@ export class Blog implements OnInit {
       day: 'numeric',
       year: 'numeric'
     }).format(date == '' ? new Date() : new Date(date));
+  }
+
+  public toHtml(markdown: string): string {
+    const rawHtml = this.md.render(markdown || '');
+    return DOMPurify.sanitize(rawHtml, {
+      ADD_TAGS: ['figure', 'figcaption', 'details', 'summary'],
+      ADD_ATTR: ['target', 'rel']
+    });
   }
 }

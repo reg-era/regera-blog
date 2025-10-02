@@ -40,7 +40,7 @@ public class BlogService {
                             blog.getDescription(),
                             blog.getUser().getUsername(),
                             blog.getCover(), blog.getMedia(),
-                            comments, like, false,
+                            like, comments, false,
                             blog.getCreatedAt());
                 })
                 .toList();
@@ -59,7 +59,7 @@ public class BlogService {
                             blog.getDescription(),
                             blog.getUser().getUsername(),
                             blog.getCover(), blog.getMedia(),
-                            comments, like, false,
+                            like, comments, false,
                             blog.getCreatedAt());
                 })
                 .toList();
@@ -114,7 +114,7 @@ public class BlogService {
                             blog.getDescription(),
                             blog.getUser().getUsername(),
                             blog.getCover(), blog.getMedia(),
-                            comments, like, false,
+                            like, comments, false,
                             blog.getCreatedAt());
                 })
                 .toList();

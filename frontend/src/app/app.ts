@@ -34,11 +34,12 @@ export class App implements OnInit, OnDestroy {
 
   @ViewChild('drawer', { static: true }) drawer!: MatDrawer;
 
-  protected readonly title = signal('frontend');
   isAdmin = false;
   isBlogger = false;
   currentTheme: 'light' | 'dark' = 'light';
   showNavBar = false;
+
+  private destroy$ = new Subject<void>();
 
   constructor(
     public router: Router,
@@ -50,8 +51,20 @@ export class App implements OnInit, OnDestroy {
         this.checkAuth()
       });
 
-    this.initializeTheme();
-    this.checkAuthenticationStatus();
+    this.currentTheme = (localStorage.getItem('theme') as 'light' | 'dark') || 'light';
+  }
+
+  ngOnInit(): void {
+    this.router.events
+      .pipe(
+        filter(event => event instanceof NavigationEnd),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => {
+        this.closeNavBar();
+      });
+
+    this.applyTheme();
   }
 
   checkAuth() {
@@ -63,28 +76,10 @@ export class App implements OnInit, OnDestroy {
     })
   }
 
-  async logout() {
-    await this.credentialService.LogoutService();
+  logout() {
+    this.credentialService.LogoutService();
     this.isAdmin = false;
     this.isBlogger = false;
-  }
-
-  currentUser: any = null;
-
-  // Component destruction subject
-  private destroy$ = new Subject<void>();
-
-
-  ngOnInit(): void {
-    // Close navbar on route changes
-    this.router.events
-      .pipe(
-        filter(event => event instanceof NavigationEnd),
-        takeUntil(this.destroy$)
-      )
-      .subscribe(() => {
-        this.closeNavBar();
-      });
   }
 
   ngOnDestroy(): void {
@@ -92,7 +87,6 @@ export class App implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // Navigation Methods
   toggleNavBar(): void {
     this.showNavBar = !this.showNavBar;
 
@@ -108,76 +102,25 @@ export class App implements OnInit, OnDestroy {
     this.drawer.close();
   }
 
-  // Theme Methods
   toggleTheme(): void {
     this.currentTheme = this.currentTheme === 'light' ? 'dark' : 'light';
-    this.applyTheme();
     localStorage.setItem('theme', this.currentTheme);
-  }
-
-  private initializeTheme(): void {
-    // Check localStorage first
-    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark';
-
-    if (savedTheme) {
-      this.currentTheme = savedTheme;
-    } else {
-      // Check system preference
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      this.currentTheme = prefersDark ? 'dark' : 'light';
-    }
-
     this.applyTheme();
   }
 
   private applyTheme(): void {
-    const body = document.body;
+    let savedTheme = localStorage.getItem('theme');
+    if (savedTheme !== 'light' && savedTheme !== 'dark') savedTheme = null;
 
-    // Remove existing theme classes
-    body.classList.remove('light-theme', 'dark-theme');
-
-    // Add current theme class
-    body.classList.toggle("dark");
-
-    // Update meta theme-color for mobile browsers
-    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
-    if (metaThemeColor) {
-      metaThemeColor.setAttribute('content',
-        this.currentTheme === 'light' ? '#ffffff' : '#1e293b'
-      );
-    }
-  }
-
-  // User Methods
-  private checkAuthenticationStatus(): void {
-    // Replace this with your actual authentication service
-    const token = localStorage.getItem('authToken');
-    const userData = localStorage.getItem('userData');
-
-    if (token && userData) {
-      this.currentUser = JSON.parse(userData);
-      this.isBlogger = true;
-      this.isAdmin = this.currentUser.role === 'admin';
+    if (savedTheme) {
+      this.currentTheme = savedTheme;
     } else {
-      this.isBlogger = false;
-      this.isAdmin = false;
-      this.currentUser = null;
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      this.currentTheme = prefersDark ? 'dark' : 'light';
     }
-  }
 
-  // Handle clicks outside the drawer to close it
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: Event): void {
-    const target = event.target as HTMLElement;
-    const drawer = document.querySelector('.custom-sidenav');
-    const toggleButton = document.querySelector('.menu-toggle-fab');
-
-    // Close drawer if clicking outside of it and not on the toggle button
-    if (this.showNavBar && drawer && toggleButton) {
-      if (!drawer.contains(target) && !toggleButton.contains(target)) {
-        this.closeNavBar();
-      }
-    }
+    this.currentTheme == 'light' ? document.body.classList.remove("dark") : document.body.classList.add("dark");
+    localStorage.setItem('theme', this.currentTheme);
   }
 
 }
