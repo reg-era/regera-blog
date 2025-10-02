@@ -5,7 +5,7 @@ import { MatListModule } from '@angular/material/list';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
-import { BlogObject, createEmptyBlogObject } from '../../services/blog-service';
+import { BlogObject } from '../../services/blog-service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { createEmptyUserObject, UserObject, UserService } from '../../services/user-service';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
@@ -64,16 +64,15 @@ export class Bloger implements OnInit {
       })
     }
 
-    const response = await this.userService.getBloger(username);
-    if (!response.success) {
-      this.router.navigate(['/profile']);
-      return;
-    }
-    this.blogger = response.data.profile;
-    this.blogs = response.data.blogs;
+    this.userService.getBloger(username).subscribe((data) => {
+      if (data) {
+        this.blogger = data.profile;
+        this.blogs = data.blogs;
 
-    this._Refresh = false;
-    this.cdr.markForCheck();
+        this._Refresh = false;
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   toggleReason(reason: string, event: Event): void {

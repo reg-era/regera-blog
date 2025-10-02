@@ -4,7 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { BlogObject, BlogService, createEmptyBlogObject } from '../../services/blog-service';
+import { BlogObject, BlogService } from '../../services/blog-service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { CommentObject, UserService } from '../../services/user-service';
@@ -21,7 +21,7 @@ import DOMPurify from 'dompurify';
 })
 
 export class Blog implements OnInit {
-  blog: BlogObject = createEmptyBlogObject();
+  blog!: BlogObject;
   comments: CommentObject[] = [];
 
   _Refresh = true;
@@ -64,11 +64,10 @@ export class Blog implements OnInit {
 
     const resBlog = await this.blogService.getBlog(parsedId);
     const resComm = await this.blogService.getComments(parsedId, 0);
-    if (!resBlog.success || !resComm.success) {
-      this.router.navigate(['/']);
-      return;
+    if (resBlog) {
+      this.blog = resBlog;
     }
-    this.blog = resBlog.data;
+
     this.comments = resComm.comment;
     this._Refresh = false;
 

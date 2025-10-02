@@ -4,7 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRippleModule } from '@angular/material/core';
-import { BlogObject, createEmptyBlogObject } from '../../../services/blog-service';
+import { BlogObject } from '../../../services/blog-service';
 import { Router } from '@angular/router';
 
 @Component({

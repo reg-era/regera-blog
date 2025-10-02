@@ -23,8 +23,12 @@
 .card-container {
   position: relative;
   width: 100%;
-  overflow: hidden;
-  padding: 2rem 0;
+  padding: 2rem;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
 
   &::before,
   &::after {
@@ -51,31 +55,6 @@
         transparent 100%);
   }
 }
-
-.blog-cards {
-  display: flex;
-  gap: 2rem;
-  animation: infiniteScroll 60s linear infinite;
-  will-change: transform;
-
-  // Duplicate the cards for seamless loop
-  &::after {
-    content: '';
-    flex: none;
-    width: 2rem; // Gap before loop restarts
-  }
-}
-
-@keyframes infiniteScroll {
-  from {
-    transform: translateX(0);
-  }
-
-  to {
-    transform: translateX(-50%); // Move by half to create seamless loop
-  }
-}
-
 
 // Responsive Design
 @media (max-width: 768px) {

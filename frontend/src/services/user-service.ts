@@ -1,199 +1,217 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from '../environments/environment.development';
-import { urlToBlobImageUrl } from '../utils/download-media';
+import { MediaService } from './media-service';
 import { BlogObject } from './blog-service';
+import { catchError, forkJoin, map, Observable, of, switchMap } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 export interface UserObject {
-    username: string,
-    picture: string,
-    email: string,
-    bio: string,
-    role: string,
-    createdAt: string,
-    isFollowing: boolean,
-    followers: number
+  username: string,
+  picture: string,
+  email: string,
+  bio: string,
+  role: string,
+  createdAt: string,
+  isFollowing: boolean,
+  followers: number
 }
 
 export function createEmptyUserObject(): UserObject {
-    return {
-        username: '',
-        picture: '',
-        email: '',
-        bio: '',
-        role: '',
-        createdAt: '',
-        isFollowing: false,
-        followers: 0,
-    };
+  return {
+    username: '',
+    picture: '',
+    email: '',
+    bio: '',
+    role: '',
+    createdAt: '',
+    isFollowing: false,
+    followers: 0,
+  };
 }
 
 export interface CommentObject {
-    id: number,
-    author: string,
-    blog: number,
-    content: string,
-    createdAt: string
+  id: number,
+  author: string,
+  blog: number,
+  content: string,
+  createdAt: string
 }
 
 export function createEmptyCommentObject() {
-    return {
-        id: 0,
-        author: '',
-        blog: 0,
-        content: '',
-        createdAt: ''
-    }
+  return {
+    id: 0,
+    author: '',
+    blog: 0,
+    content: '',
+    createdAt: ''
+  }
 }
 
 export interface NotificationObject {
-    id: number,
-    user_id: number,
-    content: string,
-    createdAt: string,
+  id: number,
+  user_id: number,
+  content: string,
+  createdAt: string,
 }
 
 export function createEmptyNotificationObject() {
-    return {
-        id: 0,
-        user_id: 0,
-        content: "",
-        createdAt: ""
-    }
+  return {
+    id: 0,
+    user_id: 0,
+    content: "",
+    createdAt: ""
+  }
 }
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-    constructor(private router: Router) { }
+  constructor(private http: HttpClient, private mediaService: MediaService) { }
 
-    async getBloger(username: string | null): Promise<{ success: boolean; data: { profile: UserObject, blogs: BlogObject[] } }> {
-        try {
-            const url = (username == null) ? `` : `/${username}`
-            const res = await fetch(`${environment.apiURL}/api/users${url}`, (username == null) ? {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                },
-            } : {});
+  getBloger(username: string | null): Observable<{ profile: UserObject, blogs: BlogObject[] } | null> {
+    const url = username ? `/${username}` : '';
+    const headers = username == null ? new HttpHeaders({
+      'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
+    }) : undefined;
 
-            if (res.ok) {
-                const data: { profile: UserObject, blogs: BlogObject[] } = await res.json();
-                data.profile.picture = await urlToBlobImageUrl(data.profile.picture);
+    return this.http.get<{ profile: UserObject, blogs: BlogObject[] }>(
+      `${environment.apiURL}/api/users${url}`,
+      { headers }
+    ).pipe(
+      switchMap(data => {
+        // Convert profile image
+        const profile$ = this.mediaService.urlToBlobImageUrl(data.profile.picture).pipe(
+          map(newImage => {
+            data.profile.picture = newImage;
+            return data.profile;
+          })
+        );
 
-                for (let i = 0; i < data.blogs.length; i++) {
-                    data.blogs[i].cover = await urlToBlobImageUrl(data.blogs[i].cover);
-                }
+        // Convert blog cover images
+        const blogs$ = forkJoin(
+          data.blogs.map(blog =>
+            this.mediaService.urlToBlobImageUrl(blog.cover).pipe(
+              map(newImage => {
+                blog.cover = newImage;
+                return blog;
+              })
+            )
+          )
+        );
 
-                return { success: true, data: data };
-            } else {
-                return { success: false, data: { profile: createEmptyUserObject(), blogs: [] } };
-            }
-        } catch (error) {
-            console.error("Error getting bloger: ", error);
-            return { success: false, data: { profile: createEmptyUserObject(), blogs: [] } };
-        }
+        // Wait for all conversions
+        return forkJoin([profile$, blogs$]).pipe(
+          map(() => data)
+        );
+      }),
+      catchError(error => {
+        console.error("Error getting bloger: ", error);
+        return of(null);
+      })
+    );
+  }
+
+  async makeFollow(username: string): Promise<{ success: boolean; data: { follows: number, status: number } }> {
+    try {
+      const res = await fetch(`${environment.apiURL}/api/follows/${username}`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+        },
+      });
+
+      if (res.ok) {
+        const data: { follows: number, status: number } = await res.json();
+        return { success: true, data: data };
+      } else {
+        return { success: false, data: { follows: 0, status: 0 } };
+      }
+    } catch (error) {
+      console.error("Error getting bloger: ", error);
+      return { success: false, data: { follows: 0, status: 0 } };
     }
+  }
 
-    async makeFollow(username: string): Promise<{ success: boolean; data: { follows: number, status: number } }> {
-        try {
-            const res = await fetch(`${environment.apiURL}/api/follows/${username}`, {
-                method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                },
-            });
+  async makeLike(blogId: number): Promise<{ success: boolean; data: { likes: number, status: number } }> {
+    try {
+      const res = await fetch(`${environment.apiURL}/api/likes/${blogId}`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+        },
+      });
 
-            if (res.ok) {
-                const data: { follows: number, status: number } = await res.json();
-                return { success: true, data: data };
-            } else {
-                return { success: false, data: { follows: 0, status: 0 } };
-            }
-        } catch (error) {
-            console.error("Error getting bloger: ", error);
-            return { success: false, data: { follows: 0, status: 0 } };
-        }
+      if (res.ok) {
+        const data: { likes: number, status: number } = await res.json();
+        return { success: true, data: data };
+      } else {
+        return { success: false, data: { likes: 0, status: 0 } };
+      }
+    } catch (error) {
+      console.error("Error getting bloger: ", error);
+      return { success: false, data: { likes: 0, status: 0 } };
     }
+  }
 
-    async makeLike(blogId: number): Promise<{ success: boolean; data: { likes: number, status: number } }> {
-        try {
-            const res = await fetch(`${environment.apiURL}/api/likes/${blogId}`, {
-                method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                },
-            });
+  async makeComment(blogId: number, comment: string): Promise<{ success: boolean, comment: CommentObject }> {
+    try {
+      const res = await fetch(`${environment.apiURL}/api/comments/${blogId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+        },
+        method: 'POST',
+        body: comment
+      });
 
-            if (res.ok) {
-                const data: { likes: number, status: number } = await res.json();
-                return { success: true, data: data };
-            } else {
-                return { success: false, data: { likes: 0, status: 0 } };
-            }
-        } catch (error) {
-            console.error("Error getting bloger: ", error);
-            return { success: false, data: { likes: 0, status: 0 } };
-        }
+      if (res.ok) {
+        const comment: CommentObject = await res.json();
+        return { success: true, comment: comment };
+      } else {
+        return { success: false, comment: createEmptyCommentObject() };
+      }
+    } catch (error) {
+      console.error("Error getting bloger: ", error);
+      return { success: false, comment: createEmptyCommentObject() };
     }
+  }
 
-    async makeComment(blogId: number, comment: string): Promise<{ success: boolean, comment: CommentObject }> {
-        try {
-            const res = await fetch(`${environment.apiURL}/api/comments/${blogId}`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                },
-                method: 'POST',
-                body: comment
-            });
+  async getNotifications(): Promise<{ success: boolean, notification: NotificationObject[] }> {
+    try {
+      const res = await fetch(`${environment.apiURL}/api/notifications`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+        },
+      });
 
-            if (res.ok) {
-                const comment: CommentObject = await res.json();
-                return { success: true, comment: comment };
-            } else {
-                return { success: false, comment: createEmptyCommentObject() };
-            }
-        } catch (error) {
-            console.error("Error getting bloger: ", error);
-            return { success: false, comment: createEmptyCommentObject() };
-        }
+      if (res.ok) {
+        const notif: NotificationObject[] = await res.json();
+        return { success: true, notification: notif };
+      } else {
+        return { success: false, notification: [createEmptyNotificationObject()] };
+      }
+    } catch (error) {
+      console.error("Error getting bloger: ", error);
+      return { success: false, notification: [createEmptyNotificationObject()] };
     }
+  }
 
-    async getNotifications(): Promise<{ success: boolean, notification: NotificationObject[] }> {
-        try {
-            const res = await fetch(`${environment.apiURL}/api/notifications`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                },
-            });
+  async deletetNotifications(id: number): Promise<boolean> {
+    try {
+      const res = await fetch(`${environment.apiURL}/api/notifications/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+        },
+        method: 'DELETE'
+      });
 
-            if (res.ok) {
-                const notif: NotificationObject[] = await res.json();
-                return { success: true, notification: notif };
-            } else {
-                return { success: false, notification: [createEmptyNotificationObject()] };
-            }
-        } catch (error) {
-            console.error("Error getting bloger: ", error);
-            return { success: false, notification: [createEmptyNotificationObject()] };
-        }
+      if (res.ok) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Error getting bloger: ", error);
+      return false;
     }
-
-    async deletetNotifications(id: number): Promise<boolean> {
-        try {
-            const res = await fetch(`${environment.apiURL}/api/notifications/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-                },
-                method: 'DELETE'
-            });
-
-            if (res.ok) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (error) {
-            console.error("Error getting bloger: ", error);
-            return false;
-        }
-    }
+  }
 }

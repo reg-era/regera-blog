@@ -105,11 +105,12 @@ export class Newblog implements OnInit, OnDestroy {
 
   private async loadBlogForEditing(blogId: number): Promise<void> {
     try {
-      const blogData: BlogObject = (await this.blogService.getBlog(blogId)).data;
-      console.log(blogData);
-      this.blogForm.get('title')?.setValue(blogData.title);
-      this.blogForm.get('description')?.setValue(blogData.description);
-      this.blogForm.get('content')?.setValue(blogData.content);
+      const blogData = (await this.blogService.getBlog(blogId));
+      if (blogData) {
+        this.blogForm.get('title')?.setValue(blogData.title);
+        this.blogForm.get('description')?.setValue(blogData.description);
+        this.blogForm.get('content')?.setValue(blogData.content);
+      }
     } catch {
       console.log('Faild to get blog data');
     }

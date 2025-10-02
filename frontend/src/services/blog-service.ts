@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from '../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
-import { urlToBlobImageUrl } from '../utils/download-media';
+import { MediaService } from './media-service';
 import { CommentObject } from './user-service';
+import { catchError, forkJoin, map, Observable, of, switchMap } from 'rxjs';
 
 
 export interface BlogFormModel {
@@ -28,26 +29,9 @@ export interface BlogObject {
   isVideo: boolean;
 }
 
-export const createEmptyBlogObject = () => {
-  return {
-    id: 0,
-    title: '',
-    content: '',
-    description: '',
-    authorName: '',
-    cover: '',
-    media: '',
-    likes: 0,
-    comments: 0,
-    isLiking: false,
-    createdAt: '',
-    isVideo: false
-  }
-};
-
 @Injectable({ providedIn: 'root' })
 export class BlogService {
-  constructor(private router: Router) { }
+  constructor(private router: Router, private http: HttpClient, private mediaService: MediaService) { }
 
   async sendBlog(blog: BlogFormModel): Promise<{ success: boolean; message?: string }> {
     try {
@@ -83,26 +67,29 @@ export class BlogService {
     }
   }
 
-  async getHomeBlogs(): Promise<{ success: boolean; data: BlogObject[] }> {
-    try {
-      const res = await fetch(`${environment.apiURL}/api/blogs`);
+  getHomeBlogs(): Observable<BlogObject[] | null> {
+    return this.http.get<BlogObject[]>(
+      `${environment.apiURL}/api/blogs`
+    ).pipe(
+      switchMap(blogs => {
+        if (!blogs || blogs.length === 0) return of(blogs);
 
-      if (res.ok) {
-        const data: BlogObject[] = await res.json();
-        for (let blog of data) {
-          blog.cover = await urlToBlobImageUrl(blog.cover);
-        }
-        return { success: true, data: data };
-      } else {
-        return { success: false, data: [] };
-      }
-    } catch (error) {
-      console.error("Error sending blog: ", error);
-      return { success: false, data: [] };
-    }
+        const blogsWithCovers$ = blogs.map(blog =>
+          this.mediaService.urlToBlobImageUrl(blog.cover).pipe(
+            map(blobUrl => ({ ...blog, cover: blobUrl }))
+          )
+        );
+
+        return forkJoin(blogsWithCovers$);
+      }),
+      catchError((err) => {
+        console.error("Error getting blogs: ", err);
+        return of(null);
+      })
+    )
   }
 
-  async getBlog(id: number): Promise<{ success: boolean; data: BlogObject }> {
+  async getBlog(id: number): Promise<BlogObject | null> {
     try {
       const res = await fetch(`${environment.apiURL}/api/blogs/${id}`);
 
@@ -114,17 +101,21 @@ export class BlogService {
           blog.isVideo = true
         };
 
-        blog.cover = await urlToBlobImageUrl(blog.cover);
-        blog.media = await urlToBlobImageUrl(blog.media);
+        this.mediaService.urlToBlobImageUrl(blog.cover).subscribe((newImage) => {
+          blog.cover = newImage;
+        });
+        this.mediaService.urlToBlobImageUrl(blog.media).subscribe(newImage => {
+          blog.media = newImage;
+        });
 
         if (blog.cover == '/error-media.gif' || blog.media == '/error-media.gif') blog.isVideo = false;
-        return { success: true, data: blog };
+        return blog;
       } else {
-        return { success: false, data: createEmptyBlogObject() };
+        return null;
       }
     } catch (error) {
       console.error("Error sending blog: ", error);
-      return { success: false, data: createEmptyBlogObject() };
+      return null;
     }
   }
 

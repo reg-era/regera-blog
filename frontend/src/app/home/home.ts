@@ -1,69 +1,34 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { BlogCard } from './blog-card/blog-card';
 import { Search } from './search/search';
 import { BlogObject, BlogService } from '../../services/blog-service';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { map, Observable } from 'rxjs';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-home',
-  imports: [BlogCard, Search, MatProgressSpinner],
+  imports: [AsyncPipe, BlogCard, Search, MatProgressSpinner],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
-export class Home implements OnInit, AfterViewInit {
-  @ViewChild('carouselTrack', { static: false }) carouselTrack!: ElementRef<HTMLElement>;
+export class Home implements OnInit {
+  public blogs$: Observable<BlogObject[] | null>;
 
-  blogs: BlogObject[] = [];
-
-  private duplicatedBlogs: BlogObject[] = [];
-  _Refresh = true;
-
-  constructor(private cdr: ChangeDetectorRef, private blogService: BlogService) {
+  constructor(private blogService: BlogService) {
+    this.blogs$ = this.blogService.getHomeBlogs();
   }
 
-  ngAfterViewInit(): void {
-    
-    this.setupInfiniteScroll();
+  ngOnInit(): void {
+    window.addEventListener('click', this.onScroll);
   }
 
-  async ngOnInit() {
-    const response = await this.blogService.getHomeBlogs();
-    if (response.success) {
-      this.blogs = response.data;
-      this._Refresh = false;
-      this.cdr.markForCheck();
+  onScroll(event: any) {
+    console.log('wwiwiwiwi');
+    const element = event.target;
+    if (element.scrollHeight - element.scrollTop === element.clientHeight) {
+      console.log('wwiwiwiwi');
+      ;
     }
-  }
-
-  private setupInfiniteScroll(): void {
-    if (!this.carouselTrack?.nativeElement || this.blogs.length === 0) {
-      return;
-    }
-
-    // Create duplicated blogs for seamless infinite scroll
-    this.duplicatedBlogs = [...this.blogs, ...this.blogs];
-
-    // Calculate total width needed for smooth animation
-    const cardWidth = 350; // Width of each card
-    const gap = 32; // Gap between cards (2rem = 32px)
-    const totalWidth = this.blogs.length * (cardWidth + gap);
-
-    // Set CSS custom property for animation
-    const track = this.carouselTrack.nativeElement;
-    track.style.setProperty('--scroll-width', `${totalWidth}px`);
-
-    // Pause animation on hover
-    track.addEventListener('mouseenter', () => {
-      track.style.animationPlayState = 'paused';
-    });
-
-    track.addEventListener('mouseleave', () => {
-      track.style.animationPlayState = 'running';
-    });
-  }
-
-  // Method to get duplicated blogs for template
-  getDuplicatedBlogs(): any[] {
-    return this.duplicatedBlogs.length > 0 ? this.duplicatedBlogs : this.blogs;
   }
 }
