@@ -72,14 +72,8 @@
         </div>
 
         <!-- Submit Button -->
-        <button mat-raised-button type="submit" class="auth-submit-btn" [disabled]="loginForm.invalid || isLoading">
-
-          @if (isLoading) {
-          <mat-spinner diameter="20" strokeWidth="3"></mat-spinner>
-          <span>Signing In...</span>
-          } @else {
+        <button mat-raised-button type="submit" class="auth-submit-btn" [disabled]="loginForm.invalid">
           <span>Sign In</span>
-          }
         </button>
 
         <!-- Error Message -->
@@ -101,7 +95,7 @@
         <!-- Register Link -->
         <p class="auth-switch">
           Don't have an account?
-          <a routerLink="/register" class="switch-link">Create one here</a>
+          <a (click)="goRegister()" class="switch-link">Create one here</a>
         </p>
       </div>
 

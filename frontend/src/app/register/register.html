@@ -118,14 +118,8 @@
         </div>
 
         <!-- Submit Button -->
-        <button mat-raised-button color="primary" type="submit" [disabled]="registerForm.invalid || isLoading">
-
-          @if (isLoading) {
-          <mat-progress-spinner mode="indeterminate" diameter="20" strokeWidth="3"></mat-progress-spinner>
-          <span>Creating Account...</span>
-          } @else {
+        <button mat-raised-button color="primary" type="submit" [disabled]="registerForm.invalid">
           <span>Create Account</span>
-          }
         </button>
 
         <!-- Error Message -->
@@ -146,7 +140,7 @@
         <!-- Login Link -->
         <p class="auth-switch">
           Already have an account?
-          <a routerLink="/login" class="switch-link">Sign in here</a>
+          <a (click)="goLogin()" class="switch-link">Sign in here</a>
         </p>
       </div>
 

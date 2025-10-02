@@ -60,7 +60,7 @@ export class Bloger implements OnInit {
     } else {
       const ping = this.credentialService.CheckAuthentication();
       ping.subscribe(obj => {
-        if (username == obj.username) this.router.navigate(['/profile']);
+        if (obj && username == obj.username) this.router.navigate(['/profile']);
       })
     }
 

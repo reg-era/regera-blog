@@ -81,7 +81,7 @@ export class Newblog implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.credentialService.CheckAuthentication().subscribe(auth => {
-      if (!auth.valid) this.router.navigate(['/']);
+      if (!auth) this.router.navigate(['/']);
     })
 
     this.route.paramMap.subscribe(params => {

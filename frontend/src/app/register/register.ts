@@ -28,10 +28,8 @@ import { Router } from '@angular/router';
 export class Register implements OnInit {
   hidePassword = true;
   hideConfirmPassword = true;
-  isLoading = false;
   errorMessage: string | null = null;
   _Refresh = true;
-
 
   registerForm!: FormGroup<RegisterFormModel>;
 
@@ -43,7 +41,7 @@ export class Register implements OnInit {
 
   ngOnInit() {
     this.credentialService.CheckAuthentication().subscribe(auth => {
-      if (auth.valid) this.router.navigate(['/']);
+      if (auth) this.router.navigate(['/']);
       this._Refresh = false;
     })
     this.registerForm = this.formBuilder.nonNullable.group<RegisterFormModel>({
@@ -64,21 +62,27 @@ export class Register implements OnInit {
     return password === confirm ? null : { passwordMismatch: true };
   };
 
-  async onSubmit() {
+  onSubmit() {
     if (this.registerForm.valid) {
-      this.isLoading = true;
 
-      const response = await this.credentialService.RegisterService(this.registerForm.getRawValue());
-      if (!response.success) {
-        this.errorMessage = response.message || 'Oops something is wrong';
-      }
-      this.isLoading = false;
-      this.registerForm.reset();
+      this.credentialService
+        .RegisterService(this.registerForm.getRawValue())
+        .subscribe(res => {
+          if (!res) {
+            this.errorMessage = res || 'Oops something is wrong';
+            this.registerForm.reset();
+          }
+        })
+
     }
   }
 
   get passwordMismatch() {
     return this.registerForm.errors?.['passwordMismatch'] &&
       this.registerForm.get('confirmPassword')?.touched;
+  }
+
+  goLogin() {
+    this.router.navigate(['/login']);
   }
 }

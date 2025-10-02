@@ -1,18 +1,18 @@
-import { Component, OnInit, OnDestroy, ElementRef, HostListener, signal, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
-import { MatToolbarModule } from '@angular/material/toolbar';
+import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatListModule } from '@angular/material/list';
-import { CommonModule } from '@angular/common';
-import { CredentialService } from '../services/credential-service';
-
 import { MatDrawer } from '@angular/material/sidenav';
-import { Subject } from 'rxjs';
-import { takeUntil, filter } from 'rxjs/operators';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { Subject } from 'rxjs';
+import { takeUntil, filter } from 'rxjs/operators';
+
+import { CredentialService } from '../services/credential-service';
 
 @Component({
   selector: 'app-root',
@@ -69,7 +69,7 @@ export class App implements OnInit, OnDestroy {
 
   checkAuth() {
     this.credentialService.CheckAuthentication().subscribe(auth => {
-      if (auth.valid) {
+      if (auth) {
         this.isBlogger = true;
         this.isAdmin = auth.role == 'ADMIN';
       }

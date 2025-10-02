@@ -1,7 +1,9 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, map, Observable, of } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
+import { catchError, map, Observable, of, tap } from 'rxjs';
+
 import { environment } from '../environments/environment.development';
 
 export interface RegisterFormModel {
@@ -25,66 +27,63 @@ export class CredentialService {
     private http: HttpClient
   ) { }
 
-  async RegisterService(form: RegisterFormModel): Promise<{ success: boolean; message?: string }> {
-    try {
-      const res = await fetch(`${environment.apiURL}/api/users/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(form),
-      });
-
-      if (res.ok) {
-        const { token } = await res.json();
-        localStorage.setItem('auth_token', token);
-        this.router.navigate(['/']);
-        return { success: true };
-      } else {
-        const { error } = await res.json();
-        return { success: false, message: error };
-      }
-
-    } catch (error) {
-      console.error("Error: ", error);
-      return { success: false, message: 'Sorry something is wrong' };
-    }
+  RegisterService(form: RegisterFormModel): Observable<string | null> {
+    return this.http.post<{ token: string } | { error: string }>(
+      `${environment.apiURL}/api/users/register`,
+      form
+    ).pipe(
+      tap((res: any) => {
+        if ('token' in res) {
+          localStorage.setItem('auth_token', res.token);
+          this.router.navigate(['/']);
+        }
+      }),
+      map((res: any) => {
+        if ('token' in res) {
+          return null; // success → no error
+        }
+        return res.error; // backend error
+      }),
+      catchError((err) => {
+        console.error('Error: ', err);
+        return of('Sorry something is wrong');
+      })
+    );
   }
 
-  async LoginService(form: LoginFormModel): Promise<{ success: boolean; message?: string }> {
-    try {
-      const res = await fetch(`${environment.apiURL}/api/users/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(form),
-      });
-
-      if (res.ok) {
-        const { token } = await res.json();
-        localStorage.setItem("auth_token", token);
-        this.router.navigate(['/']);
-        return { success: true };
-      } else {
-        const { error } = await res.json();
-        return { success: false, message: error };
-      }
-    } catch (error) {
-      console.error("Error: ", error);
-      return { success: false, message: 'Sorry something is wrong' };
-    }
+  LoginService(form: LoginFormModel): Observable<string | null> {
+    return this.http.post<{ token: string } | { error: string }>(
+      `${environment.apiURL}/api/users/login`,
+      form
+    ).pipe(
+      tap((res: any) => {
+        if ('token' in res) {
+          localStorage.setItem('auth_token', res.token);
+          this.router.navigate(['/']);
+        }
+      }),
+      map((res: any) => {
+        if ('token' in res) {
+          return null;
+        }
+        return res.error;
+      }),
+      catchError((err) => {
+        const error = err.error.error || 'Sorry something is wrong';
+        return of(error);
+      })
+    );
   }
 
-  async LogoutService() {
+  LogoutService() {
     localStorage.removeItem("auth_token");
     this.router.navigate(['/login']);
   }
 
-  CheckAuthentication(): Observable<{ valid: boolean, username: string, role: string }> {
+  CheckAuthentication(): Observable<{ username: string, role: string } | null> {
     const token = localStorage.getItem('auth_token');
     if (!token || token === '') {
-      return of({ valid: false, username: '', role: '' }); // return an Observable of default
+      return of(null);
     }
 
     const headers = new HttpHeaders({
@@ -95,11 +94,10 @@ export class CredentialService {
       `${environment.apiURL}/api/users/ping`,
       { headers }
     ).pipe(
-      map(data => ({ valid: true, ...data })), // map response to desired format
       catchError(() => {
         localStorage.removeItem('auth_token');
-        return of({ valid: false, username: '', role: '' });
-      }) // handle error
+        return of(null);
+      })
     );
   }
 }
