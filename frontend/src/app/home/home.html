@@ -1,11 +1,11 @@
-<div class="container-fluid py-4" (scroll)="onScroll($event)">
-  <div class="row" (scroll)="onScroll($event)">
-    <div class="col-12" (scroll)="onScroll($event)">
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
       <app-search />
 
-      <div class="card-container" (scroll)="onScroll($event)">
+      <div class="card-container">
         @if (blogs$ | async ;as blogs){
-        <div class="blog-cards" (scroll)="onScroll($event)">
+        <div class="blog-cards">
           @for (blog of blogs; track blog.id) {
           <app-blog-card [blog]="blog"></app-blog-card>
           }

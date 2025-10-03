@@ -36,8 +36,6 @@ export class Newblog implements OnInit, OnDestroy {
   onEditing: boolean = false;
   blogEditing: number = 0;
   errorMessage: string | null = null;
-  successMessage: string | null = null;
-  isSubmitting: boolean = false;
   isLoading: boolean = false;
 
   // File handling properties
@@ -178,30 +176,26 @@ export class Newblog implements OnInit, OnDestroy {
       return;
     }
 
-    this.isSubmitting = true;
     this.errorMessage = null;
-    this.successMessage = null;
 
     try {
       let response;
 
-      // if (this.onEditing) {
-      // response = await this.blogService.updateBlog(this.blogForm.getRawValue());
-      // } else {
-      response = await this.blogService.sendBlog(this.blogForm.getRawValue());
-      this.successMessage = 'Blog published successfully!';
-      // }
-
-      if (response.success) {
-        this.showMessage(this.successMessage, 'success');
-        this.router.navigate(['/profile']);
+      if (this.onEditing) {
+        response = await this.blogService.updateBlog(this.blogEditing, this.blogForm.getRawValue());
       } else {
-        this.showMessage(response.message || 'Failed to save blog. Please try again.', 'error');
+        response = await this.blogService.sendBlog(this.blogForm.getRawValue());
+      }
+
+      if (response) {
+        this.showMessage(response || 'Failed to save blog. Please try again.', 'error');
+      } else {
+        this.showMessage('Blog published successfully!', 'success');
+        this.router.navigate(['/profile']);
       }
     } catch (error) {
       console.error('Error submitting blog:', error);
       this.showMessage('An unexpected error occurred. Please try again.', 'error');
-      this.isSubmitting = false;
     }
   }
 
@@ -215,7 +209,6 @@ export class Newblog implements OnInit, OnDestroy {
   private resetForm(): void {
     this.blogForm.reset();
     this.errorMessage = null;
-    this.successMessage = null;
   }
 
   private showMessage(message: string, type: 'success' | 'error' | 'info' = 'info'): void {

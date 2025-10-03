@@ -10,11 +10,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BlogRepository extends JpaRepository<Blog, Long> {
-    public Optional<Blog> findById(Long id);
 
-    public List<Blog> findTop5ByOrderByCreatedAtDesc();
+    Optional<Blog> findById(Long id);
 
-    public List<Blog> findByUserUsername(String username);
+    List<Blog> findTop5ByOrderByCreatedAtDesc();
+
+    List<Blog> findByUserUsername(String username);
 
     @Query("SELECT b FROM Blog b WHERE " +
             "LOWER(b.title) LIKE LOWER(CONCAT('%', :query, '%')) OR " +

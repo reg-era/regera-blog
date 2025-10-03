@@ -89,12 +89,7 @@ export class App implements OnInit, OnDestroy {
 
   toggleNavBar(): void {
     this.showNavBar = !this.showNavBar;
-
-    if (this.showNavBar) {
-      this.drawer.open();
-    } else {
-      this.drawer.close();
-    }
+    this.showNavBar ? this.drawer.open() : this.drawer.close();
   }
 
   closeNavBar(): void {

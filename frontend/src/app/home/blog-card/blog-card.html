@@ -1,58 +1,83 @@
 <mat-card class="blog-card mat-elevation-z6" matRipple [matRippleDisabled]="false"
-    [matRippleColor]="'rgba(255,255,255,0.1)'" (click)="goBlog()">
+  [matRippleColor]="'rgba(255,255,255,0.1)'" (click)="goBlog($event)">
 
-    @if(isOwner){
-    <div class="owner-actions">
-        <button mat-icon-button color="primary" class="edit-btn" (click)="onEdit(blog)">
-            <mat-icon>edit</mat-icon>
+  @if (showDialog){
+  <div class="dialog-overlay">
+    <div class="dialog-container">
+
+      <div class="dialog-icon">
+        <mat-icon>help_outline</mat-icon>
+      </div>
+
+      <div class="dialog-content">
+        <h2 class="dialog-title">Are you sure?</h2>
+        <p class="dialog-message">you want to delete Blog :: {{blog.title}} ::</p>
+      </div>
+
+      <div class="dialog-actions">
+        <button mat-button class="cancel-btn" (click)="this.showDialog = false">Cancel</button>
+        <button mat-raised-button class="confirm-btn"
+          (click)="onConfirmDelet();this.blog.title = 'Deleted Blog';this.showDialog = false;">
+          Yes, Continue
         </button>
-        <button mat-icon-button color="warn" class="delete-btn" (click)="onDelete(blog)">
-            <mat-icon>delete</mat-icon>
-        </button>
+      </div>
+
     </div>
-    }
+  </div>
+  }
 
-    <!-- Card Header with Author Info -->
-    <mat-card-header class="card-header">
-        <div mat-card-avatar class="author-avatar">
-            <span>{{ getAuthorInitials(blog.authorName) }}</span>
-        </div>
-        <mat-card-title class="card-title">
-            {{ blog.title }}
-        </mat-card-title>
-        <mat-card-subtitle class="card-subtitle">
-            by {{ blog.authorName }}
-        </mat-card-subtitle>
-    </mat-card-header>
+  @if(isOwner){
+  <div class="owner-actions">
+    <button mat-icon-button color="primary" class="edit-btn" (click)="onEdit()">
+      <mat-icon>edit</mat-icon>
+    </button>
+    <button mat-icon-button color="warn" class="delete-btn" (click)="this.showDialog = true">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
+  }
 
-    <!-- Cover Image -->
-    <div class="image-container">
-        <img mat-card-image [src]="blog.cover" [alt]="blog.title + ' cover'" class="cover-img" loading="lazy">
-        <div class="image-overlay"></div>
+  <!-- Card Header with Author Info -->
+  <mat-card-header class="card-header">
+    <div mat-card-avatar class="author-avatar">
+      <span>{{ getAuthorInitials(blog.authorName) }}</span>
     </div>
+    <mat-card-title class="card-title">
+      {{ blog.title }}
+    </mat-card-title>
+    <mat-card-subtitle class="card-subtitle">
+      by {{ blog.authorName }}
+    </mat-card-subtitle>
+  </mat-card-header>
 
-    <!-- Card Content -->
-    <mat-card-content class="card-content">
-        <p class="blog-excerpt">
-            {{ truncateText(blog.content, 120) }}
-        </p>
-        <div class="publish-date">
-            <mat-icon class="date-icon">today</mat-icon>
-            {{ formatDate(blog.createdAt) }}
-        </div>
-    </mat-card-content>
+  <!-- Cover Image -->
+  <div class="image-container">
+    <img mat-card-image [src]="blog.cover" [alt]="blog.title + ' cover'" class="cover-img" loading="lazy">
+    <div class="image-overlay"></div>
+  </div>
 
-    <!-- Card Actions -->
-    <mat-card-actions class="card-actions d-flex justify-content-between align-items-center">
-        <div class="card-stats d-flex align-items-center gap-3">
-            <div class="stat-item d-flex align-items-center" matRipple class="stat-ripple">
-                <mat-icon class="stat-icon like-icon">favorite</mat-icon>
-                <span class="stat-count">{{ formatCount(blog.likes) }}</span>
-            </div>
-            <div class="stat-item d-flex align-items-center" matRipple class="stat-ripple">
-                <mat-icon class="stat-icon comment-icon">chat_bubble</mat-icon>
-                <span class="stat-count">{{ formatCount(blog.comments) }}</span>
-            </div>
-        </div>
-    </mat-card-actions>
+  <!-- Card Content -->
+  <mat-card-content class="card-content">
+    <p class="blog-excerpt">
+      {{ truncateText(blog.description, 120) }}
+    </p>
+    <div class="publish-date">
+      <mat-icon class="date-icon">today</mat-icon>
+      {{ formatDate(blog.createdAt) }}
+    </div>
+  </mat-card-content>
+
+  <!-- Card Actions -->
+  <mat-card-actions class="card-actions d-flex justify-content-between align-items-center">
+    <div class="card-stats d-flex align-items-center gap-3">
+      <div class="stat-item d-flex align-items-center" matRipple class="stat-ripple">
+        <mat-icon class="stat-icon like-icon">favorite</mat-icon>
+        <span class="stat-count">{{ formatCount(blog.likes) }}</span>
+      </div>
+      <div class="stat-item d-flex align-items-center" matRipple class="stat-ripple">
+        <mat-icon class="stat-icon comment-icon">chat_bubble</mat-icon>
+        <span class="stat-count">{{ formatCount(blog.comments) }}</span>
+      </div>
+    </div>
+  </mat-card-actions>
 </mat-card>

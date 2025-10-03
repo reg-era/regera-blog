@@ -94,7 +94,37 @@ public class BlogService {
         return this.blogRepository.save(blog);
     }
 
-    public void updateBlog(Blog blog) {
+    public void updateBlog(Long userId, Long blogId, String title, String description, String content) {
+        Optional<Blog> blog = this.blogRepository.findById(blogId);
+
+        if (!blog.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Blog not found");
+
+        if (!blog.get().getUser().getId().equals(userId))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Updating blog not permitted");
+
+        Blog newBlog = blog.get();
+        newBlog.setTitle(title);
+        newBlog.setDescription(description);
+        newBlog.setContent(content);
+
+        if (!newBlog.isValidBlog()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid blog information");
+        }
+
+        this.blogRepository.save(newBlog);
+    }
+
+    public void removeBlog(Long userId, Long blogId) {
+        Optional<Blog> blog = this.blogRepository.findById(blogId);
+
+        if (!blog.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Blog not found");
+
+        if (!blog.get().getUser().getId().equals(userId))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Deleting blog not permitted");
+
+        this.blogRepository.delete(blog.get());
     }
 
     public boolean existBlog(Long blogId) {

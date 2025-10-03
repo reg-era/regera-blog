@@ -541,3 +541,366 @@
     }
   }
 }
+
+
+// dialog.component.scss
+
+:root {
+  --font-base: 'Inter', sans-serif;
+  --transition: 0.3s ease;
+  --bg: #ffffff;
+  --background: #f8f9fa;
+  --text: #212529;
+  --card: #f9f9f9;
+  --accent: #4f46e5;
+  --border: #e0e0e0;
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  --border-light: #f0f0f0;
+  --text-muted: #666;
+  --elevation-2: 0px 2px 8px rgba(0, 0, 0, 0.05);
+  --input-bg: #f9f9f9;
+}
+
+// Dialog Overlay
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+  animation: fadeIn 0.3s ease-out;
+  font-family: var(--font-base);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Dialog Container
+.dialog-container {
+  background: var(--bg);
+  border-radius: 24px;
+  padding: 3rem 2.5rem 2.5rem;
+  max-width: 500px;
+  width: 100%;
+  box-shadow:
+    0 25px 80px rgba(0, 0, 0, 0.15),
+    0 0 0 1px var(--border-light);
+  position: relative;
+  animation: slideInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// Dialog Icon
+.dialog-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 2rem;
+  background: linear-gradient(135deg, var(--accent) 0%, #6366f1 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 25px rgba(79, 70, 229, 0.3);
+  animation: pulse 2s ease-in-out infinite;
+  position: relative;
+
+  mat-icon {
+    color: white;
+    font-size: 3rem;
+    width: 3rem;
+    height: 3rem;
+  }
+
+  // Ripple effect
+  &::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    opacity: 0;
+    animation: ripple 2s ease-in-out infinite;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 8px 25px rgba(79, 70, 229, 0.3);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 12px 35px rgba(79, 70, 229, 0.4);
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.3);
+    opacity: 0;
+  }
+}
+
+// Dialog Content
+.dialog-content {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.dialog-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 1rem 0;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.dialog-message {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0;
+
+  // Blog title emphasis
+  ::ng-deep {
+    strong {
+      color: var(--accent);
+      font-weight: 700;
+    }
+  }
+}
+
+// Dialog Actions
+.dialog-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+// Cancel Button
+.cancel-btn {
+  flex: 1;
+  height: 52px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  background: var(--card);
+  color: var(--text);
+  border: 2px solid var(--border);
+  transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.05), transparent);
+    transition: left 0.5s ease;
+  }
+
+  &:hover {
+    background: var(--bg);
+    border-color: var(--text-muted);
+    transform: translateY(-2px);
+    box-shadow: var(--elevation-2);
+
+    &::before {
+      left: 100%;
+    }
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.98);
+  }
+}
+
+// Confirm Button
+.confirm-btn {
+  flex: 1;
+  height: 52px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent) 0%, #6366f1 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+  border: none;
+  transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+
+    &::before {
+      left: 100%;
+    }
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.98);
+  }
+}
+
+// Responsive Design
+@media (max-width: 640px) {
+  .dialog-container {
+    padding: 2.5rem 2rem 2rem;
+    border-radius: 20px;
+    max-width: calc(100vw - 2rem);
+  }
+
+  .dialog-icon {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 1.5rem;
+
+    mat-icon {
+      font-size: 2.5rem;
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+  }
+
+  .dialog-content {
+    margin-bottom: 2rem;
+  }
+
+  .dialog-title {
+    font-size: 1.75rem;
+  }
+
+  .dialog-message {
+    font-size: 1rem;
+  }
+
+  .dialog-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+
+    .cancel-btn,
+    .confirm-btn {
+      width: 100%;
+    }
+  }
+}
+
+@media (max-width: 400px) {
+  .dialog-overlay {
+    padding: 0.5rem;
+  }
+
+  .dialog-container {
+    padding: 2rem 1.5rem 1.5rem;
+  }
+
+  .dialog-title {
+    font-size: 1.5rem;
+  }
+
+  .cancel-btn,
+  .confirm-btn {
+    height: 48px;
+    font-size: 0.95rem;
+  }
+}
+
+// Dark Theme Support
+.dark-theme {
+  --bg: #1e293b;
+  --background: #0f172a;
+  --text: #f8fafc;
+  --card: #1e293b;
+  --border: #334155;
+  --border-light: #334155;
+  --text-muted: #94a3b8;
+
+  .dialog-overlay {
+    background: rgba(0, 0, 0, 0.7);
+  }
+
+  .dialog-container {
+    box-shadow:
+      0 25px 80px rgba(0, 0, 0, 0.3),
+      0 0 0 1px rgba(255, 255, 255, 0.1);
+  }
+
+  .cancel-btn {
+    background: rgba(51, 65, 85, 0.8);
+    border-color: var(--border);
+
+    &:hover {
+      background: rgba(51, 65, 85, 0.9);
+      border-color: #64748b;
+    }
+
+    &::before {
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+    }
+  }
+}
+
+// Close animation classes (optional - add to elements when closing)
+.dialog-overlay.closing {
+  animation: fadeOut 0.3s ease-out forwards;
+}
+
+.dialog-container.closing {
+  animation: slideOutDown 0.3s ease-out forwards;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideOutDown {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+}

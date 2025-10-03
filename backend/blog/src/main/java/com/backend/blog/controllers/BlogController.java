@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -86,13 +85,29 @@ public class BlogController {
     }
 
     @PutMapping("/{blogId}")
-    public ResponseEntity<Map<String, String>> updateBlog(@PathVariable String blogId, @RequestBody Blog blog) {
-        return null;
+    public ResponseEntity<Map<String, Object>> updateBlog(@PathVariable Long blogId,
+            @RequestParam String title,
+            @RequestParam String description,
+            @RequestParam String content,
+            HttpServletRequest request) {
+
+        User user = (User) request.getAttribute("user");
+        this.blogService.updateBlog(user.getId(), blogId, title, description, content);
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("id", blogId);
+        res.put("message", "Blog Updated successfully");
+        return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
 
     @DeleteMapping("/{blogId}")
-    public ResponseEntity<Map<String, String>> removeBlog(@PathVariable String blogId) {
-        return null;
+    public ResponseEntity<Map<String, String>> removeBlog(@PathVariable Long blogId, HttpServletRequest request) {
+        User user = (User) request.getAttribute("user");
+        this.blogService.removeBlog(user.getId(), blogId);
+
+        Map<String, String> res = new HashMap<>();
+        res.put("message", "Blog Removed successfully");
+        return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
 
 }

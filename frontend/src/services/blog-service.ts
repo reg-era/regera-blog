@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { environment } from '../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
 import { MediaService } from './media-service';
@@ -31,9 +30,9 @@ export interface BlogObject {
 
 @Injectable({ providedIn: 'root' })
 export class BlogService {
-  constructor(private router: Router, private http: HttpClient, private mediaService: MediaService) { }
+  constructor(private http: HttpClient, private mediaService: MediaService) { }
 
-  async sendBlog(blog: BlogFormModel): Promise<{ success: boolean; message?: string }> {
+  async sendBlog(blog: BlogFormModel): Promise<string | null> {
     try {
       const formData = new FormData();
 
@@ -54,16 +53,62 @@ export class BlogService {
       });
 
       if (res.ok) {
-        const data = await res.json();
-        this.router.navigate([`/blog/${data.id}`]);
-        return { success: true };
+        return null;
       } else {
         const { error } = await res.json();
-        return { success: false, message: error };
+        return error;
       }
     } catch (error) {
       console.error("Error sending blog: ", error);
-      return { success: false, message: 'Sorry something is wrong' };
+      return 'Sorry something is wrong';
+    }
+  }
+
+  async updateBlog(id: number, blog: BlogFormModel): Promise<string | null> {
+    try {
+      const formData = new FormData();
+      formData.append('title', blog.title);
+      formData.append('description', blog.description);
+      formData.append('content', blog.content);
+
+      const res = await fetch(`${environment.apiURL}/api/blogs/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+        },
+        method: 'PUT',
+        body: formData,
+      });
+
+      if (res.ok) {
+        return null;
+      } else {
+        const { error } = await res.json();
+        return error;
+      }
+    } catch (error) {
+      console.error("Error Updating blog: ", error);
+      return 'Sorry something is wrong';
+    }
+  }
+
+  async deletBlog(id: number): Promise<string | null> {
+    try {
+      const res = await fetch(`${environment.apiURL}/api/blogs/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('auth_token')}`
+        },
+        method: 'DELETE',
+      });
+
+      if (res.ok) {
+        return null;
+      } else {
+        const { error } = await res.json();
+        return error;
+      }
+    } catch (error) {
+      console.error("Error Deleting blog: ", error);
+      return 'Sorry something is wrong';
     }
   }
 
