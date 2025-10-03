@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { environment } from '../environments/environment.development';
 import { MediaService } from './media-service';
 import { BlogObject } from './blog-service';
-import { catchError, forkJoin, map, Observable, of, switchMap } from 'rxjs';
+import { catchError, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 export interface UserObject {
@@ -79,7 +79,6 @@ export class UserService {
       { headers }
     ).pipe(
       switchMap(data => {
-        // Convert profile image
         const profile$ = this.mediaService.urlToBlobImageUrl(data.profile.picture).pipe(
           map(newImage => {
             data.profile.picture = newImage;
@@ -87,8 +86,7 @@ export class UserService {
           })
         );
 
-        // Convert blog cover images
-        const blogs$ = forkJoin(
+        const blogs$ = data.blogs.length > 0 ? forkJoin(
           data.blogs.map(blog =>
             this.mediaService.urlToBlobImageUrl(blog.cover).pipe(
               map(newImage => {
@@ -97,18 +95,16 @@ export class UserService {
               })
             )
           )
-        );
+        ) : of([]);
 
-        // Wait for all conversions
-        return forkJoin([profile$, blogs$]).pipe(
-          map(() => data)
-        );
+        return forkJoin({ profile: profile$, blogs: blogs$ });
       }),
       catchError(error => {
         console.error("Error getting bloger: ", error);
         return of(null);
       })
     );
+
   }
 
   async makeFollow(username: string): Promise<{ success: boolean; data: { follows: number, status: number } }> {

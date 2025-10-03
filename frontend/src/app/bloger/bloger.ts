@@ -7,20 +7,22 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { BlogObject } from '../../services/blog-service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { createEmptyUserObject, UserObject, UserService } from '../../services/user-service';
+import { UserObject, UserService } from '../../services/user-service';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { CredentialService } from '../../services/credential-service';
+import { AsyncPipe } from '@angular/common';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-bloger',
-  imports: [MatProgressSpinner, FormsModule, BlogCard, MatCardModule, MatIconModule, MatFormFieldModule, MatListModule],
+  imports: [AsyncPipe, MatProgressSpinner, FormsModule, BlogCard, MatCardModule, MatIconModule, MatFormFieldModule, MatListModule],
   templateUrl: './bloger.html',
   styleUrl: './bloger.css'
 })
 
 export class Bloger implements OnInit {
-  blogger: UserObject = createEmptyUserObject();
-  blogs: BlogObject[] = [];
+  blogger$: BehaviorSubject<UserObject | null>;
+  blogs$: BehaviorSubject<BlogObject[] | null>;
 
   isOwner = false;
 
@@ -38,17 +40,17 @@ export class Bloger implements OnInit {
   showToast = signal(false);
   toastMessage = signal<string>('');
 
-  _Refresh = true;
-
   constructor(
-    private cdr: ChangeDetectorRef,
     private router: Router,
     private route: ActivatedRoute,
     private userService: UserService,
     private credentialService: CredentialService
-  ) { }
+  ) {
+    this.blogger$ = new BehaviorSubject<UserObject | null>(null);
+    this.blogs$ = new BehaviorSubject<BlogObject[] | null>(null);
+  }
 
-  async ngOnInit() {
+  ngOnInit(): void {
     const username = this.route.snapshot.paramMap.get('username');
     if (!username && this.router.url != '/profile') {
       this.router.navigate(['/']);
@@ -66,11 +68,8 @@ export class Bloger implements OnInit {
 
     this.userService.getBloger(username).subscribe((data) => {
       if (data) {
-        this.blogger = data.profile;
-        this.blogs = data.blogs;
-
-        this._Refresh = false;
-        this.cdr.markForCheck();
+        this.blogger$.next(data.profile);
+        this.blogs$.next(data.blogs);
       }
     });
   }
@@ -107,12 +106,12 @@ export class Bloger implements OnInit {
   }
 
   async toggleFollow() {
-    const response = await this.userService.makeFollow(this.blogger.username);
-    if (response.success) {
-      this.blogger.isFollowing = response.data.status == 1;
-      this.blogger.followers = response.data.follows;
-    }
-    this.cdr.markForCheck();
+    // const response = await this.userService.makeFollow(this.blogger.username);
+    // if (response.success) {
+    // this.blogger.isFollowing = response.data.status == 1;
+    // this.blogger.followers = response.data.follows;
+    // }
+    // this.cdr.markForCheck();
   }
 
   getBlogs(): BlogObject[] {

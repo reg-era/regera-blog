@@ -1,6 +1,5 @@
 package com.backend.blog.controllers;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +21,6 @@ import com.backend.blog.entities.Blog;
 import com.backend.blog.entities.User;
 import com.backend.blog.services.BlogService;
 import com.backend.blog.services.MediaService;
-import com.backend.blog.services.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -33,7 +31,7 @@ public class BlogController {
     private final BlogService blogService;
     private final MediaService mediaService;
 
-    public BlogController(BlogService blogService, UserService userService, MediaService mediaService) {
+    public BlogController(BlogService blogService, MediaService mediaService) {
         this.blogService = blogService;
         this.mediaService = mediaService;
     }
@@ -57,7 +55,7 @@ public class BlogController {
             @RequestParam String description,
             @RequestParam String content,
             @RequestParam(required = false) MultipartFile media,
-            HttpServletRequest request) throws IOException {
+            HttpServletRequest request) {
 
         User user = (User) request.getAttribute("user");
 

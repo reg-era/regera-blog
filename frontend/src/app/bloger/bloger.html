@@ -1,75 +1,77 @@
-<!-- blogger-profile.component.html -->
-
 <div class="blogger-profile">
-    @if(_Refresh){
-    <mat-spinner></mat-spinner>
-    }@else{
-    @if(showReport){
-    <div class="confirmator-overlay">
-        <div class="confirmator-box mat-elevation-z8">
-            <p class="message">Are you sure you want to report {{ blogger.username }}?</p>
-            <div class="report-reasons">
-                @for(reason of availableReasons;track reason){
-                <label>
-                    <input type="checkbox" [value]="reason" (change)="toggleReason(reason, $event)" />
-                    {{ reason }}
-                </label>
-                }
-            </div>
-
-            <div class="report-details">
-                <textarea placeholder="Optional details..." [(ngModel)]="reportMessage"></textarea>
-            </div>
-
-            <!-- Actions -->
-            <div class="actions">
-                <button mat-raised-button color="warn" (click)="confirmReport()">Confirm</button>
-                <button mat-stroked-button color="primary" (click)="showReport = false">Cancel</button>
-            </div>
-        </div>
-    </div>
-    }
-
-    @if(showToast()) {
-    <div class="toster-container">
-        <mat-card class="toast-card mat-elevation-z8">
-            <mat-icon class="toast-icon">info</mat-icon>
-            <span class="toast-message">{{ toastMessage() }}</span>
-        </mat-card>
-    </div>
-    }
-
-    <section class="blogger-header mat-elevation-z2">
-        <div class="blogger-info">
-            <h1>{{ blogger.username }}</h1>
-            <p class="bio">{{ blogger.bio }}</p>
-            <p class="since">Joined on {{ ( formatDate(blogger.createdAt)) }}</p>
-
-            @if(!isOwner){
-            <button mat-raised-button color="primary" (click)="toggleFollow()">
-                {{ blogger.isFollowing ? 'Unfollow' : 'Follow' }} • {{ blogger.followers }}
-            </button>
-            }@else{
-            <label mat-raised-button color="primary" disabled>
-                Followers • {{ blogger.followers }}
-            </label>
-            }
-        </div>
-
-        @if(!isOwner){
-        <button mat-stroked-button color="warn" class="report-btn" (click)="this.showReport = true">
-            Report
-        </button>
+  @if(showReport){
+  <div class="confirmator-overlay">
+    <div class="confirmator-box mat-elevation-z8">
+      <p class="message">Are you sure you want to report this blogger ?</p>
+      <div class="report-reasons">
+        @for(reason of availableReasons;track reason){
+        <label>
+          <input type="checkbox" [value]="reason" (change)="toggleReason(reason, $event)" />
+          {{ reason }}
+        </label>
         }
-    </section>
+      </div>
 
-    <section class="blogger-posts">
-        <h2>{{ blogger.username }}'s Blogs</h2>
-        <div class="blog-list">
-            @for(blog of blogs;track blog.id){
-            <app-blog-card [blog]="blog"></app-blog-card>
-            }
-        </div>
-    </section>
+      <div class="report-details">
+        <textarea placeholder="Optional details..." [(ngModel)]="reportMessage"></textarea>
+      </div>
+
+      <!-- Actions -->
+      <div class="actions">
+        <button mat-raised-button color="warn" (click)="confirmReport()">Confirm</button>
+        <button mat-stroked-button color="primary" (click)="showReport = false">Cancel</button>
+      </div>
+    </div>
+  </div>
+  }
+
+  @if(showToast()) {
+  <div class="toster-container">
+    <mat-card class="toast-card mat-elevation-z8">
+      <mat-icon class="toast-icon">info</mat-icon>
+      <span class="toast-message">{{ toastMessage() }}</span>
+    </mat-card>
+  </div>
+  }
+
+  @if (blogger$ | async ; as blogger){
+  <section class="blogger-header mat-elevation-z2">
+    <div class="blogger-info">
+      <h1>{{ blogger.username }}</h1>
+      <p class="bio">{{ blogger.bio }}</p>
+      <p class="since">Joined on {{ ( formatDate(blogger.createdAt)) }}</p>
+
+      @if(!isOwner){
+      <button mat-raised-button color="primary" (click)="toggleFollow()">
+        {{ blogger.isFollowing ? 'Unfollow' : 'Follow' }} • {{ blogger.followers }}
+      </button>
+      }@else{
+      <label mat-raised-button color="primary" disabled>
+        Followers • {{ blogger.followers }}
+      </label>
+      }
+    </div>
+
+    @if(!isOwner){
+    <button mat-stroked-button color="warn" class="report-btn" (click)="this.showReport = true">
+      Report
+    </button>
     }
+  </section>
+
+  <section class="blogger-posts">
+    <h2>{{ blogger.username }}'s Blogs</h2>
+    <div class="blog-list">
+      @if (blogs$ | async; as blogs){
+      @for(blog of blogs;track blog.id){
+      <app-blog-card [blog]="blog"></app-blog-card>
+      }
+      }@else{
+      <mat-spinner></mat-spinner>
+      }
+    </div>
+  </section>
+  }@else {
+  <mat-spinner></mat-spinner>
+  }
 </div>

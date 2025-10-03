@@ -20,7 +20,6 @@ export class MediaService {
     const blob$ = this.http.get(`${environment.apiURL}${imageUrl}`, { responseType: 'blob' }).pipe(
       map(blob => URL.createObjectURL(blob)),
       catchError(() => of('/error-media.gif')),
-      shareReplay(1)
     );
 
     this.cache.set(imageUrl, blob$);

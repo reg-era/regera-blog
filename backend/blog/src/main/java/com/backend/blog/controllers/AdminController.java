@@ -6,7 +6,6 @@ import java.util.Map;
 import com.backend.blog.services.AdminService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -23,7 +22,6 @@ public class AdminController {
         this.adminService = adminService;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/users/{username}")
     public ResponseEntity<Map<String, String>> escaleAdmin(@PathVariable String username) {
         this.adminService.escaleIntoAdmin(username);
@@ -32,7 +30,6 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/users/{username}")
     public ResponseEntity<Map<String, String>> removeUser(@PathVariable String username) {
         this.adminService.removeUser(username);
@@ -41,7 +38,6 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/blog/{blogId}")
     public ResponseEntity<Map<String, String>> removeBlog(@PathVariable Long blogId) {
         this.adminService.removeBlog(blogId);
