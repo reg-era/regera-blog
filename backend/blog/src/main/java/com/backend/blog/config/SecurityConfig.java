@@ -11,6 +11,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import com.backend.blog.entities.User;
+
 import java.util.List;
 
 @Configuration
@@ -42,7 +44,7 @@ public class SecurityConfig {
         })
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/media/**").permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/**").hasRole(User.Role.ADMIN.toString())
 
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/api/users/ping", "/api/users").authenticated()

@@ -1,53 +1,127 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { AdminService } from '../../services/admin-service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { CredentialService } from '../../services/credential-service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [MatCardModule, MatFormFieldModule, MatIconModule, MatListModule, ReactiveFormsModule],
+  imports: [MatCardModule, MatFormFieldModule, MatInputModule, MatIconModule, MatListModule, ReactiveFormsModule],
   templateUrl: './dashboard.html',
-  styleUrl: './dashboard.css'
+  styleUrl: './dashboard.scss'
 })
 
-export class Dashboard {
-  blogUrl = '';
-  userUrl = '';
-
-  reports = [
-    { id: 1, user: 'john_doe', message: 'Spam content in blog post.', reported: 'masda', date: new Date() },
-    { id: 2, user: 'admin42', message: 'Offensive language in comments.', reported: 'john_doe', date: new Date() }
-  ];
-
-  clearReport(id: any) {
+export class Dashboard implements OnInit {
+  constructor(
+    private formBuilder: FormBuilder,
+    private snackBar: MatSnackBar,
+    private adminService: AdminService,
+    private credentialService: CredentialService,
+    private router: Router,
+  ) {
+    this.credentialService.CheckAuthentication().subscribe((res) => {
+      if (!res || res.role !== 'ADMIN') {
+        this.router.navigate(['/']);
+        return
+      }
+    })
   }
 
-  clearBlogUrl() {
-    //   this.blogForm.reset();
+  EscalateForm!: FormGroup;
+  DeleteUserForm!: FormGroup;
+  DeleteBlogForm!: FormGroup;
+
+  showConfirmDialog = false;
+  confirmMessage = '';
+
+  ngOnInit(): void {
+    this.EscalateForm = this.formBuilder.group({ username: ['', Validators.required] })
+    this.DeleteUserForm = this.formBuilder.group({ username: ['', Validators.required] })
+    this.DeleteBlogForm = this.formBuilder.group({ id: ['', Validators.required] })
   }
 
-  clearUserUrl() {
-    //   this.userForm.reset();
+  onEscalateUser() {
+    this.showConfirmDialog = true;
+    // if (this.EscalateForm.valid) {
+    //   const username = this.EscalateForm.get('username')?.getRawValue();
+    //   this.adminService.escalateAdmin(username).subscribe((res) => {
+    //     if (res) {
+    //       this.showMessage(`${res}`, 'success');
+    //     } else {
+    //       this.showMessage(`Something wrong or User not found`, 'error');
+    //     }
+    //   });
+    // }
+    // this.EscalateForm.reset();
   }
 
-  validateBlogUrl() {
-    //   const url = this.blogForm.value.blogUrl;
-    //   console.log('Validating Blog URL:', url);
-    //   // Call backend service or navigate to blog...
+  onBanUser() {
+    if (this.DeleteUserForm.valid) {
+      const username = this.DeleteUserForm.get('username')?.getRawValue();
+      this.adminService.removeUser(username).subscribe((res) => {
+        switch (res) {
+          case 200:
+            this.showMessage(`The user ${username} is banned`, 'success');
+            break;
+          case 404:
+            this.showMessage(`The user ${username} not found`, 'error');
+            break;
+          default:
+            this.showMessage(`Something wrong on submiting`, 'info');
+            break;
+        }
+      });
+      this.DeleteUserForm.reset();
+    }
   }
 
-  validateUserUrl() {
-    //   const url = this.userForm.value.userUrl;
-    //   console.log('Validating User URL:', url);
-    //   // Call backend or show user info...
+  onRemoveBlog() {
+    if (this.DeleteBlogForm.valid) {
+      const blog = this.DeleteBlogForm.get('id')?.getRawValue();
+      const blogId = Number.parseInt(blog);
+
+      if (Number.isNaN(blogId) || blogId <= 0) {
+        this.showMessage(`Invalid blog ID`, 'error');
+      } else {
+        this.adminService.removeBlog(blogId).subscribe((res) => {
+          switch (res) {
+            case 200:
+              this.showMessage(`The blog ${blogId} is removed`, 'success');
+              break;
+            case 404:
+              this.showMessage(`The blog ${blogId} not found`, 'error');
+              break;
+            default:
+              this.showMessage(`Something wrong on submiting`, 'info');
+              break;
+          }
+        });
+      }
+    }
+    this.DeleteBlogForm.reset();
   }
 
-  banUser() {
-    //   const url = this.userForm.value.userUrl;
-    //   console.log('Banning user by URL:', url);
-    //   // Trigger a ban logic here...
+  onClearReport() { }
+
+  onCancelDialog() { }
+
+  onConfirmDialog() { }
+
+  private showMessage(message: string, type: 'success' | 'error' | 'info' = 'info'): void {
+    const config = {
+      duration: 4000,
+      horizontalPosition: 'end' as const,
+      verticalPosition: 'top' as const,
+      panelClass: [`snackbar-${type}`]
+    };
+
+    this.snackBar.open(message, 'Close', config);
   }
 }

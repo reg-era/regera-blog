@@ -1,75 +1,184 @@
-<div class="dashboard-container">
-    <div class="top-section">
+<div class="dashboard-page">
 
-        <!-- 🔍 Blog URL Section -->
-        <mat-card class="dashboard-card">
-            <h3>Search Blog by URL</h3>
+  <div class="dashboard-header">
+    <h1 class="page-title">
+      <mat-icon>admin_panel_settings</mat-icon>
+      Admin Dashboard
+    </h1>
+    <p class="page-subtitle">Manage users, content, and review reports</p>
+  </div>
 
-            <div class="input-group">
-                <input matInput type="text" placeholder="https://example.com/blog/123" class="unstyled-input" />
+  <div class="dashboard-grid">
 
-                @if (blogUrl) {
-                <button mat-icon-button (click)="blogUrl = ''" aria-label="Clear blog URL">
-                    <mat-icon>clear</mat-icon>
-                </button>
-                }
-            </div>
+    <div class="dashboard-card">
+      <div class="card-header">
+        <div class="header-icon escalate">
+          <mat-icon>trending_up</mat-icon>
+        </div>
+        <h3 class="card-title">Escalate to Admin</h3>
+        <p class="card-description">Grant admin privileges to a user</p>
+      </div>
 
-            <button mat-raised-button color="primary" (click)="validateBlogUrl()" [disabled]="!blogUrl">
-                Validate
-            </button>
-        </mat-card>
+      <form [formGroup]="EscalateForm" class="card-form" (ngSubmit)="onEscalateUser()">
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Username</mat-label>
+          <input matInput formControlName="username" name="escalateUsername" placeholder="Enter username to escalate"
+            required>
+          <mat-icon matSuffix>person</mat-icon>
+        </mat-form-field>
 
-        <!-- 👤 User URL Section -->
-        <mat-card class="dashboard-card">
-            <h3>Search User by URL</h3>
-
-            <div class="input-group">
-                <input matInput type="text" placeholder="https://example.com/user/abc" class="unstyled-input" />
-
-                @if (userUrl) {
-                <button mat-icon-button (click)="userUrl = ''" aria-label="Clear user URL">
-                    <mat-icon>clear</mat-icon>
-                </button>
-                }
-            </div>
-
-            <div class="btn-actions">
-                <button mat-raised-button color="primary" (click)="validateUserUrl()" [disabled]="!userUrl">
-                    Validate
-                </button>
-                <button mat-raised-button color="warn" (click)="banUser()" [disabled]="!userUrl">
-                    Ban User
-                </button>
-            </div>
-        </mat-card>
+        <button mat-raised-button type="submit" class="submit-btn escalate-btn">
+          <mat-icon>admin_panel_settings</mat-icon>
+          Escalate User
+        </button>
+      </form>
     </div>
 
-    <!-- 🚨 Reported Messages -->
-    <mat-card class="dashboard-card reports-section">
-        <h3>Reported Messages</h3>
-
-        <div class="report-list">
-            @for (report of reports; track report.id) {
-            <div class="report-card">
-                <div class="left">
-                    <mat-icon color="warn">report_problem</mat-icon>
-                </div>
-                <div class="middle">
-                    <div class="report-message">{{ report.message }}</div>
-                    <div class="report-meta">
-                        From: {{ report.user }} • {{ report.date }}
-                    </div>
-                    <div class="report-target">Reported: {{ report.reported }}</div>
-                </div>
-                <div class="right">
-                    <button mat-stroked-button color="warn" (click)="clearReport(report.id)">
-                        Clear
-                    </button>
-                </div>
-            </div>
-            }
+    <!-- Section 2: Ban User -->
+    <div class="dashboard-card">
+      <div class="card-header">
+        <div class="header-icon ban">
+          <mat-icon>block</mat-icon>
         </div>
-    </mat-card>
+        <h3 class="card-title">Ban User</h3>
+        <p class="card-description">Permanently ban a user account</p>
+      </div>
+
+      <form [formGroup]="DeleteUserForm" class="card-form" (ngSubmit)="onBanUser()">
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Username</mat-label>
+          <input matInput formControlName="username" name="banUsername" placeholder="Enter username to ban" required>
+          <mat-icon matSuffix>person_off</mat-icon>
+        </mat-form-field>
+
+        <button mat-raised-button type="submit" class="submit-btn ban-btn">
+          <mat-icon>block</mat-icon>
+          Ban User
+        </button>
+      </form>
+    </div>
+
+    <!-- Section 3: Remove Blog -->
+    <div class="dashboard-card">
+      <div class="card-header">
+        <div class="header-icon remove">
+          <mat-icon>delete_forever</mat-icon>
+        </div>
+        <h3 class="card-title">Remove Blog</h3>
+        <p class="card-description">Delete a blog post by ID</p>
+      </div>
+
+      <form [formGroup]="DeleteBlogForm" class="card-form" (ngSubmit)="onRemoveBlog()">
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Blog ID</mat-label>
+          <input matInput formControlName="id" type="number" name="blogId" placeholder="Enter blog ID to remove" required>
+          <mat-icon matSuffix>tag</mat-icon>
+        </mat-form-field>
+
+        <button mat-raised-button type="submit" class="submit-btn remove-btn">
+          <mat-icon>delete</mat-icon>
+          Remove Blog
+        </button>
+      </form>
+    </div>
+
+    <!-- Section 4: Reports Table -->
+    <div class="dashboard-card reports-card">
+      <div class="card-header">
+        <div class="header-icon reports">
+          <mat-icon>report</mat-icon>
+        </div>
+        <h3 class="card-title">User Reports</h3>
+        <p class="card-description">Review and manage reported content</p>
+      </div>
+
+      <div class="reports-container">
+
+        <!-- @if (reports.length === 0) {
+        <div class="empty-state">
+          <mat-icon>assignment</mat-icon>
+          <p>No reports to display</p>
+        </div>
+        } @else {
+
+        @for (report of reports; track report.id) {
+            <div class="report-card">
+
+              <div class="report-header">
+                <div class="report-info">
+                  <span class="report-id">#{{ report.id }}</span>
+                  <span class="report-date">
+                    <mat-icon>schedule</mat-icon>
+                    {{ report.date }}
+                  </span>
+                </div>
+
+                <button
+                  mat-icon-button
+                  class="clear-btn"
+                  (click)="onClearReport(report.id)"
+                  matTooltip="Clear Report">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+
+              <div class="report-body">
+                <div class="report-row">
+                  <div class="report-label">
+                    <mat-icon>person</mat-icon>
+                    Reporter
+                  </div>
+                  <div class="report-value">{{ report.reporter }}</div>
+                </div>
+
+                <div class="report-row">
+                  <div class="report-label">
+                    <mat-icon>flag</mat-icon>
+                    Reported
+                  </div>
+                  <div class="report-value">{{ report.reported }}</div>
+                </div>
+
+                <div class="report-row full-width">
+                  <div class="report-label">
+                    <mat-icon>description</mat-icon>
+                    Reason
+                  </div>
+                  <div class="report-value reason">{{ report.cause }}</div>
+                </div>
+              </div>
+
+            </div>
+          }
+
+        } -->
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Confirmation Dialog -->
+  @if (showConfirmDialog) {
+  <div class="dialog-overlay" (click)="onCancelDialog()">
+    <div class="dialog-container" (click)="$event.stopPropagation()">
+
+      <div class="dialog-icon">
+        <mat-icon>help_outline</mat-icon>
+      </div>
+
+      <div class="dialog-content">
+        <h2 class="dialog-title">Are you sure?</h2>
+        <p class="dialog-message">{{ confirmMessage }}</p>
+      </div>
+
+      <div class="dialog-actions">
+        <button mat-button class="cancel-btn" (click)="onCancelDialog()">Cancel</button>
+        <button mat-raised-button class="confirm-btn" (click)="onConfirmDialog()">Yes, Continue</button>
+      </div>
+
+    </div>
+  </div>
+  }
 
 </div>
