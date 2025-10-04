@@ -210,4 +210,27 @@ export class UserService {
       return false;
     }
   }
+
+  makeReport(reported: string, reasons: string[], details: string): Observable<boolean> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
+    });
+
+    const content = (reasons.join(', ') + '<br>' + details).trim()
+
+    return this.http.post(`${environment.apiURL}/api/reports`, {
+      reported: reported,
+      content: content,
+    }, { headers })
+      .pipe(
+        map((data) => {
+          console.log(data);
+          return true;
+        }),
+        catchError(((err) => {
+          console.error('Error: ', err);
+          return of(false);
+        }))
+      )
+  }
 }

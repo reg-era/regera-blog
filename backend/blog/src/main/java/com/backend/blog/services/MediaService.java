@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 
@@ -82,6 +83,32 @@ public class MediaService {
         }
 
         return new InnerMediaService(coverUrl, videoUrl);
+    }
+
+    public boolean clearMedia(String mediaPath) {
+        if (mediaPath == null || mediaPath.trim().isEmpty()) {
+            System.out.println("File path is null or empty.");
+            return false;
+        }
+
+        if (mediaPath.equals(DEFAULT_BLOG) || mediaPath.equals(DEFAULT_USER))
+            return true;
+
+        try {
+            Path path = Paths.get(basePath, mediaPath.replace("/media", ""));
+
+            if (!Files.exists(path) || !Files.isWritable(path)) {
+                System.out.printf("File does not exist or locked: %s\n", path);
+                return false;
+            }
+
+            Files.delete(path);
+            return true;
+
+        } catch (IOException | SecurityException e) {
+            System.out.printf("Failed to delete file: %s. Error: %s\n", mediaPath, e.getMessage());
+            return false;
+        }
     }
 
     private void validateSize(MultipartFile file, long maxSize) {

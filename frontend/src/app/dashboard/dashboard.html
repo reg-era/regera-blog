@@ -71,7 +71,8 @@
       <form [formGroup]="DeleteBlogForm" class="card-form" (ngSubmit)="onRemoveBlog()">
         <mat-form-field appearance="outline" class="form-field">
           <mat-label>Blog ID</mat-label>
-          <input matInput formControlName="id" type="number" name="blogId" placeholder="Enter blog ID to remove" required>
+          <input matInput formControlName="id" type="number" name="blogId" placeholder="Enter blog ID to remove"
+            required>
           <mat-icon matSuffix>tag</mat-icon>
         </mat-form-field>
 
@@ -94,64 +95,64 @@
 
       <div class="reports-container">
 
-        <!-- @if (reports.length === 0) {
+        @if ( reports$ | async ;as reports ){
+
+        @if (reports.length === 0) {
         <div class="empty-state">
           <mat-icon>assignment</mat-icon>
           <p>No reports to display</p>
         </div>
         } @else {
+        @for (report of reports; track report.reportId) {
+        <div class="report-card">
 
-        @for (report of reports; track report.id) {
-            <div class="report-card">
-
-              <div class="report-header">
-                <div class="report-info">
-                  <span class="report-id">#{{ report.id }}</span>
-                  <span class="report-date">
-                    <mat-icon>schedule</mat-icon>
-                    {{ report.date }}
-                  </span>
-                </div>
-
-                <button
-                  mat-icon-button
-                  class="clear-btn"
-                  (click)="onClearReport(report.id)"
-                  matTooltip="Clear Report">
-                  <mat-icon>close</mat-icon>
-                </button>
-              </div>
-
-              <div class="report-body">
-                <div class="report-row">
-                  <div class="report-label">
-                    <mat-icon>person</mat-icon>
-                    Reporter
-                  </div>
-                  <div class="report-value">{{ report.reporter }}</div>
-                </div>
-
-                <div class="report-row">
-                  <div class="report-label">
-                    <mat-icon>flag</mat-icon>
-                    Reported
-                  </div>
-                  <div class="report-value">{{ report.reported }}</div>
-                </div>
-
-                <div class="report-row full-width">
-                  <div class="report-label">
-                    <mat-icon>description</mat-icon>
-                    Reason
-                  </div>
-                  <div class="report-value reason">{{ report.content }}</div>
-                </div>
-              </div>
-
+          <div class="report-header">
+            <div class="report-info">
+              <span class="report-id">#{{ report.reportId }}</span>
+              <span class="report-date">
+                <mat-icon>schedule</mat-icon>
+                {{ (report.createAt) }}
+              </span>
             </div>
-          }
 
-        } -->
+            <button mat-icon-button class="clear-btn" (click)="onClearReport(report.reportId)" matTooltip="Clear Report">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+
+          <div class="report-body">
+            <div class="report-row">
+              <div class="report-label">
+                <mat-icon>person</mat-icon>
+                Reporter
+              </div>
+              <div class="report-value">{{ report.reporter }}</div>
+            </div>
+
+            <div class="report-row">
+              <div class="report-label">
+                <mat-icon>flag</mat-icon>
+                Reported
+              </div>
+              <div class="report-value">{{ report.reported }}</div>
+            </div>
+
+            <div class="report-row full-width">
+              <div class="report-label">
+                <mat-icon>description</mat-icon>
+                Reason
+              </div>
+              <div class="report-value reason">{{ report.content }}</div>
+            </div>
+          </div>
+
+        </div>
+        }
+        }
+
+        }@else {
+        <mat-spinner></mat-spinner>
+        }
 
       </div>
     </div>

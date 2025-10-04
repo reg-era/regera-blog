@@ -16,15 +16,18 @@ import com.backend.blog.repositories.LikeRepository;
 
 @Service
 public class BlogService {
+
+    private final MediaService mediaService;
     private final BlogRepository blogRepository;
     private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
 
     public BlogService(BlogRepository blogRepository, CommentRepository commentRepository,
-            LikeRepository likeRepository) {
+            LikeRepository likeRepository, MediaService mediaService) {
         this.blogRepository = blogRepository;
         this.commentRepository = commentRepository;
         this.likeRepository = likeRepository;
+        this.mediaService = mediaService;
     }
 
     public final List<BlogDto> readLatestBlogs() {
@@ -123,6 +126,13 @@ public class BlogService {
 
         if (!blog.get().getUser().getId().equals(userId))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Deleting blog not permitted");
+
+        if (blog.get().getCover().equals(blog.get().getMedia())) {
+            this.mediaService.clearMedia(blog.get().getMedia());
+        } else {
+            this.mediaService.clearMedia(blog.get().getCover());
+            this.mediaService.clearMedia(blog.get().getMedia());
+        }
 
         this.blogRepository.delete(blog.get());
     }

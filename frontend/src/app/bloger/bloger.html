@@ -1,27 +1,25 @@
 <div class="blogger-profile">
   @if(showReport){
   <div class="confirmator-overlay">
-    <div class="confirmator-box mat-elevation-z8">
-      <p class="message">Are you sure you want to report this blogger ?</p>
-      <div class="report-reasons">
-        @for(reason of availableReasons;track reason){
-        <label>
-          <input type="checkbox" [value]="reason" (change)="toggleReason(reason, $event)" />
-          {{ reason }}
-        </label>
+    <form [formGroup]="ReportForm" class="confirmator-box mat-elevation-z8">
+      <p class="message">Are you sure you want to report this blogger?</p>
+
+      <div formArrayName="reasons" class="report-reasons">
+        @for (reason of availableReasons; track reason; let i = $index) {
+        <label><input type="checkbox" [formControlName]="i" />{{ reason }}</label>
         }
       </div>
 
       <div class="report-details">
-        <textarea placeholder="Optional details..." [(ngModel)]="reportMessage"></textarea>
+        <textarea placeholder="Optional details..." formControlName="details"></textarea>
       </div>
 
-      <!-- Actions -->
       <div class="actions">
         <button mat-raised-button color="warn" (click)="confirmReport()">Confirm</button>
         <button mat-stroked-button color="primary" (click)="showReport = false">Cancel</button>
       </div>
-    </div>
+    </form>
+
   </div>
   }
 

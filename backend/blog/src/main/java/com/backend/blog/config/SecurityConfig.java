@@ -59,7 +59,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/notification").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
 
-                        .anyRequest().authenticated())
+                        .anyRequest().denyAll())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

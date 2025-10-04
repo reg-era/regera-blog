@@ -1,8 +1,10 @@
 package com.backend.blog.controllers;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.backend.blog.dto.ReportDto;
 import com.backend.blog.services.AdminService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -20,6 +23,21 @@ public class AdminController {
 
     public AdminController(AdminService adminService) {
         this.adminService = adminService;
+    }
+
+    @GetMapping("/reports")
+    public ResponseEntity<List<ReportDto>> getRepports() {
+        List<ReportDto> reports = this.adminService.readRepports();
+        return ResponseEntity.ok(reports);
+    }
+
+    @DeleteMapping("/reports/{reportId}")
+    public ResponseEntity<Map<String, String>> removeRepport(@PathVariable Long reportId) {
+        this.adminService.removeRepport(reportId);
+
+        Map<String, String> res = new HashMap<>();
+        res.put("message", "Report removed");
+        return ResponseEntity.ok(res);
     }
 
     @PutMapping("/users/{username}")

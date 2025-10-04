@@ -6,21 +6,39 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
-import { AdminService } from '../../services/admin-service';
+import { AdminService, ReportObject } from '../../services/admin-service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { CredentialService } from '../../services/credential-service';
 import { Router } from '@angular/router';
 import { Dialog } from './dialog/dialog';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [MatCardModule, MatFormFieldModule, MatInputModule, MatIconModule, MatListModule, ReactiveFormsModule],
+  imports: [
+    AsyncPipe,
+    MatCardModule,
+    MatProgressSpinnerModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatListModule,
+    ReactiveFormsModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
 
 export class Dashboard implements OnInit {
+
+  EscalateForm!: FormGroup;
+  DeleteUserForm!: FormGroup;
+  DeleteBlogForm!: FormGroup;
+
+  reports$: BehaviorSubject<ReportObject[] | null>;
+
   constructor(
     private formBuilder: FormBuilder,
     private dialog: MatDialog,
@@ -35,16 +53,20 @@ export class Dashboard implements OnInit {
         return
       }
     })
-  }
 
-  EscalateForm!: FormGroup;
-  DeleteUserForm!: FormGroup;
-  DeleteBlogForm!: FormGroup;
+    this.reports$ = new BehaviorSubject<ReportObject[] | null>(null);
+  }
 
   ngOnInit(): void {
     this.EscalateForm = this.formBuilder.group({ username: ['', Validators.required] })
     this.DeleteUserForm = this.formBuilder.group({ username: ['', Validators.required] })
     this.DeleteBlogForm = this.formBuilder.group({ id: ['', Validators.required] })
+
+    this.adminService.getReports().subscribe((reports) => {
+      if (reports) {
+        this.reports$.next(reports);
+      }
+    })
   }
 
   confirmAction(message: { title: string, message: string }, onConfirm: () => void) {
@@ -61,7 +83,7 @@ export class Dashboard implements OnInit {
     if (this.EscalateForm.valid) {
       const username = this.EscalateForm.get('username')?.getRawValue();
       this.confirmAction({
-        title: 'Escaling User to admin',
+        title: 'Escaling User',
         message: `Are you sure to escale ${username} into admin`,
       }, () => {
         this.adminService.escalateAdmin(username).subscribe((res) => {
@@ -79,21 +101,20 @@ export class Dashboard implements OnInit {
   onBanUser() {
     if (this.DeleteUserForm.valid) {
       const username = this.DeleteUserForm.get('username')?.getRawValue();
-      this.adminService.removeUser(username).subscribe((res) => {
-        switch (res) {
-          case 200:
-            this.showMessage(`The user ${username} is banned`, 'success');
-            break;
-          case 404:
-            this.showMessage(`The user ${username} not found`, 'error');
-            break;
-          default:
-            this.showMessage(`Something wrong on submiting`, 'info');
-            break;
-        }
-      });
-      this.DeleteUserForm.reset();
+      this.confirmAction({
+        title: 'Removing user',
+        message: `Are you sure to remove ${username}`,
+      }, () => {
+        this.adminService.removeUser(username).subscribe((res) => {
+          if (res) {
+            this.showMessage(`${res}`, 'success');
+          } else {
+            this.showMessage(`Faild to remove or User not found`, 'error');
+          }
+        });
+      })
     }
+    this.DeleteUserForm.reset();
   }
 
   onRemoveBlog() {
@@ -104,25 +125,42 @@ export class Dashboard implements OnInit {
       if (Number.isNaN(blogId) || blogId <= 0) {
         this.showMessage(`Invalid blog ID`, 'error');
       } else {
-        this.adminService.removeBlog(blogId).subscribe((res) => {
-          switch (res) {
-            case 200:
-              this.showMessage(`The blog ${blogId} is removed`, 'success');
-              break;
-            case 404:
-              this.showMessage(`The blog ${blogId} not found`, 'error');
-              break;
-            default:
-              this.showMessage(`Something wrong on submiting`, 'info');
-              break;
-          }
-        });
+        this.confirmAction({
+          title: 'Removing blog',
+          message: `Are you sure to remove blog ${blogId}`,
+        }, () => {
+          this.adminService.removeBlog(blogId).subscribe((res) => {
+            if (res) {
+              this.showMessage(`${res}`, 'success');
+            } else {
+              this.showMessage(`Faild to remove or blog not found`, 'error');
+            }
+          });
+        })
       }
     }
     this.DeleteBlogForm.reset();
   }
 
-  onClearReport() { }
+  onClearReport(id: number) {
+    this.confirmAction({
+      title: 'Removing report',
+      message: `Are you sure to remove this report`,
+    }, () => {
+      this.adminService.removeReport(id).subscribe((res) => {
+        if (res) {
+          this.showMessage(`${res}`, 'success');
+          this.reports$.next(
+            (!this.reports$.value || this.reports$.value.length == 0)
+              ? []
+              : this.reports$.value.filter(rep => rep.reportId == id)
+          );
+        } else {
+          this.showMessage(`Faild to remove this report`, 'error');
+        }
+      });
+    })
+  }
 
   private showMessage(message: string, type: 'success' | 'error' | 'info' = 'info'): void {
     const config = {

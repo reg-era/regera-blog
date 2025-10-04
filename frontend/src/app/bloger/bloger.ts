@@ -1,8 +1,8 @@
 import { ChangeDetectorRef, Component, OnInit, signal } from '@angular/core';
 import { BlogCard } from '../home/blog-card/blog-card';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-field';
 import { MatListModule } from '@angular/material/list';
-import { FormsModule } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, FormGroupDirective, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { BlogObject } from '../../services/blog-service';
@@ -11,11 +11,24 @@ import { UserObject, UserService } from '../../services/user-service';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { CredentialService } from '../../services/credential-service';
 import { AsyncPipe } from '@angular/common';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-bloger',
-  imports: [AsyncPipe, MatProgressSpinner, FormsModule, BlogCard, MatCardModule, MatIconModule, MatFormFieldModule, MatListModule],
+  imports: [
+    AsyncPipe,
+    MatProgressSpinner,
+    FormsModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatInputModule,
+    BlogCard,
+    MatCardModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatListModule
+  ],
   templateUrl: './bloger.html',
   styleUrl: './bloger.css'
 })
@@ -26,16 +39,9 @@ export class Bloger implements OnInit {
 
   isOwner = false;
 
-  availableReasons = [
-    'Spam or misleading',
-    'Harassment or hate speech',
-    'Inappropriate content',
-    'Fake identity',
-    'Other'
-  ];
-  selectedReasons: string[] = [];
-  reportMessage: string = '';
-  reportDetails: string = '';
+  ReportForm!: FormGroup;
+  availableReasons = ['Spam or misleading', 'Harassment or hate speech', 'Inappropriate content'];
+
   showReport = false;
   showToast = signal(false);
   toastMessage = signal<string>('');
@@ -44,10 +50,16 @@ export class Bloger implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private userService: UserService,
-    private credentialService: CredentialService
+    private credentialService: CredentialService,
+    private fb: FormBuilder
   ) {
     this.blogger$ = new BehaviorSubject<UserObject | null>(null);
     this.blogs$ = new BehaviorSubject<BlogObject[] | null>(null);
+
+    this.ReportForm = this.fb.group({
+      reasons: this.fb.array(this.availableReasons.map(() => this.fb.control(false))),
+      details: this.fb.control('')
+    });
   }
 
   ngOnInit(): void {
@@ -74,23 +86,24 @@ export class Bloger implements OnInit {
     });
   }
 
-  toggleReason(reason: string, event: Event): void {
-    const isChecked = (event.target as HTMLInputElement).checked;
-    if (isChecked) {
-      this.selectedReasons.push(reason);
-    } else {
-      this.selectedReasons = this.selectedReasons.filter(r => r !== reason);
-    }
-  }
-
   confirmReport(): void {
-    const reportPayload = {
-      reasons: this.selectedReasons,
-      message: this.reportMessage
-    };
+    const selectedReasons: string[] = this.ReportForm.value.reasons
+      .map((checked: boolean, i: number) => checked ? this.availableReasons[i] : null)
+      .filter((v: string | null) => v !== null);
 
-    console.log('Submitting Report:', reportPayload);
-    this.displayToast(true);
+    if (selectedReasons.length > 0 || this.ReportForm.value.details.length > 0) {
+      console.log('Selected reasons:', selectedReasons);
+      console.log('Additional message:', this.ReportForm.value.details);
+
+      this.userService.makeReport(
+        this.blogger$.value?.username || '',
+        selectedReasons,
+        this.ReportForm.value.details || ''
+      ).subscribe((res => {
+        this.showReport = false;
+        this.displayToast(res);
+      }))
+    }
   }
 
   displayToast(sucess: boolean) {

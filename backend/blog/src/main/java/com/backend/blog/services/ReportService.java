@@ -1,15 +1,9 @@
 package com.backend.blog.services;
 
-import java.util.List;
-
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.backend.blog.dto.ReportDto;
 import com.backend.blog.entities.Report;
 import com.backend.blog.entities.User;
 import com.backend.blog.repositories.BlogRepository;
@@ -18,44 +12,30 @@ import com.backend.blog.repositories.UserRepository;
 
 @Service
 public class ReportService {
-    ReportRepository reportRepository;
-    BlogRepository blogRepository;
-    UserRepository userRepository;
+        ReportRepository reportRepository;
+        BlogRepository blogRepository;
+        UserRepository userRepository;
 
-    public ReportService(ReportRepository reportRepository,
-            BlogRepository blogRepository,
-            UserRepository userRepository) {
-        this.blogRepository = blogRepository;
-        this.userRepository = userRepository;
-        this.reportRepository = reportRepository;
-    }
+        public ReportService(ReportRepository reportRepository,
+                        BlogRepository blogRepository,
+                        UserRepository userRepository) {
+                this.blogRepository = blogRepository;
+                this.userRepository = userRepository;
+                this.reportRepository = reportRepository;
+        }
 
-    public void makeReport(Long userId, Report report) {
-        User reporter = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Reporter not found"));
+        public void makeReport(Long userId, Report report) {
+                User reporter = userRepository.findById(userId)
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                "Reporter not found"));
 
-        User reportedUser = userRepository.findById(report.getReportedUser().getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-        report.setReportedUser(reportedUser);
+                User reportedUser = userRepository.findById(report.getReportedUser().getId())
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+                report.setReportedUser(reportedUser);
 
-        report.setUser(reporter);
+                report.setUser(reporter);
 
-        reportRepository.save(report);
-    }
-
-    public List<ReportDto> readComments(int offset) {
-        Sort sort = Sort.by("createdAt").descending();
-        Pageable pageable = PageRequest.of(offset, 5, sort);
-
-        List<ReportDto> res = this.reportRepository.findAll(pageable).stream()
-                .map(rep -> new ReportDto(rep.getId(),
-                        rep.getUser().getUsername(),
-                        rep.getReportedUser().getUsername(),
-                        rep.getContent(),
-                        rep.getCreatedAt()))
-                .toList();
-
-        return res;
-    }
+                reportRepository.save(report);
+        }
 
 }
