@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.backend.blog.dto.ReportDto;
-import com.backend.blog.entities.Blog;
 import com.backend.blog.entities.Report;
 import com.backend.blog.entities.User;
 import com.backend.blog.repositories.BlogRepository;
@@ -35,15 +34,9 @@ public class ReportService {
         User reporter = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Reporter not found"));
 
-        if (report.getIsUserReport()) {
-            User reportedUser = userRepository.findById(report.getTargetId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-            report.setReportedUser(reportedUser);
-        } else {
-            Blog reportedBlog = blogRepository.findById(report.getTargetId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Blog not found"));
-            report.setReportedBlog(reportedBlog);
-        }
+        User reportedUser = userRepository.findById(report.getReportedUser().getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        report.setReportedUser(reportedUser);
 
         report.setUser(reporter);
 
@@ -56,10 +49,8 @@ public class ReportService {
 
         List<ReportDto> res = this.reportRepository.findAll(pageable).stream()
                 .map(rep -> new ReportDto(rep.getId(),
-                        rep.getUser().getId(),
                         rep.getUser().getUsername(),
-                        rep.getIsUserReport(),
-                        rep.getTargetId(),
+                        rep.getReportedUser().getUsername(),
                         rep.getContent(),
                         rep.getCreatedAt()))
                 .toList();

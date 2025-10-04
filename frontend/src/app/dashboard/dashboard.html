@@ -144,7 +144,7 @@
                     <mat-icon>description</mat-icon>
                     Reason
                   </div>
-                  <div class="report-value reason">{{ report.cause }}</div>
+                  <div class="report-value reason">{{ report.content }}</div>
                 </div>
               </div>
 
@@ -157,28 +157,5 @@
     </div>
 
   </div>
-
-  <!-- Confirmation Dialog -->
-  @if (showConfirmDialog) {
-  <div class="dialog-overlay" (click)="onCancelDialog()">
-    <div class="dialog-container" (click)="$event.stopPropagation()">
-
-      <div class="dialog-icon">
-        <mat-icon>help_outline</mat-icon>
-      </div>
-
-      <div class="dialog-content">
-        <h2 class="dialog-title">Are you sure?</h2>
-        <p class="dialog-message">{{ confirmMessage }}</p>
-      </div>
-
-      <div class="dialog-actions">
-        <button mat-button class="cancel-btn" (click)="onCancelDialog()">Cancel</button>
-        <button mat-raised-button class="confirm-btn" (click)="onConfirmDialog()">Yes, Continue</button>
-      </div>
-
-    </div>
-  </div>
-  }
 
 </div>

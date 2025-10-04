@@ -8,8 +8,10 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MatInputModule } from '@angular/material/input';
 import { AdminService } from '../../services/admin-service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 import { CredentialService } from '../../services/credential-service';
 import { Router } from '@angular/router';
+import { Dialog } from './dialog/dialog';
 
 @Component({
   selector: 'app-dashboard',
@@ -21,6 +23,7 @@ import { Router } from '@angular/router';
 export class Dashboard implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
+    private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private adminService: AdminService,
     private credentialService: CredentialService,
@@ -38,28 +41,39 @@ export class Dashboard implements OnInit {
   DeleteUserForm!: FormGroup;
   DeleteBlogForm!: FormGroup;
 
-  showConfirmDialog = false;
-  confirmMessage = '';
-
   ngOnInit(): void {
     this.EscalateForm = this.formBuilder.group({ username: ['', Validators.required] })
     this.DeleteUserForm = this.formBuilder.group({ username: ['', Validators.required] })
     this.DeleteBlogForm = this.formBuilder.group({ id: ['', Validators.required] })
   }
 
+  confirmAction(message: { title: string, message: string }, onConfirm: () => void) {
+    const dialogRef = this.dialog.open(Dialog, { data: message });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        onConfirm();
+      }
+    });
+  }
+
   onEscalateUser() {
-    this.showConfirmDialog = true;
-    // if (this.EscalateForm.valid) {
-    //   const username = this.EscalateForm.get('username')?.getRawValue();
-    //   this.adminService.escalateAdmin(username).subscribe((res) => {
-    //     if (res) {
-    //       this.showMessage(`${res}`, 'success');
-    //     } else {
-    //       this.showMessage(`Something wrong or User not found`, 'error');
-    //     }
-    //   });
-    // }
-    // this.EscalateForm.reset();
+    if (this.EscalateForm.valid) {
+      const username = this.EscalateForm.get('username')?.getRawValue();
+      this.confirmAction({
+        title: 'Escaling User to admin',
+        message: `Are you sure to escale ${username} into admin`,
+      }, () => {
+        this.adminService.escalateAdmin(username).subscribe((res) => {
+          if (res) {
+            this.showMessage(`${res}`, 'success');
+          } else {
+            this.showMessage(`Faild to escale or User not found`, 'error');
+          }
+        });
+      })
+    }
+    this.EscalateForm.reset();
   }
 
   onBanUser() {
@@ -109,10 +123,6 @@ export class Dashboard implements OnInit {
   }
 
   onClearReport() { }
-
-  onCancelDialog() { }
-
-  onConfirmDialog() { }
 
   private showMessage(message: string, type: 'success' | 'error' | 'info' = 'info'): void {
     const config = {
