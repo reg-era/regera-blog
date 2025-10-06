@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { environment } from '../environments/environment.development';
 import { MediaService } from './media-service';
 import { BlogObject } from './blog-service';
@@ -70,13 +69,10 @@ export class UserService {
 
   getBloger(username: string | null): Observable<{ profile: UserObject, blogs: BlogObject[] } | null> {
     const url = username ? `/${username}` : '';
-    const headers = username == null ? new HttpHeaders({
-      'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
-    }) : undefined;
 
     return this.http.get<{ profile: UserObject, blogs: BlogObject[] }>(
       `${environment.apiURL}/api/users${url}`,
-      { headers }
+      { headers: new HttpHeaders({ 'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}` }) }
     ).pipe(
       switchMap(data => {
         const profile$ = this.mediaService.urlToBlobImageUrl(data.profile.picture).pipe(
@@ -107,25 +103,17 @@ export class UserService {
 
   }
 
-  async makeFollow(username: string): Promise<{ success: boolean; data: { follows: number, status: number } }> {
-    try {
-      const res = await fetch(`${environment.apiURL}/api/follows/${username}`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-        },
-      });
-
-      if (res.ok) {
-        const data: { follows: number, status: number } = await res.json();
-        return { success: true, data: data };
-      } else {
-        return { success: false, data: { follows: 0, status: 0 } };
-      }
-    } catch (error) {
-      console.error("Error getting bloger: ", error);
-      return { success: false, data: { follows: 0, status: 0 } };
-    }
+  makeFollow(username: string): Observable<{ follows: number, status: number } | null> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
+    });
+    return this.http.post<{ follows: number, status: number }>(
+      `${environment.apiURL}/api/follows/${username}`,
+      null,
+      { headers }
+    ).pipe(
+      catchError((err) => of(null))
+    );
   }
 
   async makeLike(blogId: number): Promise<{ success: boolean; data: { likes: number, status: number } }> {

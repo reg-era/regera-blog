@@ -16,10 +16,7 @@
 
       <div class="dialog-actions">
         <button mat-button class="cancel-btn" (click)="this.showDialog = false">Cancel</button>
-        <button mat-raised-button class="confirm-btn"
-          (click)="onConfirmDelet();this.blog.title = 'Deleted Blog';this.showDialog = false;">
-          Yes, Continue
-        </button>
+        <button mat-raised-button class="confirm-btn"(click)="onConfirmDelet();this.blog.title = 'Deleted Blog';this.showDialog = false;">Yes</button>
       </div>
 
     </div>
@@ -59,12 +56,8 @@
   <!-- Card Content -->
   <mat-card-content class="card-content">
     <p class="blog-excerpt">
-      {{ truncateText(blog.description, 120) }}
+      {{ truncateText(blog.description, 150) }}
     </p>
-    <div class="publish-date">
-      <mat-icon class="date-icon">today</mat-icon>
-      {{ formatDate(blog.createdAt) }}
-    </div>
   </mat-card-content>
 
   <!-- Card Actions -->

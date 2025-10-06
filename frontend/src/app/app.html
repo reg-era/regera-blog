@@ -1,5 +1,5 @@
 <mat-drawer-container class="main-container" autosize>
-  <mat-drawer #drawer class="custom-sidenav" mode="over" position="end" [opened]="showNavBar">
+  <mat-drawer #drawer class="custom-sidenav" mode="over" position="end" (closed)="closeNavBar()" [opened]="showNavBar">
 
     <nav class="nav-buttons">
       <div class="main-nav">
@@ -79,7 +79,7 @@
     <router-outlet></router-outlet>
   </div>
 
-  <button class="menu-toggle-fab" [class.menu-open]="showNavBar" (click)="toggleNavBar()"
+  <button class="menu-toggle-fab" (click)="toggleNavBar()"
     matTooltip="{{ showNavBar ? 'Close Menu' : 'Open Menu' }}" matTooltipPosition="left">
     <mat-icon>menu</mat-icon>
   </button>

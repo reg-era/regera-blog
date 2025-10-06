@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild, ElementRef, EventEmitter, Output, ChangeDetectorRef, Query } from '@angular/core';
+import { Component, ViewChild, ElementRef, EventEmitter, Output, ChangeDetectorRef, Query, OnDestroy } from '@angular/core';
 import { MatRippleModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { SearchService, SearchSuggestion } from '../../../services/search-service';
-import { debounceTime, distinctUntilChanged, filter, map, Observable, Subject, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, map, Observable, Subject, switchMap, tap } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Component({
@@ -20,31 +20,37 @@ import { Router } from '@angular/router';
   templateUrl: './search.html',
   styleUrls: ['./search.scss']
 })
-export class Search {
-  private searchInput$ = new Subject<string>();
-  suggestions$: Observable<SearchSuggestion | null>;
+export class Search implements OnDestroy {
+  suggestions$: BehaviorSubject<SearchSuggestion | null>;
+  private searchTimeout: any;
   showSuggestions = false;
 
+
   constructor(private router: Router, private searchService: SearchService) {
-    this.suggestions$ = this.searchInput$.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      filter(query => query.length > 2),
-      tap(() => {
-        this.showSuggestions = true;
-      }),
-      switchMap(query => this.searchService.performSearch(query))
-    );
+    this.suggestions$ = new BehaviorSubject<SearchSuggestion | null>(null);
+  }
+
+  ngOnDestroy(): void {
+    this.suggestions$.unsubscribe();
+    clearTimeout(this.searchTimeout);
   }
 
   onSearchInput(event: Event): void {
-    const query = (event.target as HTMLInputElement).value.trim().toLowerCase();
-    if (query.length == 0) {
-      this.showSuggestions = false;
-      return;
-    }
-    this.showSuggestions = true;
-    this.searchInput$.next(query);
+    clearTimeout(this.searchTimeout);
+
+    this.searchTimeout = setTimeout(() => {
+      const query = (event.target as HTMLInputElement).value.trim().toLowerCase();
+
+      if (query.length === 0) {
+        this.showSuggestions = false;
+        return;
+      }
+
+      this.searchService.performSearch(query).subscribe((sugg) => {
+        this.suggestions$.next(sugg);
+        this.showSuggestions = true;
+      });
+    }, 300);
   }
 
   navigate(link: string) {

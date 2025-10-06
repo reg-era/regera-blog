@@ -2,10 +2,13 @@ package com.backend.blog.utils;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.Optional;
 
 @Component
 public class JwtUtil {
@@ -26,11 +29,25 @@ public class JwtUtil {
                 .compact();
     }
 
-    public Claims validateToken(String token) throws JwtException {
+    public Claims validateToken(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
+
+    public Optional<Claims> extractClaimsFromRequest(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            try {
+                return Optional.of(this.validateToken(token));
+            } catch (JwtException e) {
+                return Optional.empty();
+            }
+        }
+        return Optional.empty();
+    }
+
 }

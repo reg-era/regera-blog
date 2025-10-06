@@ -1,0 +1,602 @@
+.blogger-profile {
+  min-height: 100vh;
+  background: var(--background);
+  padding: 2rem;
+  font-family: var(--font-base);
+  animation: fadeIn 0.5s ease-out;
+  position: relative;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+mat-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  ::ng-deep circle {
+    stroke: var(--text);
+  }
+}
+
+.blogger-header {
+  max-width: 1200px;
+  margin: 0 auto 3rem;
+  background: var(--bg);
+  border-radius: 24px;
+  padding: 3rem;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-light);
+  position: relative;
+  animation: slideDown 0.6s ease-out;
+  transition: all var(--transition);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+  }
+
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.blogger-info {
+  flex: 1;
+  min-width: 280px;
+
+  h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--text);
+    margin: 0 0 1rem 0;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    background: linear-gradient(45deg, var(--text), var(--text-muted), var(--background), var(--text));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
+  }
+
+  .bio {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: var(--text);
+    margin: 2rem 0 1rem;
+    padding: 1rem 1.5rem;
+    background: var(--card);
+    border-radius: 12px;
+    border-left: 3px solid var(--text-muted);
+    position: relative;
+  }
+
+  .since {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin: 1rem 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  button {
+    height: 52px;
+    padding: 0 2rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+    color: var(--bg);
+    background: var(--text);
+
+    border: none;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px var(--shadow);
+      background: var(--text-muted);
+    }
+  }
+
+
+  label {
+    border-radius: 12px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+    color: var(--text);
+  }
+}
+
+.report-btn {
+  align-self: flex-start;
+  height: 48px;
+  padding: 0 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  color: #ef4444;
+  transition: all var(--transition);
+  background: var(--bg);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+  }
+}
+
+// Blogger Posts Section
+.blogger-posts {
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: fadeInUp 0.6s ease-out 0.2s backwards;
+
+  h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0 0 2rem 0;
+    text-align: center;
+    letter-spacing: -0.01em;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.blog-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+
+  app-blog-card {
+    animation: scaleIn 0.4s ease-out backwards;
+
+    @for $i from 1 through 12 {
+      &:nth-child(#{$i}) {
+        animation-delay: #{$i * 0.1}s;
+      }
+    }
+  }
+
+  mat-spinner {
+    grid-column: 1 / -1;
+    justify-self: center;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.confirmator-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.confirmator-box {
+  background: var(--bg);
+  border-radius: 24px;
+  padding: 3rem 2.5rem 2.5rem;
+  max-width: 600px;
+  width: 100%;
+  box-shadow:
+    0 25px 80px rgba(0, 0, 0, 0.15),
+    0 0 0 1px var(--border-light);
+  position: relative;
+  animation: slideInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  .message {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+    text-align: center;
+    margin: 0 0 2rem 0;
+    letter-spacing: -0.01em;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.report-reasons {
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  background: var(--card);
+  border-radius: 16px;
+  border: 1px solid var(--border-light);
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all var(--transition);
+    font-size: 1rem;
+    color: var(--text);
+
+    &:hover {
+      background: rgba(118, 0, 145, 0.05);
+      transform: translateX(4px);
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    input[type="checkbox"] {
+      width: 15px;
+      height: 15px;
+      accent-color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 4px;
+    }
+  }
+}
+
+.report-details {
+  margin-bottom: 2rem;
+
+  textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    background: var(--input-bg);
+    font-family: var(--font-base);
+    font-size: 1rem;
+    color: var(--text);
+    resize: vertical;
+    transition: all var(--transition);
+
+    &::placeholder {
+      color: var(--text-muted);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: var(--text);
+      background: var(--bg);
+      box-shadow: 0 0 0 3px rgba(118, 0, 145, 0.1);
+    }
+
+    &:hover {
+      border-color: var(--text-muted);
+    }
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+
+  button {
+    flex: 1;
+    height: 52px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+
+    &[color="warn"] {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+      border: none;
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s ease;
+      }
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+
+        &::before {
+          left: 100%;
+        }
+      }
+    }
+
+    &[color="primary"] {
+      background: var(--card);
+      color: var(--text);
+      border: 2px solid var(--border);
+
+      &:hover {
+        background: var(--bg);
+        border-color: var(--text-muted);
+        transform: translateY(-2px);
+        box-shadow: var(--elevation-2);
+      }
+    }
+  }
+}
+
+// Toast Notification
+.toster-container {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  z-index: 10000;
+  animation: slideInRight 0.4s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.toast-card {
+  background: var(--bg);
+  border-radius: 16px;
+  padding: 1.25rem 1.75rem;
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.12),
+    0 0 0 1px var(--border-light);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-left: 4px solid var(--text);
+  min-width: 300px;
+
+  .toast-icon {
+    color: var(--text);
+    font-size: 1.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .toast-message {
+    color: var(--text);
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .blogger-profile {
+    padding: 1rem;
+  }
+
+  .blogger-header {
+    padding: 2rem 1.5rem;
+    flex-direction: column;
+    margin-bottom: 2rem;
+
+    .blogger-info {
+      h1 {
+        font-size: 2.25rem;
+      }
+
+      .bio {
+        font-size: 1rem;
+        padding: 1rem;
+      }
+
+      button,
+      label {
+        width: 100%;
+      }
+    }
+
+    .report-btn {
+      width: 100%;
+    }
+  }
+
+  .blogger-posts {
+    h2 {
+      font-size: 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  .blog-list {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .confirmator-box {
+    padding: 2.5rem 2rem 2rem;
+
+    .message {
+      font-size: 1.25rem;
+    }
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 0.75rem;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  .toster-container {
+    top: 1rem;
+    right: 1rem;
+    left: 1rem;
+
+    .toast-card {
+      min-width: auto;
+      width: 100%;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .blogger-profile {
+    padding: 0.75rem;
+  }
+
+  .blogger-header {
+    padding: 1.5rem 1.25rem;
+    border-radius: 20px;
+
+    .blogger-info {
+      h1 {
+        font-size: 2rem;
+      }
+
+      .bio {
+        font-size: 0.95rem;
+        margin: 1.5rem 0 0.75rem;
+      }
+
+      button,
+      label {
+        height: 48px;
+        font-size: 0.95rem;
+      }
+    }
+
+    .report-btn {
+      height: 44px;
+    }
+  }
+
+  .blogger-posts h2 {
+    font-size: 1.5rem;
+  }
+
+  .blog-list {
+    gap: 1.25rem;
+  }
+
+  .confirmator-box {
+    padding: 2rem 1.5rem 1.5rem;
+    border-radius: 20px;
+
+    .message {
+      font-size: 1.125rem;
+    }
+  }
+
+  .report-reasons {
+    padding: 1rem;
+
+    label {
+      padding: 0.625rem;
+      font-size: 0.95rem;
+    }
+  }
+
+  .report-details textarea {
+    min-height: 100px;
+    padding: 0.875rem 1rem;
+  }
+
+  .actions button {
+    height: 48px;
+    font-size: 0.95rem;
+  }
+}
+
+@media print {
+
+  .report-btn,
+  .confirmator-overlay,
+  .toster-container,
+  mat-spinner {
+    display: none;
+  }
+
+  .blogger-header {
+    box-shadow: none;
+    border: 1px solid var(--border);
+  }
+
+  .blog-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

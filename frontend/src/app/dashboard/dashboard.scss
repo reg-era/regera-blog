@@ -1,22 +1,3 @@
-// admin-dashboard.component.scss
-
-:root {
-  --font-base: 'Inter', sans-serif;
-  --transition: 0.3s ease;
-  --bg: #ffffff;
-  --background: #f8f9fa;
-  --text: #212529;
-  --card: #f9f9f9;
-  --accent: #4f46e5;
-  --border: #e0e0e0;
-  --shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
-  --border-light: #f0f0f0;
-  --text-muted: #666;
-  --elevation-2: 0px 2px 8px rgba(0, 0, 0, 0.05);
-  --input-bg: #f9f9f9;
-}
-
-// Dashboard Page
 .dashboard-page {
   min-height: 100vh;
   background: var(--background);
@@ -125,22 +106,6 @@
 
   &:hover::before {
     opacity: 1;
-  }
-
-  &:nth-child(1)::before {
-    background: linear-gradient(90deg, #10b981, #059669);
-  }
-
-  &:nth-child(2)::before {
-    background: linear-gradient(90deg, #ef4444, #dc2626);
-  }
-
-  &:nth-child(3)::before {
-    background: linear-gradient(90deg, #f59e0b, #d97706);
-  }
-
-  &:nth-child(4)::before {
-    background: linear-gradient(90deg, var(--accent), #6366f1);
   }
 }
 
@@ -452,7 +417,7 @@
 
   .report-id {
     font-weight: 700;
-    color: var(--accent);
+    color: var(--text);
     font-size: 0.95rem;
   }
 
@@ -473,7 +438,8 @@
   .clear-btn {
     width: 32px;
     height: 32px;
-    color: #ef4444;
+    padding: 5px;
+    color: var(--text);
     transition: all var(--transition);
 
     mat-icon {
@@ -515,7 +481,7 @@
       font-size: 18px;
       width: 18px;
       height: 18px;
-      color: var(--accent);
+      color: var(--text);
     }
   }
 
@@ -529,7 +495,7 @@
       padding: 0.75rem;
       background: rgba(79, 70, 229, 0.05);
       border-radius: 8px;
-      border-left: 3px solid var(--accent);
+      border-left: 3px solid var(--text-muted);
     }
   }
 }

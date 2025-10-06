@@ -4,7 +4,6 @@
   padding: 2rem 1rem;
   position: relative;
   z-index: 1;
-  // height: 100vh;
 }
 
 .search-header {
@@ -12,7 +11,7 @@
   position: relative;
 
   .blog-title {
-    font-size: 2.5rem;
+    font-size: 3rem;
     font-weight: 700;
     font-family: "Poppins", "Inter", "Helvetica Neue", Arial, sans-serif;
     ;
@@ -71,10 +70,8 @@ mat-label {
 ::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__notch {
   color: var(--text);
   border-color: var(--text) !important;
-  /* your custom color */
 }
 
-// Main Search Wrapper
 .search-wrapper {
   position: relative;
   background: rgba(255, 255, 255, 0.1);
@@ -119,44 +116,6 @@ mat-label {
   }
 }
 
-// AI-Powered Badge
-.ai-badge {
-  position: absolute;
-  top: -16px;
-  right: 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  animation: float 3s ease-in-out infinite;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
-    border-radius: 22px;
-    z-index: -1;
-    opacity: 0;
-    animation: gradientShift 3s ease-in-out infinite;
-  }
-
-  &:hover::before {
-    opacity: 0.5;
-  }
-}
-
 @keyframes float {
 
   0%,
@@ -166,16 +125,6 @@ mat-label {
 
   50% {
     transform: translateY(-4px);
-  }
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
   }
 }
 
@@ -190,7 +139,6 @@ mat-label {
     font-size: 1.1rem;
     font-weight: 400;
     background: transparent;
-    caret-color: #667eea;
 
     &::placeholder {
       color: rgba(255, 255, 255, 0.6);
@@ -232,6 +180,7 @@ mat-label {
 .suggestions-list {
   max-height: 400px;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 0.5rem 0;
 
   // Custom scrollbar
@@ -244,11 +193,11 @@ mat-label {
   }
 
   &::-webkit-scrollbar-thumb {
-    background: rgba(102, 126, 234, 0.3);
+    background: var(--shadow);
     border-radius: 3px;
 
     &:hover {
-      background: rgba(102, 126, 234, 0.5);
+      background: var(--shadow);
     }
   }
 }
@@ -264,21 +213,9 @@ mat-label {
   border-left: 3px solid transparent;
   position: relative;
 
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    background: linear-gradient(90deg, #667eea, #764ba2);
-    opacity: 0;
-    transition: opacity 0.2s ease;
-  }
-
   &:hover {
     background: rgba(102, 126, 234, 0.05);
-    border-left-color: #667eea;
+    border-left-color: var(--background);
     transform: translateX(4px);
 
     &::before {
@@ -287,7 +224,6 @@ mat-label {
 
     .suggestion-icon {
       transform: scale(1.1);
-      color: #667eea;
     }
   }
 
@@ -295,54 +231,21 @@ mat-label {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: rgba(102, 126, 234, 0.1);
+    background: var(--background);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #667eea;
+    color: var(--text);
     transition: all 0.2s ease;
 
     .title-icon,
     .author-icon {
       font-size: 20px;
     }
-
-    .author-icon {
-      color: #764ba2;
-    }
   }
 
   .suggestion-content {
     flex: 1;
-
-    .suggestion-text {
-      font-size: 1rem;
-      font-weight: 500;
-      color: #1e293b;
-      margin-bottom: 0.25rem;
-
-      .dark-theme & {
-        color: #f8fafc;
-      }
-
-      // Highlight matched text
-      ::ng-deep mark {
-        background: linear-gradient(120deg, #667eea, #764ba2);
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-weight: 700;
-      }
-    }
-
-    .suggestion-meta {
-      font-size: 0.85rem;
-      color: #64748b;
-
-      .dark-theme & {
-        color: #94a3b8;
-      }
-    }
   }
 
   .suggestion-stats {
@@ -363,10 +266,6 @@ mat-label {
         width: 16px;
         height: 16px;
         color: #ef4444;
-      }
-
-      .dark-theme & {
-        color: #94a3b8;
       }
     }
   }
@@ -401,71 +300,12 @@ mat-label {
       font-weight: 600;
       color: #374151;
       margin-bottom: 0.5rem;
-
-      .dark-theme & {
-        color: #f3f4f6;
-      }
     }
 
     p {
       color: #6b7280;
       line-height: 1.5;
-
-      .dark-theme & {
-        color: #9ca3af;
-      }
     }
-  }
-}
-
-// Loading Animation for AI Processing
-.ai-processing {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  gap: 1rem;
-
-  .processing-dots {
-    display: flex;
-    gap: 0.5rem;
-
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #667eea;
-      animation: processingPulse 1.5s ease-in-out infinite;
-
-      &:nth-child(2) {
-        animation-delay: 0.2s;
-      }
-
-      &:nth-child(3) {
-        animation-delay: 0.4s;
-      }
-    }
-  }
-
-  .processing-text {
-    color: #667eea;
-    font-weight: 500;
-    font-size: 0.9rem;
-  }
-}
-
-@keyframes processingPulse {
-
-  0%,
-  80%,
-  100% {
-    transform: scale(1);
-    opacity: 0.5;
-  }
-
-  40% {
-    transform: scale(1.2);
-    opacity: 1;
   }
 }
 
@@ -482,12 +322,6 @@ mat-label {
   .search-wrapper {
     padding: 1.5rem;
     border-radius: 20px;
-  }
-
-  .ai-badge {
-    right: 16px;
-    font-size: 0.7rem;
-    padding: 6px 12px;
   }
 
   .suggestion-item {
@@ -514,13 +348,5 @@ mat-label {
   .search-field .mat-mdc-form-field-flex {
     min-height: 52px;
     padding: 0.5rem 0.75rem;
-  }
-
-  .ai-badge {
-    position: relative;
-    top: 0;
-    right: 0;
-    margin-bottom: 1rem;
-    align-self: flex-end;
   }
 }

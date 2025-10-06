@@ -31,21 +31,20 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 export class Newblog implements OnInit, OnDestroy {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
-  // Form and state properties
+  private oneSubmit = false;
+
   blogForm: FormGroup;
   onEditing: boolean = false;
   blogEditing: number = 0;
   errorMessage: string | null = null;
   isLoading: boolean = false;
 
-  // File handling properties
   selectedFile: File | null = null;
   imagePreview: string | null = null;
   maxFileSize = 10 * 1024 * 1024; // 10MB
   allowedImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
   allowedVideoTypes = ['video/mp4', 'video/avi', 'video/mov', 'video/wmv'];
 
-  // Character limits
   readonly titleMaxLength = 100;
   readonly descriptionMaxLength = 200;
   readonly contentMinLength = 50;
@@ -169,6 +168,10 @@ export class Newblog implements OnInit, OnDestroy {
   }
 
   async submitForm(): Promise<void> {
+    if (this.oneSubmit) {
+      return;
+    }
+    this.oneSubmit = true;
     if (this.blogForm.invalid) {
       this.markFormGroupTouched();
       this.errorMessage = 'Please fill in all required fields correctly.';

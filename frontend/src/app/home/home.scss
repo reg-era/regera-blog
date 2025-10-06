@@ -2,101 +2,112 @@
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    pointer-events: none;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .row {
   position: relative;
   z-index: 1;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-// Card Container and Carousel
-.card-container {
-  position: relative;
+app-search {
+  display: block;
   width: 100%;
-  padding: 2rem;
+  max-width: 600px;
+  margin: 0 auto 4rem;
+  padding: 0 1rem;
+}
 
+.card-container {
   display: flex;
   flex-wrap: wrap;
   gap: 2rem;
   justify-content: center;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
 
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 100px;
-    z-index: 10;
-    pointer-events: none;
-  }
+// Blog Card Styling
+::ng-deep app-blog-card {
+  flex: 0 1 auto;
+  width: 350px;
+  max-width: calc(100% - 2rem);
+  margin: 0;
 
-  &::before {
-    left: 0;
-    background: linear-gradient(to right,
-        var(--bg) 0%,
-        transparent 100%);
-  }
-
-  &::after {
-    right: 0;
-    background: linear-gradient(to left,
-        var(--bg) 0%,
-        transparent 100%);
+  // Ensure cards don't stretch
+  .blog-card {
+    height: 100%;
+    margin: 0;
   }
 }
 
-// Responsive Design
+// Responsive adjustments
+@media (max-width: 1400px) {
+  .card-container {
+    max-width: 100%;
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .card-container {
+    gap: 1.75rem;
+    padding: 1.5rem 1rem;
+  }
+
+  ::ng-deep app-blog-card {
+    width: 320px;
+  }
+}
+
 @media (max-width: 768px) {
   .container-fluid {
-    padding: 2rem 0;
+    padding: 1rem 0;
   }
 
   app-search {
     margin: 0 1rem 3rem 1rem;
     max-width: none;
+    padding: 0;
   }
 
   .card-container {
-    padding: 1rem 0;
-
-    &::before,
-    &::after {
-      width: 50px;
-    }
+    gap: 1.5rem;
+    padding: 1rem;
   }
 
   ::ng-deep app-blog-card {
     width: 300px;
-  }
-
-  .blog-cards {
-    gap: 1.5rem;
-    animation-duration: 45s;
+    max-width: 100%;
   }
 }
 
 @media (max-width: 480px) {
+  .card-container {
+    gap: 1.25rem;
+    padding: 0.75rem;
+  }
+
   ::ng-deep app-blog-card {
-    width: 280px;
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
 
     .card-header .card-title {
       font-size: 1.1rem;
     }
 
     .image-container {
-      height: 180px;
+      width: calc(100% - 32px);
       margin: 0 16px 16px;
+      padding-top: 56.25%; // Maintain 16:9 aspect ratio
     }
 
     .card-content,
@@ -104,5 +115,29 @@
       padding-left: 16px;
       padding-right: 16px;
     }
+  }
+}
+
+// Extra small screens - single column centered
+@media (max-width: 360px) {
+  .card-container {
+    padding: 0.5rem;
+  }
+
+  ::ng-deep app-blog-card {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+// Large screens - better spacing
+@media (min-width: 1600px) {
+  .card-container {
+    gap: 2.5rem;
+    padding: 3rem;
+  }
+
+  ::ng-deep app-blog-card {
+    width: 380px;
   }
 }

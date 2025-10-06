@@ -1,8 +1,8 @@
-import { ChangeDetectorRef, Component, OnInit, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { BlogCard } from '../home/blog-card/blog-card';
-import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-field';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatListModule } from '@angular/material/list';
-import { FormArray, FormBuilder, FormControl, FormGroup, FormGroupDirective, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { BlogObject } from '../../services/blog-service';
@@ -30,14 +30,15 @@ import { MatInputModule } from '@angular/material/input';
     MatListModule
   ],
   templateUrl: './bloger.html',
-  styleUrl: './bloger.css'
+  styleUrl: './bloger.scss'
 })
 
-export class Bloger implements OnInit {
+export class Bloger implements OnInit, OnDestroy {
   blogger$: BehaviorSubject<UserObject | null>;
   blogs$: BehaviorSubject<BlogObject[] | null>;
 
   isOwner = false;
+  isAuthenticated = false;
 
   ReportForm!: FormGroup;
   availableReasons = ['Spam or misleading', 'Harassment or hate speech', 'Inappropriate content'];
@@ -74,7 +75,13 @@ export class Bloger implements OnInit {
     } else {
       const ping = this.credentialService.CheckAuthentication();
       ping.subscribe(obj => {
-        if (obj && username == obj.username) this.router.navigate(['/profile']);
+        if (obj) {
+          if (username == obj.username) {
+            this.router.navigate(['/profile']);
+            return
+          }
+          this.isAuthenticated = true;
+        }
       })
     }
 
@@ -86,15 +93,21 @@ export class Bloger implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    this.blogger$.unsubscribe();
+    this.blogs$.unsubscribe();
+  }
+
   confirmReport(): void {
+    if (!this.isAuthenticated) {
+      this.router.navigate(['/login']);
+      return;
+    }
     const selectedReasons: string[] = this.ReportForm.value.reasons
       .map((checked: boolean, i: number) => checked ? this.availableReasons[i] : null)
       .filter((v: string | null) => v !== null);
 
     if (selectedReasons.length > 0 || this.ReportForm.value.details.length > 0) {
-      console.log('Selected reasons:', selectedReasons);
-      console.log('Additional message:', this.ReportForm.value.details);
-
       this.userService.makeReport(
         this.blogger$.value?.username || '',
         selectedReasons,
@@ -118,13 +131,23 @@ export class Bloger implements OnInit {
     }, 3000);
   }
 
-  async toggleFollow() {
-    // const response = await this.userService.makeFollow(this.blogger.username);
-    // if (response.success) {
-    // this.blogger.isFollowing = response.data.status == 1;
-    // this.blogger.followers = response.data.follows;
-    // }
-    // this.cdr.markForCheck();
+  toggleFollow() {
+    if (!this.isAuthenticated) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    if (this.blogger$.value) {
+      this.userService.makeFollow(this.blogger$.value.username).subscribe((res) => {
+        if (res != null) {
+          const newUser = {
+            ...this.blogger$.value!,
+            isFollowing: res.status === 1,
+            followers: res.follows
+          };
+          this.blogger$.next(newUser);
+        }
+      });
+    }
   }
 
   getBlogs(): BlogObject[] {

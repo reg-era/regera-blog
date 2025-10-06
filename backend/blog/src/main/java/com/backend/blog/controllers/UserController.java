@@ -8,12 +8,14 @@ import com.backend.blog.services.FollowService;
 import com.backend.blog.services.UserService;
 import com.backend.blog.utils.JwtUtil;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,8 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
+
+    private final JwtUtil jwtUtil;
 
     private final UserService userService;
     private final BlogService blogService;
@@ -38,10 +42,12 @@ public class UserController {
         }
     }
 
-    public UserController(UserService userService, BlogService blogService, FollowService followService) {
+    public UserController(UserService userService, BlogService blogService, FollowService followService,
+            JwtUtil jwtUtil) {
         this.userService = userService;
         this.blogService = blogService;
         this.followService = followService;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("/register")
@@ -101,13 +107,21 @@ public class UserController {
 
     @GetMapping("/{username}")
     public ResponseEntity<UserInfoResponce> getByUsername(@PathVariable String username, HttpServletRequest request) {
-        User user = (User) request.getAttribute("user");
+        Optional<Claims> claimsOpt = this.jwtUtil.extractClaimsFromRequest(request);
         User other = this.userService.fetchUser(username);
-        boolean isFollowing = user != null ? this.userService.isFollowing(user, other.getId()) : false;
+        User user = null;
+
+        if (claimsOpt.isPresent()) {
+            Claims claims = claimsOpt.get();
+            String authUsername = claims.getSubject();
+            user = this.userService.fetchUser(authUsername);
+        }
+
+        boolean isFollowing = user == null ? false : this.userService.isFollowing(user, other.getId());
 
         List<BlogDto> blogs = this.blogService.readUserBlogs(other.getUsername());
-        Long follwers = this.followService.countFollowing(other.getUsername());
-        UserDto profile = other.toDto(isFollowing, follwers);
+        Long followers = this.followService.countFollowing(other.getUsername());
+        UserDto profile = other.toDto(isFollowing, followers);
 
         return ResponseEntity.ok(new UserInfoResponce(profile, blogs));
     }
