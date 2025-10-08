@@ -16,6 +16,7 @@ import DOMPurify from 'dompurify';
 import { BehaviorSubject } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MediaService } from '../../services/media-service';
 
 @Component({
   selector: 'app-blog',
@@ -35,22 +36,27 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 export class Blog implements OnInit {
   public blog$: BehaviorSubject<BlogObject | null>;
   public comments$: BehaviorSubject<CommentObject[] | null>;
-  private md: MarkdownIt;
 
+  public blogMedia$: BehaviorSubject<string>;
+  public IsVideo = false;
+
+  public CommentFrom: FormGroup;
   private commentPage = 0;
   public doneComment = false;
 
-  public CommentFrom: FormGroup;
+  private md: MarkdownIt;
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private blogService: BlogService,
     private userService: UserService,
+    private mediaService: MediaService,
     private fb: FormBuilder
   ) {
     this.blog$ = new BehaviorSubject<BlogObject | null>(null);
     this.comments$ = new BehaviorSubject<CommentObject[] | null>(null);
+    this.blogMedia$ = new BehaviorSubject<string>('/error-media.gif');
 
     this.md = new MarkdownIt({
       html: false,
@@ -81,7 +87,14 @@ export class Blog implements OnInit {
     }
 
     this.blogService.getBlog(parsedId).subscribe((blog) => {
-      this.blog$.next(blog);
+      if (blog) {
+        this.blog$.next(blog);
+        this.IsVideo = blog.media.includes('video');
+
+        this.mediaService.urlToBlobImageUrl(blog.media).subscribe((url) => {
+          this.blogMedia$.next(url);
+        })
+      }
     });
     this.blogService.getComments(parsedId, this.commentPage++).subscribe((comments) => {
       this.comments$.next(comments);

@@ -25,7 +25,6 @@ export interface BlogObject {
   comments: number;
   isLiking: boolean;
   createdAt: string;
-  isVideo: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -137,17 +136,6 @@ export class BlogService {
   getBlog(id: number): Observable<BlogObject | null> {
     return this.http.get<BlogObject>(
       `${environment.apiURL}/api/blogs/${id}`
-    ).pipe(
-      map((blog) => {
-        this.mediaService.urlToBlobImageUrl(blog.cover).subscribe((newImage) => {
-          blog.cover = newImage;
-        });
-        this.mediaService.urlToBlobImageUrl(blog.media).subscribe(newImage => {
-          blog.media = newImage;
-        });
-        return blog
-      }),
-      catchError((err) => of(null))
     );
   }
 

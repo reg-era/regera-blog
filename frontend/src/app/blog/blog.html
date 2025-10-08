@@ -11,14 +11,16 @@
       <h1 class="blog-title">{{ blog.title }}</h1>
 
       <section class="media-section">
-        @if (blog.isVideo){
+        @if (blogMedia$ |async;as media){
+        @if (IsVideo){
         <ng-container video>
-          <video [src]="blog.media" controls playsinline></video>
+          <video [src]="media" controls playsinline></video>
         </ng-container>
         }@else {
         <ng-container image>
-          <img [src]="blog.media" alt="blog cover" class="media-image" />
+          <img [src]="media" alt="blog cover" class="media-image" />
         </ng-container>
+        }
         }
       </section>
 
@@ -56,7 +58,7 @@
         @for (comment of comments; track comment.id) {
         <div class="comment">
           <strong>{{ comment.author }}</strong>
-          <span> •  {{ formatDate(comment.createdAt) }}</span>
+          <span> • {{ formatDate(comment.createdAt) }}</span>
           <p>{{ comment.content }}</p>
         </div>
         }
