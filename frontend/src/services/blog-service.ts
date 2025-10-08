@@ -134,49 +134,27 @@ export class BlogService {
     )
   }
 
-  async getBlog(id: number): Promise<BlogObject | null> {
-    try {
-      const res = await fetch(`${environment.apiURL}/api/blogs/${id}`);
-
-      if (res.ok) {
-        const blog: BlogObject = await res.json();
-        blog.isVideo = false;
-
-        if (blog.media.endsWith('mp4')) {
-          blog.isVideo = true
-        };
-
+  getBlog(id: number): Observable<BlogObject | null> {
+    return this.http.get<BlogObject>(
+      `${environment.apiURL}/api/blogs/${id}`
+    ).pipe(
+      map((blog) => {
         this.mediaService.urlToBlobImageUrl(blog.cover).subscribe((newImage) => {
           blog.cover = newImage;
         });
         this.mediaService.urlToBlobImageUrl(blog.media).subscribe(newImage => {
           blog.media = newImage;
         });
-
-        if (blog.cover == '/error-media.gif' || blog.media == '/error-media.gif') blog.isVideo = false;
-        return blog;
-      } else {
-        return null;
-      }
-    } catch (error) {
-      console.error("Error sending blog: ", error);
-      return null;
-    }
+        return blog
+      }),
+      catchError((err) => of(null))
+    );
   }
 
-  async getComments(blogId: number, offset: number): Promise<{ success: boolean, comment: CommentObject[] }> {
-    try {
-      const res = await fetch(`${environment.apiURL}/api/comments/${blogId}?offset=${offset}`);
-      if (res.ok) {
-        const comment: CommentObject[] = await res.json();
-        return { success: true, comment: comment };
-      } else {
-        return { success: false, comment: [] };
-      }
-    } catch (error) {
-      console.error("Error getting bloger: ", error);
-      return { success: false, comment: [] };
-    }
+  getComments(blogId: number, offset: number): Observable<CommentObject[] | null> {
+    return this.http.get<CommentObject[]>(
+      `${environment.apiURL}/api/comments/${blogId}?offset=${offset}`
+    );
   }
 
 }

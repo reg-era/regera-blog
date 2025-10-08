@@ -14,9 +14,9 @@
     grid-template-columns: 1fr 380px;
   }
 
-  // Loading state
-  mat-spinner {
-    position: absolute;
+  // Loading spinner
+  >mat-spinner {
+    position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -27,6 +27,7 @@
   }
 }
 
+// Main Blog Container
 .blog-container {
   background: var(--bg);
   border-radius: 24px;
@@ -54,9 +55,10 @@
   }
 }
 
+// Author Section
 .author-section {
   padding: 2rem 3rem;
-  background: linear-gradient(135deg, var(--accent) 0%, #6366f1 100%);
+  background: linear-gradient(45deg, var(--bg), var(--background), var(--text-muted));
   color: var(--text);
   position: relative;
   overflow: hidden;
@@ -119,10 +121,21 @@
   position: relative;
   background: var(--card);
 
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), #9b00b8, #c000e0);
+    z-index: 1;
+  }
+
   video,
   .media-image {
     width: 100%;
-    height: 100%;
+    height: auto;
     display: block;
     max-height: 600px;
     object-fit: cover;
@@ -262,11 +275,9 @@
   flex-direction: column;
   gap: 2rem;
   animation: fadeInRight 0.6s ease-out 0.2s both;
-
-  @media (max-width: 1023px) {
-    position: sticky;
-    top: 2rem;
-  }
+  height: fit-content;
+  position: sticky;
+  top: 2rem;
 }
 
 @keyframes fadeInRight {
@@ -298,45 +309,6 @@
     transform: translateY(-2px);
   }
 
-  button[mat-raised-button] {
-    width: 100%;
-    height: 50px;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 1rem;
-    text-transform: none;
-    letter-spacing: 0.02em;
-    background: linear-gradient(135deg, var(--accent) 0%, #6366f1 100%);
-    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
-    transition: all var(--transition);
-    position: relative;
-    overflow: hidden;
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-      transition: left 0.5s ease;
-    }
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
-
-      &::before {
-        left: 100%;
-      }
-    }
-
-    &:active {
-      transform: translateY(0);
-    }
-  }
-
   .likes {
     display: flex;
     align-items: center;
@@ -357,6 +329,47 @@
       width: 1.5rem;
       height: 1.5rem;
       animation: heartBeat 2s ease-in-out infinite;
+    }
+
+    &:hover {
+      background: rgba(239, 68, 68, 0.05);
+      border-color: rgba(239, 68, 68, 0.2);
+      transform: scale(1.02);
+    }
+  }
+
+  button {
+    width: 100%;
+    height: 50px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    text-transform: none;
+    letter-spacing: 0.02em;
+    background: linear-gradient(135deg, var(--accent), #9b00b8);
+    box-shadow: 0 4px 15px rgba(118, 0, 145, 0.3);
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(118, 0, 145, 0.4);
+
+      &::before {
+        left: 100%;
+      }
     }
   }
 }
@@ -385,20 +398,100 @@
   }
 }
 
-// Comments Section
+// Comments Section - FIXED HEIGHT
 .comments-section {
   background: var(--bg);
-  padding: 2rem;
   border-radius: 20px;
   box-shadow: var(--shadow);
   border: 1px solid var(--border-light);
   transition: all var(--transition);
+  display: flex;
+  flex-direction: column;
 
-  &.fixed-comments {
-    position: sticky;
-    top: 2rem;
-    max-height: calc(100vh - 4rem);
+  // FIXED HEIGHT for better responsive design
+  height: 600px;
+  max-height: calc(100vh - 300px);
+
+  &:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+  }
+
+  h3 {
+    margin: 0;
+    padding: 2rem 2rem 1rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+
+    &::before {
+      content: '💬';
+      font-size: 1.3rem;
+    }
+  }
+
+  // Comment Form - Fixed at top
+  form {
+    padding: 0 2rem 1rem;
+    flex-shrink: 0;
+
+    mat-form-field {
+      width: 100%;
+
+      .mat-mdc-text-field-wrapper {
+        background: var(--input-bg);
+        border-radius: 12px;
+        border: 2px solid transparent;
+        transition: all var(--transition);
+
+        &:hover {
+          background: var(--bg);
+          border-color: var(--border);
+        }
+      }
+
+      &.mat-focused {
+        .mat-mdc-text-field-wrapper {
+          background: var(--bg);
+          border-color: var(--accent);
+          box-shadow: 0 0 0 3px rgba(118, 0, 145, 0.1);
+        }
+      }
+
+      .mat-mdc-form-field-flex {
+        background: transparent;
+        padding: 0.75rem 1rem;
+      }
+
+      input {
+        color: var(--text);
+        font-size: 1rem;
+        font-family: var(--font-base);
+
+        &::placeholder {
+          color: var(--text-muted);
+        }
+      }
+
+      .mat-mdc-floating-label {
+        color: var(--text-muted);
+        font-weight: 500;
+
+        &.mdc-floating-label--float-above {
+          color: var(--accent);
+        }
+      }
+    }
+  }
+
+  // Comments List - Scrollable area
+  >div:not(h3):not(form) {
+    flex: 1;
     overflow-y: auto;
+    padding: 0 2rem 1rem;
 
     // Custom scrollbar
     &::-webkit-scrollbar {
@@ -415,39 +508,30 @@
       border-radius: 3px;
 
       &:hover {
-        background: #6366f1;
+        background: #9b00b8;
       }
     }
   }
 
-  &:hover {
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
-  }
+  // Loading spinner in comments
+  mat-spinner {
+    margin: 2rem auto;
 
-  h3 {
-    margin: 0 0 1.5rem 0;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--text);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    ::ng-deep circle {
+      stroke: var(--accent);
+    }
   }
 }
 
+// Individual Comment
 .comment {
-  padding: 1.25rem;
+  padding: 0.5rem;
   margin-bottom: 1rem;
   background: var(--card);
   border-radius: 12px;
   border: 1px solid var(--border-light);
   transition: all var(--transition);
   animation: slideInUp 0.4s ease-out;
-
-  // important part for wrapping
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  white-space: normal;
 
   &:hover {
     background: var(--bg);
@@ -457,20 +541,30 @@
   }
 
   strong {
-    display: block;
-    margin-bottom: 0.5rem;
     font-weight: 700;
     color: var(--accent);
     font-size: 0.95rem;
+    margin-right: 0.35rem;
+  }
+
+  span {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    opacity: 0.8;
   }
 
   p {
-    margin: 0;
+    margin: 0.4rem 0 0;
     color: var(--text);
     line-height: 1.6;
     font-size: 0.95rem;
+    max-width: 65ch;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
 }
+
+
 
 @keyframes slideInUp {
   from {
@@ -484,58 +578,31 @@
   }
 }
 
-// Comment Form
-.comment-form {
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 2px solid var(--border-light);
+// More Comments Button - Fixed at bottom
+.more-comments {
+  width: calc(100% - 4rem);
+  margin: 1rem 2rem;
+  padding: 0.875rem 1.5rem;
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  background: var(--card);
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  flex-shrink: 0;
 
-  .comment-input {
-    width: 100%;
+  &:hover {
+    background: var(--accent);
+    color: var(--text);
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(118, 0, 145, 0.2);
+  }
 
-    .mat-mdc-text-field-wrapper {
-      background: var(--input-bg);
-      border-radius: 12px;
-      border: 2px solid transparent;
-      transition: all var(--transition);
-
-      &:hover {
-        background: var(--bg);
-        border-color: var(--border);
-      }
-    }
-
-    &.mat-focused {
-      .mat-mdc-text-field-wrapper {
-        background: var(--bg);
-        border-color: var(--accent);
-        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-      }
-    }
-
-    .mat-mdc-form-field-flex {
-      background: transparent;
-      padding: 1rem;
-    }
-
-    input {
-      color: var(--text);
-      font-size: 1rem;
-      font-family: var(--font-base);
-
-      &::placeholder {
-        color: var(--text-muted);
-      }
-    }
-
-    .mat-mdc-floating-label {
-      color: var(--text-muted);
-      font-weight: 500;
-
-      &.mdc-floating-label--float-above {
-        color: var(--accent);
-      }
-    }
+  &:active {
+    transform: translateY(0);
   }
 }
 
@@ -545,6 +612,19 @@
     padding: 1rem;
     grid-template-columns: 1fr;
   }
+
+  .blog-sidebar {
+    position: relative;
+    top: 0;
+  }
+
+  .comments-section {
+    height: 500px;
+    max-height: none;
+  }
+}
+
+@media (max-width: 768px) {
 
   .blog-container,
   .blog-sidebar {
@@ -593,17 +673,29 @@
     }
   }
 
-  .comments-section.fixed-comments {
-    position: relative;
-    max-height: none;
+  .interaction-header,
+  .comments-section h3,
+  .comments-section form {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .comments-section {
+    height: 450px;
+
+    >div:not(h3):not(form) {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  .more-comments {
+    width: calc(100% - 3rem);
+    margin: 0 1.5rem 1.5rem;
   }
 }
 
-@media (max-width: 768px) {
-  .blog-layout {
-    padding: 0.75rem;
-  }
-
+@media (max-width: 480px) {
   .author-section {
     padding: 1.25rem 1.5rem;
     border-radius: 20px 20px 0 0;
@@ -625,60 +717,28 @@
     font-size: 1rem;
   }
 
-  .interaction-header,
-  .comments-section {
+  .interaction-header {
     padding: 1.5rem;
   }
-}
 
-@media (max-width: 480px) {
-  .content-section {
-    padding: 1.25rem;
+  .comments-section {
+    height: 400px;
 
-    .blog-title {
-      font-size: 1.625rem;
+    h3 {
+      padding: 1.5rem 1.5rem 1rem;
+      font-size: 1.25rem;
+    }
+
+    form {
+      padding: 0 1.5rem 1rem;
+    }
+
+    >div:not(h3):not(form) {
+      padding: 0 1.5rem 1rem;
     }
   }
 
-  .media-section {
-    border-radius: 16px;
-
-    video,
-    .media-image {
-      max-height: 300px;
-    }
-  }
-}
-
-// Dark Theme (if needed)
-.dark-theme {
-  --bg: #1e293b;
-  --background: #0f172a;
-  --text: #f8fafc;
-  --card: #1e293b;
-  --border: #334155;
-  --border-light: #334155;
-  --text-muted: #94a3b8;
-  --input-bg: #1e293b;
-  --shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  --elevation-2: 0px 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-// Print styles
-@media print {
-
-  .blog-sidebar,
-  .interaction-header {
-    display: none;
-  }
-
-  .blog-layout {
-    padding: 0;
-    display: block;
-  }
-
-  .blog-container {
-    box-shadow: none;
-    border: 1px solid var(--border);
+  .more-comments {
+    margin: 0 1.5rem 1.5rem;
   }
 }

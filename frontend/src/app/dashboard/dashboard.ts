@@ -1,7 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 
 import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -55,13 +55,13 @@ export class Dashboard implements OnInit {
     })
 
     this.reports$ = new BehaviorSubject<ReportObject[] | null>(null);
-  }
 
-  ngOnInit(): void {
     this.EscalateForm = this.formBuilder.group({ username: ['', Validators.required] })
     this.DeleteUserForm = this.formBuilder.group({ username: ['', Validators.required] })
     this.DeleteBlogForm = this.formBuilder.group({ id: ['', Validators.required] })
+  }
 
+  ngOnInit(): void {
     this.adminService.getReports().subscribe((reports) => {
       if (reports) {
         this.reports$.next(reports);

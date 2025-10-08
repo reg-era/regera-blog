@@ -1,17 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BlogFormModel, BlogObject, BlogService } from '../../services/blog-service';
+import { BlogFormModel, BlogService } from '../../services/blog-service';
 import { CredentialService } from '../../services/credential-service';
 import { ViewChild, ElementRef } from '@angular/core';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
@@ -41,7 +36,7 @@ export class Newblog implements OnInit, OnDestroy {
 
   selectedFile: File | null = null;
   imagePreview: string | null = null;
-  maxFileSize = 10 * 1024 * 1024; // 10MB
+  maxFileSize = 20 * 1024 * 1024;
   allowedImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
   allowedVideoTypes = ['video/mp4', 'video/avi', 'video/mov', 'video/wmv'];
 
@@ -100,17 +95,14 @@ export class Newblog implements OnInit, OnDestroy {
     }
   }
 
-  private async loadBlogForEditing(blogId: number): Promise<void> {
-    try {
-      const blogData = (await this.blogService.getBlog(blogId));
-      if (blogData) {
-        this.blogForm.get('title')?.setValue(blogData.title);
-        this.blogForm.get('description')?.setValue(blogData.description);
-        this.blogForm.get('content')?.setValue(blogData.content);
+  private loadBlogForEditing(blogId: number) {
+    this.blogService.getBlog(blogId).subscribe((blog) => {
+      if (blog) {
+        this.blogForm.get('title')?.setValue(blog.title);
+        this.blogForm.get('description')?.setValue(blog.description);
+        this.blogForm.get('content')?.setValue(blog.content);
       }
-    } catch {
-      console.log('Faild to get blog data');
-    }
+    })
   }
 
   onFileSelected(event: Event): void {

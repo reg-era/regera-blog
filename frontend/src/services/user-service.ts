@@ -116,47 +116,28 @@ export class UserService {
     );
   }
 
-  async makeLike(blogId: number): Promise<{ success: boolean; data: { likes: number, status: number } }> {
-    try {
-      const res = await fetch(`${environment.apiURL}/api/likes/${blogId}`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-        },
-      });
-
-      if (res.ok) {
-        const data: { likes: number, status: number } = await res.json();
-        return { success: true, data: data };
-      } else {
-        return { success: false, data: { likes: 0, status: 0 } };
-      }
-    } catch (error) {
-      console.error("Error getting bloger: ", error);
-      return { success: false, data: { likes: 0, status: 0 } };
-    }
+  makeLike(blogId: number): Observable<{ likes: number, status: number } | any> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
+    });
+    return this.http.post<{ likes: number, status: number }>(
+      `${environment.apiURL}/api/likes/${blogId}`,
+      null,
+      { headers }
+    ).pipe(
+      catchError((err) => of(null))
+    );
   }
 
-  async makeComment(blogId: number, comment: string): Promise<{ success: boolean, comment: CommentObject }> {
-    try {
-      const res = await fetch(`${environment.apiURL}/api/comments/${blogId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-        },
-        method: 'POST',
-        body: comment
-      });
-
-      if (res.ok) {
-        const comment: CommentObject = await res.json();
-        return { success: true, comment: comment };
-      } else {
-        return { success: false, comment: createEmptyCommentObject() };
-      }
-    } catch (error) {
-      console.error("Error getting bloger: ", error);
-      return { success: false, comment: createEmptyCommentObject() };
-    }
+  makeComment(blogId: number, comment: string): Observable<CommentObject | null> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
+    });
+    return this.http.post<CommentObject>(
+      `${environment.apiURL}/api/comments/${blogId}`,
+      comment,
+      { headers }
+    );
   }
 
   async getNotifications(): Promise<{ success: boolean, notification: NotificationObject[] }> {

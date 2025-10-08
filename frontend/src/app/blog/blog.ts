@@ -1,8 +1,8 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { BlogObject, BlogService } from '../../services/blog-service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,33 +13,49 @@ import MarkdownIt from 'markdown-it';
 import hljs from 'highlight.js';
 import DOMPurify from 'dompurify';
 
+import { BehaviorSubject } from 'rxjs';
+import { AsyncPipe } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+
 @Component({
   selector: 'app-blog',
-  imports: [MatProgressSpinner, MatCardModule, MatIconModule, MatFormField, MatLabel, MatInputModule],
+  imports: [
+    AsyncPipe,
+    MatProgressSpinner,
+    MatCardModule,
+    MatIconModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatInputModule
+  ],
   templateUrl: './blog.html',
   styleUrl: './blog.scss'
 })
 
 export class Blog implements OnInit {
-  blog!: BlogObject;
-  comments: CommentObject[] = [];
-
-  _Refresh = true;
-  newComment = '';
-
+  public blog$: BehaviorSubject<BlogObject | null>;
+  public comments$: BehaviorSubject<CommentObject[] | null>;
   private md: MarkdownIt;
 
+  private commentPage = 0;
+  public doneComment = false;
+
+  public CommentFrom: FormGroup;
+
   constructor(
-    private cdr: ChangeDetectorRef,
     private router: Router,
     private route: ActivatedRoute,
     private blogService: BlogService,
-    private userService: UserService
+    private userService: UserService,
+    private fb: FormBuilder
   ) {
+    this.blog$ = new BehaviorSubject<BlogObject | null>(null);
+    this.comments$ = new BehaviorSubject<CommentObject[] | null>(null);
+
     this.md = new MarkdownIt({
-      html: false,       // disable raw HTML in markdown for security
-      linkify: true,     // autolink URLs
-      typographer: true, // nice quotes, dashes
+      html: false,
+      linkify: true,
+      typographer: true,
       highlight: (code: string, lang: string) => {
         if (lang && hljs.getLanguage(lang)) {
           return `<pre><code class="hljs language-${lang}">${hljs.highlight(code, { language: lang }).value}</code></pre>`;
@@ -47,9 +63,11 @@ export class Blog implements OnInit {
         return `<pre><code class="hljs">${this.md.utils.escapeHtml(code)}</code></pre>`;
       },
     });
+
+    this.CommentFrom = this.fb.group({ comment: ['', Validators.max(150)] })
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) {
       this.router.navigate(['/']);
@@ -62,46 +80,60 @@ export class Blog implements OnInit {
       return;
     }
 
-    const resBlog = await this.blogService.getBlog(parsedId);
-    const resComm = await this.blogService.getComments(parsedId, 0);
-    if (resBlog) {
-      this.blog = resBlog;
-    }
-
-    this.comments = resComm.comment;
-    this._Refresh = false;
-
-    this.cdr.markForCheck();
+    this.blogService.getBlog(parsedId).subscribe((blog) => {
+      this.blog$.next(blog);
+    });
+    this.blogService.getComments(parsedId, this.commentPage++).subscribe((comments) => {
+      this.comments$.next(comments);
+    });
   }
 
-  async toggleLike() {
-    const response = await this.userService.makeLike(this.blog.id);
-    if (response.success) {
-      this.blog.isLiking = response.data.status == 1;
-      this.blog.likes = response.data.likes;
-    }
-    this.cdr.markForCheck();
-  }
-
-  setComment(e: KeyboardEvent) {
-    const input = e.target as HTMLTextAreaElement;
-
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      this.submitComment();
-    } else {
-      this.newComment = input.value;
+  toggleLike() {
+    if (this.blog$.value) {
+      this.userService.makeLike(this.blog$.value.id).subscribe((res) => {
+        if (res) {
+          this.blog$.next({
+            ...this.blog$.value!,
+            likes: res.likes,
+            isLiking: res.status == 1
+          })
+        }
+      });
     }
   }
 
-  async submitComment() {
-    if (!this.newComment.trim()) return;
-    const comment = await this.userService.makeComment(this.blog.id, this.newComment.trim());
-    if (comment.success) {
-      this.comments.push(comment.comment);
+  submitComment() {
+    if (this.CommentFrom.valid) {
+
+      const newComment: string = this.CommentFrom.get('comment')?.getRawValue();
+      if (this.blog$.value && newComment && newComment.length > 0) {
+        this.userService.makeComment(this.blog$.value.id, newComment).subscribe((comment) => {
+          if (this.comments$.value && comment) {
+            this.comments$.next([
+              comment,
+              ...this.comments$.value
+            ]);
+          }
+          this.CommentFrom.reset();
+          this.CommentFrom.markAsPristine();
+          this.CommentFrom.markAsUntouched();
+          this.CommentFrom.updateValueAndValidity();
+        })
+      }
     }
-    this.newComment = '';
-    this.cdr.markForCheck();
+  }
+
+  getMoreComment() {
+    if (!this.doneComment && this.blog$.value) {
+      this.blogService.getComments(this.blog$.value.id, this.commentPage++).subscribe((comments) => {
+        if (comments) {
+          this.comments$.next([...this.comments$.value!, ...comments]);
+          if (comments.length < 5) {
+            this.doneComment = true;
+          }
+        }
+      });
+    }
   }
 
   formatDate(date: string): string {
