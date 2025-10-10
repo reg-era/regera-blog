@@ -1,19 +1,45 @@
-<div class="container-fluid py-4">
+<div class="wrap">
+  @for(n of maxArray ; track n) {
+  <div class="tri"></div>
+  }
+</div>
+<div class="container-fluid">
   <div class="row">
     <div class="col-12">
+
       <app-search />
 
-      <div class="card-container">
-        @if (blogs$ | async ;as blogs){
-        <div class="blog-cards">
-          @for (blog of blogs; track blog.id) {
-          <app-blog-card [blog]="blog"></app-blog-card>
+
+      @if (blogs$ | async; as blogs) {
+      <div class="carousel-wrapper">
+
+        <div class="gradient-overlay left"></div>
+        <div class="gradient-overlay right"></div>
+
+        <div class="card-container" [attr.data-count]="blogs.length">
+
+          <!-- First Set of Cards -->
+          @for (blog of blogs; track blog.id; let i = $index) {
+          <app-blog-card [blog]="blog" [attr.data-index]="i" class="scroll-card">
+          </app-blog-card>
           }
+
+          <!-- Duplicate Set for Seamless Loop (if less than 10) -->
+          @if (blogs.length < 10) { @for (blog of blogs; track blog.id + '-duplicate' ; let i=$index) { <app-blog-card
+            [blog]="blog" [attr.data-index]="blogs.length + i" class="scroll-card duplicate">
+            </app-blog-card>
+            }
+            }
+
         </div>
-        }@else {
-        <mat-spinner></mat-spinner>
-        }
+
       </div>
+      } @else {
+      <div class="loading-container">
+        <mat-spinner></mat-spinner>
+        <p class="loading-text">Loading amazing blogs...</p>
+      </div>
+      }
 
     </div>
   </div>

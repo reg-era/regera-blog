@@ -1,69 +1,282 @@
+@use "sass:math";
+
+$total: 200;
+$time: 10s;
+
+html,
+body,
+.wrap {
+  height: 100%;
+}
+
+body {
+  background: black;
+  background-image: radial-gradient(circle at center, white 0%, #222 10%, black 60%);
+  overflow: hidden;
+}
+
+.wrap {
+  position: fixed; // stay in the background
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0; // behind all content
+  pointer-events: none; // allow clicks to pass through
+  transform-style: preserve-3d;
+  perspective: 800px;
+  overflow: hidden;
+}
+
+
+.tri {
+  height: 0;
+  width: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+@for $i from 1 through $total {
+  $size: math.random(50) * 1px;
+  $rotate: math.random(360) * 1deg;
+
+  .tri:nth-child(#{$i}) {
+    border-top: $size solid hsla(math.random(360), 100%, 50%, 1);
+    border-right: $size solid transparent;
+    border-left: $size solid transparent;
+    margin-left: math.div(-$size, 2);
+    margin-top: math.div(-$size, 2);
+    -webkit-filter: grayscale(1);
+    filter: grayscale(1);
+    transform: rotate($rotate) translate3d(0, 0, -1500px) scale(0);
+    animation: anim#{$i} $time infinite linear;
+    animation-delay: $i * math.div(-$time,$total);
+    opacity: 0;
+  }
+
+  @keyframes anim#{$i} {
+    0% {
+      opacity: 1;
+      transform: rotate($rotate * 1.5) translate3d(math.random(1000) * 1px, math.random(1000) * 1px, 1000px) scale(1);
+    }
+  }
+}
+
 .container-fluid {
   min-height: 100vh;
-  position: relative;
-  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding: 2rem 0;
+  z-index: 10;
 }
 
 .row {
+  width: 100%;
+  max-width: 100%;
+}
+
+.col-12 {
+  padding: 0;
+}
+
+// Carousel Wrapper
+.carousel-wrapper {
   position: relative;
-  z-index: 1;
   width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
+  height: 600px;
+  overflow: hidden;
+  margin: 2rem 0;
 }
 
-app-search {
-  display: block;
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto 4rem;
-  padding: 0 1rem;
+// Gradient Overlays for fade effect
+.gradient-overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 150px;
+  z-index: 10;
+  pointer-events: none;
+
+  &.left {
+    left: 0;
+    background: linear-gradient(to right, var(--bg) 0%, var(--bg) 50%, transparent 100%);
+  }
+
+  &.right {
+    right: 0;
+    background: linear-gradient(to left, var(--bg) 0%, var(--bg) 50%, transparent 100%);
+  }
 }
 
+// Card Container
 .card-container {
+  position: relative;
+  height: 100%;
   display: flex;
-  flex-wrap: wrap;
   gap: 2rem;
-  justify-content: center;
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem;
+  animation: infiniteScroll 60s linear infinite;
+  will-change: transform;
+
+  // Pause on hover
+  &:hover {
+    animation-play-state: paused;
+  }
+
+  // Dynamic animation speed based on card count
+  &[data-count="1"] {
+    animation-duration: 20s;
+  }
+
+  &[data-count="2"] {
+    animation-duration: 25s;
+  }
+
+  &[data-count="3"] {
+    animation-duration: 30s;
+  }
+
+  &[data-count="4"] {
+    animation-duration: 35s;
+  }
+
+  &[data-count="5"] {
+    animation-duration: 40s;
+  }
+
+  &[data-count="6"] {
+    animation-duration: 45s;
+  }
+
+  &[data-count="7"] {
+    animation-duration: 50s;
+  }
+
+  &[data-count="8"] {
+    animation-duration: 55s;
+  }
+
+  &[data-count="9"] {
+    animation-duration: 60s;
+  }
+
+  &[data-count="10"] {
+    animation-duration: 65s;
+  }
 }
 
-// Blog Card Styling
-::ng-deep app-blog-card {
-  flex: 0 1 auto;
-  width: 350px;
-  max-width: calc(100% - 2rem);
-  margin: 0;
+// Infinite Scroll Animation
+@keyframes infiniteScroll {
+  from {
+    transform: translateX(0);
+  }
 
-  // Ensure cards don't stretch
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+// Individual Cards
+::ng-deep .scroll-card {
+  flex: 0 0 350px;
+  width: 350px !important;
+  height: auto;
+  position: relative;
+  animation: fadeInCard 0.6s ease-out backwards;
+
+  // Staggered entrance animation
+  @for $i from 0 through 9 {
+    &[data-index="#{$i}"] {
+      animation-delay: #{$i * 0.1}s;
+    }
+  }
+
   .blog-card {
     height: 100%;
     margin: 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+      transform: translateY(-12px) scale(1.03);
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.2);
+      z-index: 5;
+    }
+  }
+
+  // Duplicate cards (for seamless loop with less than 10 items)
+  &.duplicate {
+    opacity: 1;
   }
 }
 
-// Responsive adjustments
-@media (max-width: 1400px) {
-  .card-container {
-    max-width: 100%;
-    padding: 2rem 1.5rem;
+@keyframes fadeInCard {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
+// Loading State
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 2rem;
+
+  mat-spinner {
+    ::ng-deep circle {
+      stroke: #760091;
+    }
+  }
+
+  .loading-text {
+    font-size: 1.25rem;
+    color: #666;
+    font-weight: 500;
+    margin: 0;
+    animation: pulse 2s ease-in-out infinite;
+  }
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+// Responsive Design
 @media (max-width: 1024px) {
-  .card-container {
-    gap: 1.75rem;
-    padding: 1.5rem 1rem;
+  .carousel-wrapper {
+    height: 550px;
   }
 
-  ::ng-deep app-blog-card {
-    width: 320px;
+  ::ng-deep .scroll-card {
+    flex: 0 0 320px;
+    width: 320px !important;
+  }
+
+  .card-container {
+    gap: 1.5rem;
+  }
+
+  .gradient-overlay {
+    width: 100px;
   }
 }
 
@@ -73,71 +286,125 @@ app-search {
   }
 
   app-search {
-    margin: 0 1rem 3rem 1rem;
+    margin: 0 1rem 3rem;
     max-width: none;
-    padding: 0;
+  }
+
+  .carousel-wrapper {
+    height: 520px;
+    margin: 1rem 0;
+  }
+
+  ::ng-deep .scroll-card {
+    flex: 0 0 300px;
+    width: 300px !important;
   }
 
   .card-container {
-    gap: 1.5rem;
-    padding: 1rem;
+    gap: 1.25rem;
+
+    // Faster animation on mobile
+    &[data-count="1"] {
+      animation-duration: 15s;
+    }
+
+    &[data-count="2"] {
+      animation-duration: 20s;
+    }
+
+    &[data-count="3"] {
+      animation-duration: 25s;
+    }
+
+    &[data-count="4"] {
+      animation-duration: 30s;
+    }
+
+    &[data-count="5"] {
+      animation-duration: 35s;
+    }
+
+    &[data-count="6"] {
+      animation-duration: 40s;
+    }
+
+    &[data-count="7"] {
+      animation-duration: 45s;
+    }
+
+    &[data-count="8"] {
+      animation-duration: 50s;
+    }
+
+    &[data-count="9"] {
+      animation-duration: 55s;
+    }
+
+    &[data-count="10"] {
+      animation-duration: 60s;
+    }
   }
 
-  ::ng-deep app-blog-card {
-    width: 300px;
-    max-width: 100%;
+  .gradient-overlay {
+    width: 60px;
   }
 }
 
 @media (max-width: 480px) {
-  .card-container {
-    gap: 1.25rem;
-    padding: 0.75rem;
+  .carousel-wrapper {
+    height: 500px;
   }
 
-  ::ng-deep app-blog-card {
-    width: 100%;
-    max-width: 380px;
-    margin: 0 auto;
+  ::ng-deep .scroll-card {
+    flex: 0 0 280px;
+    width: 280px !important;
+  }
 
-    .card-header .card-title {
-      font-size: 1.1rem;
+  .card-container {
+    gap: 1rem;
+  }
+
+  .gradient-overlay {
+    width: 40px;
+  }
+}
+
+// Dark theme gradient overlays
+.dark-theme {
+  .container-fluid {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  }
+
+  .gradient-overlay {
+    &.left {
+      background: linear-gradient(to right, #0f172a 0%, rgba(15, 23, 42, 0.8) 50%, transparent 100%);
     }
 
-    .image-container {
-      width: calc(100% - 32px);
-      margin: 0 16px 16px;
-      padding-top: 56.25%; // Maintain 16:9 aspect ratio
-    }
-
-    .card-content,
-    .card-actions {
-      padding-left: 16px;
-      padding-right: 16px;
+    &.right {
+      background: linear-gradient(to left, #0f172a 0%, rgba(15, 23, 42, 0.8) 50%, transparent 100%);
     }
   }
 }
 
-// Extra small screens - single column centered
-@media (max-width: 360px) {
+// Accessibility: Respect prefers-reduced-motion
+@media (prefers-reduced-motion: reduce) {
   .card-container {
-    padding: 0.5rem;
+    animation: infiniteScrollSlow 120s linear infinite;
   }
 
-  ::ng-deep app-blog-card {
-    width: 100%;
-    max-width: 100%;
-  }
-}
+  @keyframes infiniteScrollSlow {
+    from {
+      transform: translateX(0);
+    }
 
-// Large screens - better spacing
-@media (min-width: 1600px) {
-  .card-container {
-    gap: 2.5rem;
-    padding: 3rem;
+    to {
+      transform: translateX(-50%);
+    }
   }
 
-  ::ng-deep app-blog-card {
-    width: 380px;
+  ::ng-deep .scroll-card {
+    animation: none;
+    opacity: 1;
+    transform: scale(1);
   }
 }

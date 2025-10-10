@@ -20,6 +20,8 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class Home implements OnInit {
   public blogs$ = new BehaviorSubject<BlogObject[]>([]);
+  public blogSize = 0;
+  maxArray = [...Array(200).keys()].map(i => i + 1);
 
   constructor(private blogService: BlogService) { }
 
@@ -27,6 +29,7 @@ export class Home implements OnInit {
     this.blogService.getHomeBlogs().subscribe({
       next: (blogs) => {
         if (blogs) {
+          this.blogSize = blogs.length;
           this.blogs$.next(blogs);
         }
       },

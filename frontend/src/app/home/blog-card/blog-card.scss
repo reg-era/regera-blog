@@ -7,8 +7,9 @@
   cursor: pointer;
   display: inline-flex;
   margin: 1rem;
-  max-width: 400px;
-  height: 500px;
+  width: 350px !important;
+  height: 400px !important;
+
   position: relative;
 
   &:hover {
