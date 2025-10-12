@@ -26,8 +26,9 @@ public class UserService {
     }
 
     public User createUser(User user) {
-        if (!user.isValidEmail())
-            throw new IllegalArgumentException("Invalid Email");
+        Optional<String> validation = user.isValidUser();
+        if (!validation.isEmpty())
+            throw new IllegalArgumentException(validation.get());
 
         user.setPasswordHash(user.getPassword());
 

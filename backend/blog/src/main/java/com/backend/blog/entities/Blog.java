@@ -3,6 +3,7 @@ package com.backend.blog.entities;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Entity
 @Table(name = "blogs")
@@ -112,9 +113,17 @@ public class Blog {
     }
 
     @Transient
-    public boolean isValidBlog() {
-        return title != null && !title.isEmpty()
-                && content != null && !content.isEmpty();
+    public Optional<String> isValidBlog() {
+        if (this.title == null || this.title.length() < 30 || this.title.length() > 100) {
+            return Optional.of("Invalid title");
+        }
+        if (this.description == null || this.description.length() < 100 || this.description.length() > 200) {
+            return Optional.of("Invalid description");
+        }
+        if (this.content == null || this.content.length() < 300 || this.content.length() > 5_000) {
+            return Optional.of("Invalid content");
+        }
+        return Optional.empty();
     }
 
 }

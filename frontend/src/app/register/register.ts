@@ -45,10 +45,10 @@ export class Register implements OnInit {
       this._Refresh = false;
     })
     this.registerForm = this.formBuilder.nonNullable.group<RegisterFormModel>({
-      username: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(15)]],
+      username: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(20)]],
       email: ['', [Validators.required, Validators.email]],
-      bio: ['', [Validators.maxLength(100)]],
-      password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(50)]],
+      bio: ['', [Validators.maxLength(200)]],
+      password: ['', [Validators.required, Validators.minLength(8), Validators.pattern("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]+$")]],
       confirmPassword: ['', [Validators.required]],
     }, {
       validators: this.passwordsMatchValidator

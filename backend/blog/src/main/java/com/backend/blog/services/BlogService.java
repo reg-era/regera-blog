@@ -90,8 +90,9 @@ public class BlogService {
     }
 
     public Blog createBlog(Blog blog) {
-        if (!blog.isValidBlog()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid blog information");
+        Optional<String> validation = blog.isValidBlog();
+        if (!validation.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, validation.get());
         }
 
         return this.blogRepository.save(blog);
@@ -111,8 +112,9 @@ public class BlogService {
         newBlog.setDescription(description);
         newBlog.setContent(content);
 
-        if (!newBlog.isValidBlog()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid blog information");
+        Optional<String> validation = newBlog.isValidBlog();
+        if (!validation.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, validation.get());
         }
 
         this.blogRepository.save(newBlog);

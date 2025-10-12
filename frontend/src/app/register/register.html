@@ -79,13 +79,13 @@
             @if(registerForm.get('password')?.hasError('required')) {
             <mat-error>
               <mat-icon>error</mat-icon>
-              Password is required
+              Password required at lease 1 alpha 1 digit 1 super character
             </mat-error>
             }
             @if(registerForm.get('password')?.hasError('minlength')) {
             <mat-error>
               <mat-icon>error</mat-icon>
-              Min 6 characters
+              Min 8 characters
             </mat-error>
             }
           </mat-form-field>

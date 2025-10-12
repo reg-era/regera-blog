@@ -1,6 +1,7 @@
 package com.backend.blog.entities;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import com.backend.blog.dto.UserDto;
@@ -91,13 +92,23 @@ public class User {
         this.role = role;
     }
 
-    public boolean isValidEmail() {
-        if (this.email == null)
-            return false;
-        String trimmed = this.email.trim();
-        if (trimmed.length() == 0)
-            return false;
-        return EMAIL_PATTERN.matcher(trimmed).matches();
+    public Optional<String> isValidUser() {
+        if (this.username == null || this.username.trim().length() < 5 || this.username.trim().length() > 20) {
+            return Optional.of("Invalid username");
+        }
+        if (this.bio == null || this.bio.trim().length() > 200) {
+            return Optional.of("Invalid bio");
+        }
+
+        if (this.email == null || this.email.trim().length() == 0 || !EMAIL_PATTERN.matcher(this.email).matches()) {
+            return Optional.of("Invalid bio");
+        }
+
+        String pattern = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]+$";
+        if (this.password == null || this.password.length() < 8 || !password.matches(pattern)) {
+            return Optional.of("Invalid password");
+        }
+        return Optional.empty();
     }
 
     public UserDto toDto(boolean isFollowing, Long followers) {
