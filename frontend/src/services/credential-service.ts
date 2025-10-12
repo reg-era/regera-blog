@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 
 import { catchError, map, Observable, of, tap } from 'rxjs';
 
@@ -86,14 +86,20 @@ export class CredentialService {
       return of(null);
     }
 
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
+    const headers = { Authorization: `Bearer ${token}` };
 
     return this.http.get<{ username: string, role: string }>(
       `${environment.apiURL}/api/users/ping`,
-      { headers }
+      { headers, observe: 'response' }
     ).pipe(
+      map((resp: HttpResponse<{ username: string, role: string }>) => {
+        const newToken = resp.headers.get('Authorization');
+        if (newToken && newToken.startsWith('Bearer ')) {
+          localStorage.setItem('auth_token', newToken.substring('Bearer '.length));
+        }
+
+        return resp.body;
+      }),
       catchError(() => {
         localStorage.removeItem('auth_token');
         return of(null);

@@ -10,23 +10,18 @@ import com.backend.blog.utils.JwtUtil;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-
-    private final JwtUtil jwtUtil;
 
     private final UserService userService;
     private final BlogService blogService;
@@ -42,16 +37,14 @@ public class UserController {
         }
     }
 
-    public UserController(UserService userService, BlogService blogService, FollowService followService,
-            JwtUtil jwtUtil) {
+    public UserController(UserService userService, BlogService blogService, FollowService followService) {
         this.userService = userService;
         this.blogService = blogService;
         this.followService = followService;
-        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String, String>> register(@Valid @RequestBody User registerReq) {
+    public ResponseEntity<Map<String, String>> register(@RequestBody User registerReq) {
         User created = this.userService.createUser(registerReq);
 
         String token = JwtUtil.generateToken(created.getId(), created.getUsername(), created.getRole().name());
@@ -65,13 +58,10 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> getMethodName(@Valid @RequestBody User loginReq) {
+    public ResponseEntity<Map<String, String>> getMethodName(@RequestBody User loginReq) {
         Map<String, String> res = new HashMap<String, String>();
 
-        User user = this.userService.fetchUser(loginReq.getUsername(), loginReq.getEmail());
-
-        if (!user.getPasswordHash().equals(loginReq.getPassword()))
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
+        User user = this.userService.registerUser(loginReq.getUsername(), loginReq.getEmail(), loginReq.getPassword());
 
         String token = JwtUtil.generateToken(user.getId(), user.getUsername(), user.getRole().name());
 
@@ -107,7 +97,7 @@ public class UserController {
 
     @GetMapping("/{username}")
     public ResponseEntity<UserInfoResponce> getByUsername(@PathVariable String username, HttpServletRequest request) {
-        Optional<Claims> claimsOpt = this.jwtUtil.extractClaimsFromRequest(request);
+        Optional<Claims> claimsOpt = JwtUtil.extractClaimsFromRequest(request);
         User other = this.userService.fetchUser(username);
         User user = null;
 

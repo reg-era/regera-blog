@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.regex.Pattern;
 
 import com.backend.blog.dto.UserDto;
-import com.backend.blog.services.MediaService;
+import com.backend.blog.services.UserService;
 
 import jakarta.persistence.*;
 
@@ -22,9 +22,6 @@ public class User {
 
     @Column(unique = true, nullable = false)
     private String username;
-
-    @Column
-    private String picture;
 
     @Column
     private String bio;
@@ -82,20 +79,12 @@ public class User {
         return bio;
     }
 
-    public String getPicture() {
-        return picture;
-    }
-
     public void setBio(String bio) {
         this.bio = bio;
     }
 
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
-    }
-
-    public void setPicture(String picture) {
-        this.picture = picture;
     }
 
     public void setRole(Role role) {
@@ -111,15 +100,9 @@ public class User {
         return EMAIL_PATTERN.matcher(trimmed).matches();
     }
 
-    @Override
-    public String toString() {
-        return this.id + " " + this.username + " " + this.email;
-    }
-
     public UserDto toDto(boolean isFollowing, Long followers) {
         return new UserDto(
                 this.username,
-                this.picture,
                 this.email,
                 this.bio,
                 this.role.toString(),
@@ -128,13 +111,24 @@ public class User {
     }
 
     public static User createAdmin() {
+        String adminName = System.getenv("ADMIN_NAME");
+        String adminEmail = System.getenv("ADMIN_EMAIL");
+        String adminPassword = System.getenv("ADMIN_PASSWORD");
+        if (adminName == null || adminEmail == null || adminPassword == null) {
+            System.err.println("Cannot find admin infos");
+            System.exit(1);
+        }
         User admin = new User();
-        admin.username = "admin";
-        admin.email = "admin@admin.ceo";
-        admin.passwordHash = "admin123";
+        admin.username = adminName;
+        admin.email = adminEmail;
+        admin.password = adminPassword;
         admin.role = User.Role.ADMIN;
-        admin.picture = MediaService.DEFAULT_USER;
         admin.bio = "This is the root admins for RegBlog";
         return admin;
+    }
+
+    @PrePersist
+    private void hashPassword() {
+        this.passwordHash = UserService.passwordEncoder.encode(this.password);
     }
 }

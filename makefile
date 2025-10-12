@@ -14,6 +14,7 @@ run-postgres:
 run-backend:
 	cd backend/blog && \
 	mvn clean compile && \
+	ADMIN_NAME=$(ADMIN_NAME) ADMIN_EMAIL=$(ADMIN_EMAIL) ADMIN_PASSWORD=$(ADMIN_PASSWORD) \
 	mvn spring-boot:run
 
 run-frontend:

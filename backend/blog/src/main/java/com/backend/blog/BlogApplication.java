@@ -20,7 +20,6 @@ public class BlogApplication {
 		return args -> {
 			if (!userRepository.existsByUsername("admin")) {
 				userRepository.save(User.createAdmin());
-				System.out.println("✅ Default admin created: admin/root123");
 			}
 		};
 	}

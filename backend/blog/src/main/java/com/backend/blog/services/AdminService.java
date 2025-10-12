@@ -15,6 +15,8 @@ import com.backend.blog.repositories.BlogRepository;
 import com.backend.blog.repositories.ReportRepository;
 import com.backend.blog.repositories.UserRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class AdminService {
 
@@ -55,6 +57,7 @@ public class AdminService {
         this.reportRepository.delete(report.get());
     }
 
+    @Transactional
     public void escaleIntoAdmin(String username) {
         Optional<User> user = this.userRepository.findByUsername(username);
         if (user.isPresent()) {

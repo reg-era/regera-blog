@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -16,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class UserService {
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
+    public static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
 
     public UserService(UserRepository userRepository, FollowRepository followRepository) {
         this.userRepository = userRepository;
@@ -27,7 +30,6 @@ public class UserService {
             throw new IllegalArgumentException("Invalid Email");
 
         user.setPasswordHash(user.getPassword());
-        user.setPicture("/media/images/default-profile.jpg");
 
         if (userRepository.existsByUsername(user.getUsername()))
             throw new IllegalArgumentException("Username already used");
@@ -60,6 +62,21 @@ public class UserService {
         return user.get();
     }
 
+    public User registerUser(String username, String email, String password) {
+        Optional<User> user = this.userRepository.findByUsername(username);
+        if (!user.isPresent())
+            user = this.userRepository.findByEmail(email);
+
+        if (!user.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found: " + username);
+        }
+
+        if (passwordEncoder.encode(password).equals(user.get().getPasswordHash()))
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
+
+        return user.get();
+    }
+
     public boolean isFollowing(User user, Long otherId) {
         return this.followRepository.existsByUser_IdAndFollower_Id(user.getId(), otherId);
     }
@@ -71,7 +88,6 @@ public class UserService {
                 .map(user -> {
                     return new UserDto(
                             user.getUsername(),
-                            user.getPicture(),
                             user.getEmail(),
                             user.getBio(),
                             user.getRole().toString(),

@@ -7,7 +7,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 export interface UserObject {
   username: string,
-  picture: string,
   email: string,
   bio: string,
   role: string,
@@ -16,18 +15,6 @@ export interface UserObject {
   followers: number
 }
 
-export function createEmptyUserObject(): UserObject {
-  return {
-    username: '',
-    picture: '',
-    email: '',
-    bio: '',
-    role: '',
-    createdAt: '',
-    isFollowing: false,
-    followers: 0,
-  };
-}
 
 export interface CommentObject {
   id: number,
@@ -35,16 +22,6 @@ export interface CommentObject {
   blog: number,
   content: string,
   createdAt: string
-}
-
-export function createEmptyCommentObject() {
-  return {
-    id: 0,
-    author: '',
-    blog: 0,
-    content: '',
-    createdAt: ''
-  }
 }
 
 export interface NotificationObject {
@@ -75,12 +52,7 @@ export class UserService {
       { headers: new HttpHeaders({ 'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}` }) }
     ).pipe(
       switchMap(data => {
-        const profile$ = this.mediaService.urlToBlobImageUrl(data.profile.picture).pipe(
-          map(newImage => {
-            data.profile.picture = newImage;
-            return data.profile;
-          })
-        );
+        const profile$ = of(data.profile);
 
         const blogs$ = data.blogs.length > 0 ? forkJoin(
           data.blogs.map(blog =>

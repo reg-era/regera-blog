@@ -23,11 +23,9 @@ import java.util.List;
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final JwtUtil jwtUtil;
     private final UserService userService;
 
-    public JwtFilter(JwtUtil jwtUtil, UserService userService) {
-        this.jwtUtil = jwtUtil;
+    public JwtFilter(UserService userService) {
         this.userService = userService;
     }
 
@@ -39,18 +37,27 @@ public class JwtFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring("Bearer ".length());
             try {
-                Claims claims = jwtUtil.validateToken(token);
+                Claims claims = JwtUtil.validateToken(token);
                 String username = claims.getSubject();
+                String tokenRole = claims.get("role", String.class);
 
                 User user = this.userService.fetchUser(username);
 
                 List<GrantedAuthority> authorities;
+                String dbRole;
                 if (user.getRole().equals(User.Role.ADMIN)) {
                     authorities = List.of(
                             new SimpleGrantedAuthority("ROLE_" + User.Role.ADMIN),
                             new SimpleGrantedAuthority("ROLE_" + User.Role.BLOGGER));
+                    dbRole = User.Role.ADMIN.name();
                 } else {
                     authorities = List.of(new SimpleGrantedAuthority("ROLE_" + User.Role.BLOGGER));
+                    dbRole = User.Role.BLOGGER.name();
+                }
+
+                if (!dbRole.equals(tokenRole)) {
+                    String newToken = JwtUtil.generateToken(user.getId(), user.getUsername(), dbRole);
+                    response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + newToken);
                 }
 
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username, null,

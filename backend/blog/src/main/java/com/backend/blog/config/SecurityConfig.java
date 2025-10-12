@@ -27,7 +27,6 @@ public class SecurityConfig {
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true); // allow cookies
         config.setAllowedOrigins(List.of("http://127.0.0.1:4200", "http://localhost:4200")); // frontend
         config.setAllowedHeaders(List.of("*")); // allow all headers
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // allow methods
