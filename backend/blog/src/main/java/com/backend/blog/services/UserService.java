@@ -50,18 +50,6 @@ public class UserService {
         return user.get();
     }
 
-    public User fetchUser(String username, String email) {
-        Optional<User> user = this.userRepository.findByUsername(username);
-        if (!user.isPresent())
-            user = this.userRepository.findByEmail(email);
-
-        if (!user.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found: " + username);
-        }
-
-        return user.get();
-    }
-
     public User registerUser(String username, String email, String password) {
         Optional<User> user = this.userRepository.findByUsername(username);
         if (!user.isPresent())

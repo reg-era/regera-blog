@@ -117,9 +117,4 @@ public class Blog {
                 && content != null && !content.isEmpty();
     }
 
-    @Override
-    public String toString() {
-        return this.id + " " + this.title + " " + this.content;
-    }
-
 }
