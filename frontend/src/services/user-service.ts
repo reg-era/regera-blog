@@ -112,44 +112,44 @@ export class UserService {
     );
   }
 
-  async getNotifications(): Promise<{ success: boolean, notification: NotificationObject[] }> {
-    try {
-      const res = await fetch(`${environment.apiURL}/api/notifications`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-        },
-      });
+  getNotifications(): Observable<NotificationObject[] | null> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
+    });
 
-      if (res.ok) {
-        const notif: NotificationObject[] = await res.json();
-        return { success: true, notification: notif };
-      } else {
-        return { success: false, notification: [createEmptyNotificationObject()] };
-      }
-    } catch (error) {
-      console.error("Error getting bloger: ", error);
-      return { success: false, notification: [createEmptyNotificationObject()] };
-    }
+    return this.http.get<NotificationObject[]>(
+      `${environment.apiURL}/api/notifications`, { headers }
+    ).pipe(
+      map(notif => notif.map(not => {
+        return {
+          ...not,
+          createAt: new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+          }).format(new Date(not.createdAt))
+        }
+      })),
+      catchError((err: any) => {
+        return of(null);
+      })
+    );
   }
 
-  async deletetNotifications(id: number): Promise<boolean> {
-    try {
-      const res = await fetch(`${environment.apiURL}/api/notifications/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-        },
-        method: 'DELETE'
-      });
+  deletetNotifications(id: number): Observable<boolean> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
+    });
 
-      if (res.ok) {
-        return true;
-      } else {
-        return false;
-      }
-    } catch (error) {
-      console.error("Error getting bloger: ", error);
-      return false;
-    }
+    return this.http.delete(
+      `${environment.apiURL}/api/notifications/${id}`,
+      { headers }
+    ).pipe(
+      map((res) => true),
+      catchError((err) => of(false))
+    );
   }
 
   makeReport(reported: string, reasons: string[], details: string): Observable<boolean> {
@@ -157,21 +157,15 @@ export class UserService {
       'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
     });
 
-    const content = (reasons.join(', ') + '<br>' + details).trim()
+    const content = (reasons.join(', ') + ' ' + details).trim()
 
     return this.http.post(`${environment.apiURL}/api/reports`, {
       reported: reported,
       content: content,
     }, { headers })
       .pipe(
-        map((data) => {
-          console.log(data);
-          return true;
-        }),
-        catchError(((err) => {
-          console.error('Error: ', err);
-          return of(false);
-        }))
+        map((res) => true),
+        catchError(((err) => of(false)))
       )
   }
 }

@@ -1,72 +1,69 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { AsyncPipe } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDividerModule } from '@angular/material/divider';
+
+import { BehaviorSubject } from 'rxjs';
+
 import { NotificationObject, UserService } from '../../services/user-service';
 
 @Component({
-    selector: 'app-notifications',
-    standalone: true,
-    imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatButtonModule,
-        MatIconModule,
-        MatProgressSpinnerModule,
-        MatMenuModule,
-        MatCheckboxModule,
-        MatDividerModule
-    ],
-    templateUrl: './notification.html',
-    styleUrls: ['./notification.scss'],
+  selector: 'app-notifications',
+  standalone: true,
+  imports: [
+    AsyncPipe,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule
+  ],
+  templateUrl: './notification.html',
+  styleUrls: ['./notification.scss'],
 })
 
-export class Notifications implements OnInit {
+export class Notifications implements OnInit, OnDestroy {
 
-    notifications: NotificationObject[] = [];
-    _Refresh = true;
+  notifications$: BehaviorSubject<NotificationObject[] | null>;
 
-    constructor(private cdr: ChangeDetectorRef,
-        private userService: UserService) { }
+  constructor(private userService: UserService) {
+    this.notifications$ = new BehaviorSubject<NotificationObject[] | null>(null)
+  }
 
-    ngOnInit(): void {
-        this.loadNotifications();
+  ngOnInit(): void {
+    this.userService.getNotifications().subscribe((notifs) => {
+      if (notifs) {
+        this.notifications$.next(notifs)
+      }
+    })
+  }
+
+  ngOnDestroy(): void {
+    this.notifications$.unsubscribe();
+  }
+
+  deleteNotification(id: number) {
+    const oldNotif = this.notifications$.value
+    let index = -1;
+    if (!oldNotif) return;
+    for (let i = 0; i < oldNotif.length; i++) {
+      if (oldNotif[i].id == id) {
+        index = i;
+        break;
+      }
     }
-
-    private async loadNotifications() {
-        this.notifications = (await this.userService.getNotifications()).notification;
-        this._Refresh = false;
-
-        this.cdr.markForCheck();
-    }
-
-    async deleteNotification(id: number) {
-        const index = this.notifications.findIndex(n => n.id === id);
-        if (index > -1) {
-            const valid = await this.userService.deletetNotifications(id);
-            if (valid) {
-                this.notifications.splice(index, 1);
+    if (index > -1) {
+      this.userService.deletetNotifications(id).subscribe((res) => {
+        if (res) {
+          if (index == 0) {
+            this.notifications$.next([]);
+          } else {
+            const newNots = oldNotif.splice(index, 1);
+            if (newNots) {
+              this.notifications$.next(newNots);
             }
+          }
         }
+      });
     }
-
-    getTimeAgo(dateString: string): string {
-        const date = new Date(dateString);
-        const now = new Date();
-        const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
-
-        if (diffInMinutes < 1) return 'Just now';
-        if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
-        if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
-        return `${Math.floor(diffInMinutes / 1440)}d ago`;
-    }
+  }
 }
