@@ -147,7 +147,6 @@ public class BlogService {
         return this.blogRepository.searchBlogs(query)
                 .stream()
                 .map(blog -> {
-                    Long comments = this.commentRepository.countByBlogId(blog.getId());
                     Long like = this.likeRepository.countByBlogId(blog.getId());
                     return new BlogDto(
                             blog.getId(),
@@ -156,7 +155,7 @@ public class BlogService {
                             blog.getDescription(),
                             blog.getUser().getUsername(),
                             blog.getCover(), blog.getMedia(),
-                            like, comments, false,
+                            like, 0L, false,
                             blog.getCreatedAt());
                 })
                 .toList();

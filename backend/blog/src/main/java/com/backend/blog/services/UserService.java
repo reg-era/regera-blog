@@ -18,7 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class UserService {
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
-    public static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
+    public static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
     public UserService(UserRepository userRepository, FollowRepository followRepository) {
         this.userRepository = userRepository;
@@ -32,11 +32,9 @@ public class UserService {
 
         user.setPasswordHash(user.getPassword());
 
-        if (userRepository.existsByUsername(user.getUsername()))
-            throw new IllegalArgumentException("Username already used");
-
-        if (userRepository.existsByEmail(user.getEmail()))
-            throw new IllegalArgumentException("Email already used");
+        if (userRepository.existsByUsernameOrEmail(user.getUsername(), user.getEmail())) {
+            throw new IllegalArgumentException("Username or Email already used");
+        }
 
         this.userRepository.save(user);
         return user;
@@ -52,16 +50,14 @@ public class UserService {
     }
 
     public User registerUser(String username, String email, String password) {
-        Optional<User> user = this.userRepository.findByUsername(username);
-        if (!user.isPresent())
-            user = this.userRepository.findByEmail(email);
-
+        Optional<User> user = this.userRepository.findByUsernameOrEmail(username, email);
         if (!user.isPresent()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found: " + username);
         }
 
-        if (passwordEncoder.encode(password).equals(user.get().getPasswordHash()))
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
+        if (!passwordEncoder.matches(password, user.get().getPasswordHash())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Oops! invalid password.");
+        }
 
         return user.get();
     }
@@ -75,6 +71,7 @@ public class UserService {
         return users
                 .stream()
                 .map(user -> {
+                    Long followers = this.followRepository.countByFollowerId(user.getId());
                     return new UserDto(
                             user.getUsername(),
                             user.getEmail(),
@@ -82,7 +79,7 @@ public class UserService {
                             user.getRole().toString(),
                             user.getCreatedAt(),
                             false,
-                            0L);
+                            followers);
                 })
                 .toList();
     }

@@ -1,5 +1,7 @@
 package com.backend.blog.services;
 
+import java.util.Optional;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,15 +27,16 @@ public class ReportService {
         }
 
         public void makeReport(Long userId, Report report) {
-                User reporter = userRepository.findById(userId)
-                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                                "Reporter not found"));
+                Optional<User> reporter = userRepository.findById(userId);
+                if (!reporter.isPresent())
+                        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Reporter not found");
 
-                User reportedUser = userRepository.findById(report.getReportedUser().getId())
-                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-                report.setReportedUser(reportedUser);
+                Optional<User> reportedUser = userRepository.findById(report.getReportedUser().getId());
+                if (!reportedUser.isPresent())
+                        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
 
-                report.setUser(reporter);
+                report.setReportedUser(reportedUser.get());
+                report.setUser(reporter.get());
 
                 reportRepository.save(report);
         }

@@ -8,4 +8,6 @@ import com.backend.blog.entities.Notification;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
     public List<Notification> findAllByUserId(Long userId);
+
+    boolean existsByIdAndUserId(Long notificationId, Long userId);
 }

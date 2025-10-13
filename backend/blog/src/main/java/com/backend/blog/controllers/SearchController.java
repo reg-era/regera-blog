@@ -30,7 +30,7 @@ public class SearchController {
 
     @PostMapping
     public ResponseEntity<SearchDto> performSearch(@RequestBody String query) {
-        if (query.length() <= 2) {
+        if (query.length() == 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Query must be bigger");
         }
         List<UserDto> users = this.userService.searchForUsers(query);
