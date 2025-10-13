@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../environments/environment.development';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { MediaService } from './media-service';
 import { CommentObject } from './user-service';
 import { catchError, forkJoin, map, Observable, of, switchMap } from 'rxjs';
@@ -51,8 +51,8 @@ export class BlogService {
       formData,
       { headers }
     ).pipe(
-      map((res) => true),
-      catchError((err) => of(false))
+      map((res) => null),
+      catchError((err) => of(err.message))
     )
   }
 
@@ -67,34 +67,27 @@ export class BlogService {
     });
 
     return this.http.put(
-      `${environment.apiURL}/api/blogs`,
+      `${environment.apiURL}/api/blogs/${id}`,
       formData,
       { headers }
     ).pipe(
-      map((res) => true),
-      catchError((err) => of(false))
+      map((res) => null),
+      catchError((err) => of(err.message))
     );
   }
 
-  async deletBlog(id: number): Promise<string | null> {
-    try {
-      const res = await fetch(`${environment.apiURL}/api/blogs/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-        },
-        method: 'DELETE',
-      });
+  deletBlog(id: number): Observable<string | null> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${localStorage.getItem('auth_token') || ''}`
+    });
 
-      if (res.ok) {
-        return null;
-      } else {
-        const { error } = await res.json();
-        return error;
-      }
-    } catch (error) {
-      console.error("Error Deleting blog: ", error);
-      return 'Sorry something is wrong';
-    }
+    return this.http.delete(
+      `${environment.apiURL}/api/blogs/${id}`,
+      { headers }
+    ).pipe(
+      map((res) => null),
+      catchError((err) => of(err.message))
+    );
   }
 
   getHomeBlogs(): Observable<BlogObject[] | null> {

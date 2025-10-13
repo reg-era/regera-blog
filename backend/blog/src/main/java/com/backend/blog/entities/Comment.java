@@ -70,6 +70,6 @@ public class Comment {
     }
 
     public boolean isValidComment() {
-        return true;
+        return this.content.length() > 0;
     }
 }

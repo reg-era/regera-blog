@@ -71,10 +71,11 @@ export class BlogCard {
     this.router.navigate([`/newblog/${this.blog.id}`])
   }
 
-  async onConfirmDelet() {
-    const res = await this.blogService.deletBlog(this.blog.id);
-    if (res) {
-      console.log(res);
-    }
+  onConfirmDelet() {
+    this.blogService.deletBlog(this.blog.id).subscribe((res)=>{
+      if (res) {
+        console.log(res);
+      }
+    });
   }
 }

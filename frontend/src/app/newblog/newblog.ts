@@ -31,18 +31,18 @@ export class Newblog implements OnInit, OnDestroy {
   blogForm: FormGroup;
   onEditing: boolean = false;
   blogEditing: number = 0;
-  errorMessage: string | null = null;
-  isLoading: boolean = false;
 
   selectedFile: File | null = null;
   imagePreview: string | null = null;
-  maxFileSize = 20 * 1024 * 1024;
-  allowedImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-  allowedVideoTypes = ['video/mp4', 'video/avi', 'video/mov', 'video/wmv'];
+
+  maxFileSizeImage = 5 * 1024 * 1024;   // 5MB
+  maxFileSizeVideo = 15 * 1024 * 1024;  // 15MB
+  allowedImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+  allowedVideoTypes = ['video/mp4', 'video/webm'];
 
   readonly titleMaxLength = 100;
   readonly descriptionMaxLength = 200;
-  readonly contentMinLength = 50;
+  readonly contentMinLength = 300;
 
   constructor(
     private route: ActivatedRoute,
@@ -55,17 +55,18 @@ export class Newblog implements OnInit, OnDestroy {
     this.blogForm = this.formBuilder.group<BlogFormModel>({
       title: ['', [
         Validators.required,
-        Validators.minLength(5),
+        Validators.minLength(30),
         Validators.maxLength(this.titleMaxLength)
       ]],
       media: [null],
       content: ['', [
         Validators.required,
-        Validators.minLength(this.contentMinLength)
+        Validators.minLength(this.contentMinLength),
+        Validators.maxLength(5_000)
       ]],
       description: ['', [
         Validators.required,
-        Validators.minLength(10),
+        Validators.minLength(100),
         Validators.maxLength(this.descriptionMaxLength)
       ]],
     });
@@ -110,21 +111,24 @@ export class Newblog implements OnInit, OnDestroy {
     if (!input.files?.length) return;
 
     const file = input.files[0];
-    this.errorMessage = null;
 
-    if (!this.isValidFileType(file)) {
-      this.errorMessage = 'Please select a valid image (JPG, PNG, GIF, WebP) or video (MP4, AVI, MOV, WMV) file.';
-      this.showMessage(this.errorMessage, 'error');
+    if (!this.allowedImageTypes.includes(file.type) && !this.allowedVideoTypes.includes(file.type)) {
+      this.showMessage('Please select a valid image (JPG, JEPG, PNG, WebP) or video (MP4, WebM) file.', 'error');
       this.resetFileInput();
       return;
     }
 
-    if (file.size > this.maxFileSize) {
-      this.errorMessage = `File size must be less than ${this.maxFileSize / (1024 * 1024)}MB.`;
-      this.showMessage(this.errorMessage, 'error');
+    if (this.allowedImageTypes.includes(file.type) && file.size > this.maxFileSizeImage) {
+      this.showMessage(`File size must be less than ${this.maxFileSizeImage / (1024 * 1024)}MB for images.`, 'error');
       this.resetFileInput();
       return;
     }
+    if (this.allowedVideoTypes.includes(file.type) && file.size > this.maxFileSizeVideo) {
+      this.showMessage(`File size must be less than ${this.maxFileSizeVideo / (1024 * 1024)}MB for videos.`, 'error');
+      this.resetFileInput();
+      return;
+    }
+
 
     this.selectedFile = file;
     this.blogForm.get('media')?.setValue(file);
@@ -134,11 +138,6 @@ export class Newblog implements OnInit, OnDestroy {
     }
 
     this.showMessage('File selected successfully', 'success');
-  }
-
-  private isValidFileType(file: File): boolean {
-    return this.allowedImageTypes.includes(file.type) ||
-      this.allowedVideoTypes.includes(file.type);
   }
 
   isImage(file: File): boolean {
@@ -160,37 +159,31 @@ export class Newblog implements OnInit, OnDestroy {
   }
 
   submitForm() {
-    if (this.oneSubmit) {
-      return;
-    }
+    if (this.oneSubmit) return;
     this.oneSubmit = true;
+
     if (this.blogForm.invalid) {
       this.markFormGroupTouched();
-      this.errorMessage = 'Please fill in all required fields correctly.';
-      this.showMessage(this.errorMessage, 'error');
+      this.showMessage('Please fill in all required fields correctly.', 'error');
       return;
     }
-
-    this.errorMessage = null;
-
-    let response;
 
     if (this.onEditing) {
       this.blogService.updateBlog(this.blogEditing, this.blogForm.getRawValue()).subscribe((res) => {
         if (res) {
+          this.showMessage(res, 'error');
+        } else {
           this.showMessage('Blog published successfully!', 'success');
           this.router.navigate(['/profile']);
-        } else {
-          this.showMessage('Failed to save blog. Please try again.', 'error');
         }
       });
     } else {
       this.blogService.sendBlog(this.blogForm.getRawValue()).subscribe((res) => {
         if (res) {
+          this.showMessage(res, 'error');
+        } else {
           this.showMessage('Blog published successfully!', 'success');
           this.router.navigate(['/profile']);
-        } else {
-          this.showMessage('Failed to save blog. Please try again.', 'error');
         }
       });
     }
@@ -205,7 +198,6 @@ export class Newblog implements OnInit, OnDestroy {
 
   private resetForm(): void {
     this.blogForm.reset();
-    this.errorMessage = null;
   }
 
   private showMessage(message: string, type: 'success' | 'error' | 'info' = 'info'): void {
