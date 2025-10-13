@@ -159,7 +159,7 @@ export class Newblog implements OnInit, OnDestroy {
     }
   }
 
-  async submitForm(): Promise<void> {
+  submitForm() {
     if (this.oneSubmit) {
       return;
     }
@@ -173,24 +173,26 @@ export class Newblog implements OnInit, OnDestroy {
 
     this.errorMessage = null;
 
-    try {
-      let response;
+    let response;
 
-      if (this.onEditing) {
-        response = await this.blogService.updateBlog(this.blogEditing, this.blogForm.getRawValue());
-      } else {
-        response = await this.blogService.sendBlog(this.blogForm.getRawValue());
-      }
-
-      if (response) {
-        this.showMessage(response || 'Failed to save blog. Please try again.', 'error');
-      } else {
-        this.showMessage('Blog published successfully!', 'success');
-        this.router.navigate(['/profile']);
-      }
-    } catch (error) {
-      console.error('Error submitting blog:', error);
-      this.showMessage('An unexpected error occurred. Please try again.', 'error');
+    if (this.onEditing) {
+      this.blogService.updateBlog(this.blogEditing, this.blogForm.getRawValue()).subscribe((res) => {
+        if (res) {
+          this.showMessage('Blog published successfully!', 'success');
+          this.router.navigate(['/profile']);
+        } else {
+          this.showMessage('Failed to save blog. Please try again.', 'error');
+        }
+      });
+    } else {
+      this.blogService.sendBlog(this.blogForm.getRawValue()).subscribe((res) => {
+        if (res) {
+          this.showMessage('Blog published successfully!', 'success');
+          this.router.navigate(['/profile']);
+        } else {
+          this.showMessage('Failed to save blog. Please try again.', 'error');
+        }
+      });
     }
   }
 

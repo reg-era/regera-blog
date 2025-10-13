@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../environments/environment.development';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MediaService } from './media-service';
 import { CommentObject } from './user-service';
 import { catchError, forkJoin, map, Observable, of, switchMap } from 'rxjs';
@@ -31,63 +31,49 @@ export interface BlogObject {
 export class BlogService {
   constructor(private http: HttpClient, private mediaService: MediaService) { }
 
-  async sendBlog(blog: BlogFormModel): Promise<string | null> {
-    try {
-      const formData = new FormData();
+  sendBlog(blog: BlogFormModel): Observable<string | null> {
+    const formData = new FormData();
 
-      formData.append('title', blog.title);
-      formData.append('description', blog.description);
-      formData.append('content', blog.content);
+    formData.append('title', blog.title);
+    formData.append('description', blog.description);
+    formData.append('content', blog.content);
 
-      if (blog.media) {
-        formData.append('media', blog.media);
-      }
-
-      const res = await fetch(`${environment.apiURL}/api/blogs`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-        },
-        method: 'POST',
-        body: formData,
-      });
-
-      if (res.ok) {
-        return null;
-      } else {
-        const { error } = await res.json();
-        return error;
-      }
-    } catch (error) {
-      console.error("Error sending blog: ", error);
-      return 'Sorry something is wrong';
+    if (blog.media) {
+      formData.append('media', blog.media);
     }
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${localStorage.getItem('auth_token') || ''}`
+    });
+
+    return this.http.post(
+      `${environment.apiURL}/api/blogs`,
+      formData,
+      { headers }
+    ).pipe(
+      map((res) => true),
+      catchError((err) => of(false))
+    )
   }
 
-  async updateBlog(id: number, blog: BlogFormModel): Promise<string | null> {
-    try {
-      const formData = new FormData();
-      formData.append('title', blog.title);
-      formData.append('description', blog.description);
-      formData.append('content', blog.content);
+  updateBlog(id: number, blog: BlogFormModel): Observable<string | null> {
+    const formData = new FormData();
+    formData.append('title', blog.title);
+    formData.append('description', blog.description);
+    formData.append('content', blog.content);
 
-      const res = await fetch(`${environment.apiURL}/api/blogs/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('auth_token')}`
-        },
-        method: 'PUT',
-        body: formData,
-      });
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${localStorage.getItem('auth_token') || ''}`
+    });
 
-      if (res.ok) {
-        return null;
-      } else {
-        const { error } = await res.json();
-        return error;
-      }
-    } catch (error) {
-      console.error("Error Updating blog: ", error);
-      return 'Sorry something is wrong';
-    }
+    return this.http.put(
+      `${environment.apiURL}/api/blogs`,
+      formData,
+      { headers }
+    ).pipe(
+      map((res) => true),
+      catchError((err) => of(false))
+    );
   }
 
   async deletBlog(id: number): Promise<string | null> {
