@@ -20,11 +20,21 @@ run-backend:
 run-frontend:
 	cd frontend && npm start
 
-docker-build:
-	cd backend && docker build -t $(APP_NAME):latest .
+docker-build-backend:
+	docker build -f Dockerfile.backend -t $(APP_NAME)-backend:latest .
+
+docker-build-frontend:
+	docker build -f Dockerfile.frontend -t $(APP_NAME)-frontend:latest .
 
 docker-up:
 	docker compose up --build -d
 
 docker-down:
 	docker compose down
+
+clean:
+	cd backend && mvn clean compile
+
+hard-clean: clean
+	docker rmi $(APP_NAME)-backend || true
+	docker rmi $(APP_NAME)-frontend || true
