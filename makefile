@@ -12,7 +12,7 @@ run-postgres:
 	-d postgres:15
 
 run-backend:
-	cd backend/blog && \
+	cd backend && \
 	mvn clean compile && \
 	ADMIN_NAME=$(ADMIN_NAME) ADMIN_EMAIL=$(ADMIN_EMAIL) ADMIN_PASSWORD=$(ADMIN_PASSWORD) \
 	mvn spring-boot:run

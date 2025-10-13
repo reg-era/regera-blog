@@ -13,9 +13,9 @@
 	</parent>
 
 	<groupId>com.backend</groupId>
-	<artifactId>blog</artifactId>
+	<artifactId>blogAPI</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>blog</name>
+	<name>blogAPI</name>
 	<description>Blog backend project</description>
 
 	<properties>
