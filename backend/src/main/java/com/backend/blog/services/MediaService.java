@@ -31,8 +31,8 @@ public class MediaService {
     private static final Set<String> IMAGE_EXTS = Set.of("jpg", "jpeg", "png", "webp");
     private static final Set<String> VIDEO_EXTS = Set.of("mp4", "webm");
 
-    private static final long MAX_IMAGE_SIZE = 5 * 1024 * 1024;   // 5MB
-    private static final long MAX_VIDEO_SIZE = 15 * 1024 * 1024;  // 15MB
+    private static final long MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
+    private static final long MAX_VIDEO_SIZE = 15 * 1024 * 1024; // 15MB
 
     private final String basePath = new File("src/main/resources/static/media").getAbsolutePath();
 
@@ -70,6 +70,7 @@ public class MediaService {
         try {
             Files.copy(media.getInputStream(), dest, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
+            System.err.println("error coping file: " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to save the file");
         }
 

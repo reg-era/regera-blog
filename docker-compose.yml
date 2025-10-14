@@ -1,30 +1,46 @@
+version: "3.9"
+
 services:
-  db:
+  postgres:
     image: postgres:15
-    container_name: blog-postgres
+    container_name: postgres-server
+    restart: unless-stopped
+    env_file: .env
     environment:
-      POSTGRES_USER: bloguser
-      POSTGRES_PASSWORD: blogpass
-      POSTGRES_DB: blogdb
+      POSTGRES_USER: ${PSQ_USER}
+      POSTGRES_PASSWORD: ${PSQ_PASS}
+      POSTGRES_DB: ${PSQ_NAME}
     ports:
-      - "5432:5432"
+      - "${PSQ_PORT}:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
-      - ./backend/postgresconfig.sh:/docker-entrypoint-initdb.d/postgresconfig.sh:ro
+      - postgres_data:/var/lib/postgresql/data
 
   backend:
     build:
-        # context: ./backend
-        dockerfile: ./Dockerfile.backend 
+      context: ./backend
+      dockerfile: Dockerfile.backend
     container_name: blog-backend
     depends_on:
-      - db
+      - postgres
+    env_file: .env
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/blogdb
-      SPRING_DATASOURCE_USERNAME: bloguser
-      SPRING_DATASOURCE_PASSWORD: blogpass
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${PSQ_NAME}
+      SPRING_DATASOURCE_USERNAME: ${PSQ_USER}
+      SPRING_DATASOURCE_PASSWORD: ${PSQ_PASS}
+      SERVER_PORT: ${BACKEND_PORT:-8080}
     ports:
-      - "8080:8080"
+      - "${BACKEND_PORT:-8080}:8080"
+
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    container_name: blog-frontend
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-4200}:80"
 
 volumes:
-  pgdata:
+  postgres_data:
