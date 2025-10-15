@@ -23,7 +23,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   templateUrl: './newblog.html',
   styleUrl: './newblog.scss'
 })
-export class Newblog implements OnInit, OnDestroy {
+export class NewblogComponent implements OnInit, OnDestroy {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   private oneSubmit = false;

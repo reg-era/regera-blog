@@ -20,7 +20,7 @@ import { Router } from '@angular/router';
   templateUrl: './blog-card.html',
   styleUrl: './blog-card.scss'
 })
-export class BlogCard {
+export class BlogCardComponent {
   @Input() blog!: BlogObject;
   isOwner: boolean = false;
   showDialog: boolean = false;

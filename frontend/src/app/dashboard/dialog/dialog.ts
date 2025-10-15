@@ -9,6 +9,6 @@ import { MatIcon } from '@angular/material/icon';
   templateUrl: './dialog.html',
   styleUrl: './dialog.scss'
 })
-export class Dialog {
+export class DialogComponent {
   constructor(@Inject(MAT_DIALOG_DATA) public data: { title: string; message: string }) { }
 }

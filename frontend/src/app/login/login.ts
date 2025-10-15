@@ -24,7 +24,7 @@ import { Router } from '@angular/router';
   templateUrl: './login.html',
   styleUrl: './login.scss'
 })
-export class Login implements OnInit {
+export class LoginComponent implements OnInit {
   hidePassword = true;
   loginForm!: FormGroup;
   errorMessage: string | null = null;

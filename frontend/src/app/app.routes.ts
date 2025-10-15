@@ -1,23 +1,25 @@
 import { Routes } from '@angular/router';
-import { Home } from './home/home';
-import { Login } from './login/login';
-import { Register } from './register/register';
-import { Bloger } from './bloger/bloger';
-import { Blog } from './blog/blog';
-import { Newblog } from './newblog/newblog';
-import { Dashboard } from './dashboard/dashboard';
-import { Notifications } from './notification/notification';
+import { HomeComponent } from './home/home';
+import { LoginComponent } from './login/login';
+import { RegisterComponent } from './register/register';
+import { BlogerComponent } from './bloger/bloger';
+import { BlogComponent } from './blog/blog';
+import { NewblogComponent } from './newblog/newblog';
+import { DashboardComponent } from './dashboard/dashboard';
+import { NotificationsComponent } from './notification/notification';
+import { ErrorComponent } from './error/error';
 
 export const routes: Routes = [
-  { path: '', component: Home },
-  { path: 'login', component: Login },
-  { path: 'register', component: Register },
-  { path: 'blogger/:username', component: Bloger },
-  { path: 'profile', component: Bloger },
-  { path: 'blog/:id', component: Blog },
-  { path: 'newblog', component: Newblog },         // create
-  { path: 'newblog/:id', component: Newblog },
-  { path: 'notification', component: Notifications },
-  { path: 'dashboard', component: Dashboard },
-  { path: '**', component: Home },
+  { path: '', component: HomeComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
+  { path: 'blogger/:username', component: BlogerComponent },
+  { path: 'profile', component: BlogerComponent },
+  { path: 'blog/:id', component: BlogComponent },
+  { path: 'newblog', component: NewblogComponent },
+  { path: 'newblog/:id', component: NewblogComponent },
+  { path: 'notification', component: NotificationsComponent },
+  { path: 'dashboard', component: DashboardComponent },
+  { path: 'error/:status', component: ErrorComponent },
+  { path: '**', component: ErrorComponent }
 ];

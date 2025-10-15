@@ -1,0 +1,12 @@
+<div class="error-page">
+  <div class="wrap">
+    @for (n of maxArray; track n) {
+      <div class="tri"></div>
+    }
+  </div>
+
+  <div class="message-box">
+    <h1>{{ message }}</h1>
+    <button (click)="goHome()">Go Back Home</button>
+  </div>
+</div>

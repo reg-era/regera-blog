@@ -20,7 +20,7 @@ import { Router } from '@angular/router';
   templateUrl: './search.html',
   styleUrls: ['./search.scss']
 })
-export class Search implements OnDestroy {
+export class SearchComponent implements OnDestroy {
   suggestions$: BehaviorSubject<SearchSuggestion | null>;
   private searchTimeout: any;
   showSuggestions = false;

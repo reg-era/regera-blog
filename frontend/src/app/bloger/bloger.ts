@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, signal } from '@angular/core';
-import { BlogCard } from '../home/blog-card/blog-card';
+import { BlogCardComponent } from '../home/blog-card/blog-card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatListModule } from '@angular/material/list';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -23,7 +23,7 @@ import { MatInputModule } from '@angular/material/input';
     MatFormFieldModule,
     ReactiveFormsModule,
     MatInputModule,
-    BlogCard,
+    BlogCardComponent,
     MatCardModule,
     MatIconModule,
     MatFormFieldModule,
@@ -33,7 +33,7 @@ import { MatInputModule } from '@angular/material/input';
   styleUrl: './bloger.scss'
 })
 
-export class Bloger implements OnInit, OnDestroy {
+export class BlogerComponent implements OnInit, OnDestroy {
   blogger$: BehaviorSubject<UserObject | null>;
   blogs$: BehaviorSubject<BlogObject[] | null>;
 

@@ -1,0 +1,102 @@
+@use "sass:math";
+
+$total: 200;
+$time: 10s;
+
+html,
+body,
+.wrap {
+  height: 100%;
+}
+
+body {
+  background: black;
+  background-image: radial-gradient(circle at center, white 0%, #222 10%, black 60%);
+  overflow: hidden;
+}
+
+.wrap {
+  position: fixed; // stay in the background
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0; // behind all content
+  pointer-events: none; // allow clicks to pass through
+  transform-style: preserve-3d;
+  perspective: 800px;
+  overflow: hidden;
+}
+
+
+.tri {
+  height: 0;
+  width: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+@for $i from 1 through $total {
+  $size: math.random(50) * 1px;
+  $rotate: math.random(360) * 1deg;
+
+  .tri:nth-child(#{$i}) {
+    border-top: $size solid hsla(math.random(360), 100%, 50%, 1);
+    border-right: $size solid transparent;
+    border-left: $size solid transparent;
+    margin-left: math.div(-$size, 2);
+    margin-top: math.div(-$size, 2);
+    -webkit-filter: grayscale(1);
+    filter: grayscale(1);
+    transform: rotate($rotate) translate3d(0, 0, -1500px) scale(0);
+    animation: anim#{$i} $time infinite linear;
+    animation-delay: $i * math.div(-$time, $total);
+    opacity: 0;
+  }
+
+  @keyframes anim#{$i} {
+    0% {
+      opacity: 1;
+      transform: rotate($rotate * 1.5) translate3d(math.random(1000) * 1px, math.random(1000) * 1px, 1000px) scale(1);
+    }
+  }
+}
+
+.error-page {
+  position: relative;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.message-box {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.message-box h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.message-box button {
+  background: var(--bg);
+  color: var(--text);
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.message-box button:hover {
+  background: var(--text);
+  color: var(--bg);
+}

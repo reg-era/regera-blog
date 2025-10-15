@@ -33,7 +33,7 @@ import { MediaService } from '../../services/media-service';
   styleUrl: './blog.scss'
 })
 
-export class Blog implements OnInit {
+export class BlogComponent implements OnInit {
   public blog$: BehaviorSubject<BlogObject | null>;
   public comments$: BehaviorSubject<CommentObject[] | null>;
 

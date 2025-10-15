@@ -11,8 +11,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { CredentialService } from '../../services/credential-service';
 import { Router } from '@angular/router';
-import { Dialog } from './dialog/dialog';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { DialogComponent } from './dialog/dialog';
+import { BehaviorSubject } from 'rxjs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AsyncPipe } from '@angular/common';
 
@@ -26,12 +26,13 @@ import { AsyncPipe } from '@angular/common';
     MatInputModule,
     MatIconModule,
     MatListModule,
-    ReactiveFormsModule],
+    ReactiveFormsModule
+  ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
 
-export class Dashboard implements OnInit {
+export class DashboardComponent implements OnInit {
 
   EscalateForm!: FormGroup;
   DeleteUserForm!: FormGroup;
@@ -70,7 +71,7 @@ export class Dashboard implements OnInit {
   }
 
   confirmAction(message: { title: string, message: string }, onConfirm: () => void) {
-    const dialogRef = this.dialog.open(Dialog, { data: message });
+    const dialogRef = this.dialog.open(DialogComponent, { data: message });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {

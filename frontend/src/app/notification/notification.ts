@@ -21,7 +21,7 @@ import { NotificationObject, UserService } from '../../services/user-service';
   styleUrls: ['./notification.scss'],
 })
 
-export class Notifications implements OnInit, OnDestroy {
+export class NotificationsComponent implements OnInit, OnDestroy {
 
   notifications$: BehaviorSubject<NotificationObject[] | null>;
 
