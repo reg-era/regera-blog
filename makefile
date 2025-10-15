@@ -4,7 +4,7 @@ APP_NAME=blog
 
 # Build
 docker-build-backend:
-	docker build -f backend/Dockerfile.backend -t $(APP_NAME)-backend:latest ./backend
+	docker build -f backend/Dockerfile.backend -t $(APP_NAME)-backend:latest .
 
 docker-build-frontend:
 	docker build -f frontend/Dockerfile.frontend -t $(APP_NAME)-frontend:latest ./frontend

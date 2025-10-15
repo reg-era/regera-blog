@@ -1,2 +1,14 @@
 .env
 backend/target
+
+.vscode/
+
+*.jpg
+*.jpeg
+*.png
+*.webp
+*.mp4
+*.webm
+
+!**/media/images/default-blog.jpg
+!**/media/images/default-profile.jpg

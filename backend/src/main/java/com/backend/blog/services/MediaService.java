@@ -3,6 +3,7 @@ package com.backend.blog.services;
 import org.jcodec.api.FrameGrab;
 import org.jcodec.common.io.NIOUtils;
 import org.jcodec.common.model.Picture;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,10 +35,15 @@ public class MediaService {
     private static final long MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
     private static final long MAX_VIDEO_SIZE = 15 * 1024 * 1024; // 15MB
 
-    private final String basePath = new File("src/main/resources/static/media").getAbsolutePath();
+    @Value("${app.media.path}")
+    private String mediaLocation;
 
     public static final String DEFAULT_BLOG = "/media/images/default-blog.jpg";
     public static final String DEFAULT_USER = "/media/images/default-profile.jpg";
+
+    public String getBasePath() {
+        return new File(mediaLocation).getAbsolutePath();
+    }
 
     public InnerMediaService downloadMedia(MultipartFile media) {
         if (media == null || media.isEmpty()) {
@@ -60,7 +66,7 @@ public class MediaService {
 
         String uniqueName = UUID.randomUUID().toString() + "." + extension;
 
-        File mediaDir = new File(basePath, mediaType);
+        File mediaDir = new File(this.getBasePath(), mediaType);
         if (!mediaDir.exists()) {
             mediaDir.mkdirs();
         }
@@ -68,9 +74,10 @@ public class MediaService {
         Path dest = Path.of(mediaDir.getAbsolutePath(), uniqueName);
 
         try {
-            Files.copy(media.getInputStream(), dest, StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(media.getInputStream(), dest);
         } catch (IOException e) {
             System.err.println("error coping file: " + e.getMessage());
+            System.err.println("from dest : " + dest);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to save the file");
         }
 
@@ -96,7 +103,7 @@ public class MediaService {
             return true;
 
         try {
-            Path path = Paths.get(basePath, mediaPath.replace("/media", ""));
+            Path path = Paths.get(this.getBasePath(), mediaPath.replace("/media", ""));
 
             if (!Files.exists(path) || !Files.isWritable(path)) {
                 System.out.printf("File does not exist or locked: %s\n", path);
@@ -132,7 +139,7 @@ public class MediaService {
         String baseName = originalVideoName.substring(0, originalVideoName.lastIndexOf('.'));
         String thumbnailName = baseName + ".jpg";
 
-        File imageDir = new File(basePath, "images");
+        File imageDir = new File(this.getBasePath(), "images");
         if (!imageDir.exists()) {
             imageDir.mkdirs();
         }

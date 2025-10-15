@@ -10,9 +10,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.backend.blog.entities.User;
 
+import java.nio.file.Paths;
 import java.util.List;
 
 @Configuration
@@ -58,7 +61,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/notification").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
 
-                        .anyRequest().denyAll())
+                        .anyRequest().denyAll()
+                        )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
