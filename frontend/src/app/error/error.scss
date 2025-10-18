@@ -16,13 +16,13 @@ body {
 }
 
 .wrap {
-  position: fixed; // stay in the background
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0; // behind all content
-  pointer-events: none; // allow clicks to pass through
+  z-index: 0;
+  pointer-events: none;
   transform-style: preserve-3d;
   perspective: 800px;
   overflow: hidden;

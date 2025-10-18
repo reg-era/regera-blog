@@ -17,20 +17,10 @@
         <div class="gradient-overlay right"></div>
 
         <div class="card-container" [attr.data-count]="blogs.length">
-
-          <!-- First Set of Cards -->
           @for (blog of blogs; track blog.id; let i = $index) {
           <app-blog-card [blog]="blog" [attr.data-index]="i" class="scroll-card">
           </app-blog-card>
           }
-
-          <!-- Duplicate Set for Seamless Loop (if less than 10) -->
-          @if (blogs.length < 10) { @for (blog of blogs; track blog.id + '-duplicate' ; let i=$index) { <app-blog-card
-            [blog]="blog" [attr.data-index]="blogs.length + i" class="scroll-card duplicate">
-            </app-blog-card>
-            }
-            }
-
         </div>
 
       </div>

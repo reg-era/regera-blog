@@ -24,7 +24,7 @@
         }
       </section>
 
-      <div class="blog-body" [innerHTML]="toHtml(blog.content)"></div>
+      <div class="blog-body" [innerHTML]="superSanitization(toHtml(blog.content))"></div>
     </section>
   </div>
 

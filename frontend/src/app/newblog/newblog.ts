@@ -35,7 +35,7 @@ export class NewblogComponent implements OnInit, OnDestroy {
   selectedFile: File | null = null;
   imagePreview: string | null = null;
 
-  maxFileSizeImage = 5 * 1024 * 1024;   // 5MB
+  maxFileSizeImage = 100 * 1024 * 1024;   // 5MB
   maxFileSizeVideo = 15 * 1024 * 1024;  // 15MB
   allowedImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
   allowedVideoTypes = ['video/mp4', 'video/webm'];
@@ -176,6 +176,7 @@ export class NewblogComponent implements OnInit, OnDestroy {
           this.showMessage('Blog published successfully!', 'success');
           this.router.navigate(['/profile']);
         }
+        this.oneSubmit = false;
       });
     } else {
       this.blogService.sendBlog(this.blogForm.getRawValue()).subscribe((res) => {
@@ -185,6 +186,7 @@ export class NewblogComponent implements OnInit, OnDestroy {
           this.showMessage('Blog published successfully!', 'success');
           this.router.navigate(['/profile']);
         }
+        this.oneSubmit = false;
       });
     }
   }

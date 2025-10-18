@@ -205,11 +205,6 @@ body {
       z-index: 5;
     }
   }
-
-  // Duplicate cards (for seamless loop with less than 10 items)
-  &.duplicate {
-    opacity: 1;
-  }
 }
 
 @keyframes fadeInCard {

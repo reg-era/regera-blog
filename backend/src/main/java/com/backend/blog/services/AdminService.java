@@ -60,7 +60,7 @@ public class AdminService {
     @Transactional
     public void escaleIntoAdmin(String username) {
         Optional<User> user = this.userRepository.findByUsername(username);
-        if (user.isPresent()) {
+        if (user.isPresent() && !user.get().getRole().equals(User.Role.ADMIN)) {
             User newAdmin = user.get();
             newAdmin.setRole(User.Role.ADMIN);
             this.userRepository.save(newAdmin);

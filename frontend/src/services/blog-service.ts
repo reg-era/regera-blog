@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../environments/environment.development';
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MediaService } from './media-service';
 import { CommentObject } from './user-service';
 import { catchError, forkJoin, map, Observable, of, switchMap } from 'rxjs';
@@ -29,7 +29,10 @@ export interface BlogObject {
 
 @Injectable({ providedIn: 'root' })
 export class BlogService {
-  constructor(private http: HttpClient, private mediaService: MediaService) { }
+  constructor(
+    private http: HttpClient,
+    private mediaService: MediaService,
+  ) { }
 
   sendBlog(blog: BlogFormModel): Observable<string | null> {
     const formData = new FormData();
@@ -52,7 +55,11 @@ export class BlogService {
       { headers }
     ).pipe(
       map((res) => null),
-      catchError((err) => of(err.message))
+      catchError((err) => {
+        console.log("from error: ", err);
+
+        return of(err.error.error)
+      })
     )
   }
 
@@ -72,7 +79,7 @@ export class BlogService {
       { headers }
     ).pipe(
       map((res) => null),
-      catchError((err) => of(err.message))
+      catchError((err) => of(err.error.error))
     );
   }
 
@@ -86,7 +93,7 @@ export class BlogService {
       { headers }
     ).pipe(
       map((res) => null),
-      catchError((err) => of(err.message))
+      catchError((err) => of(err.error.error))
     );
   }
 
@@ -115,6 +122,8 @@ export class BlogService {
   getBlog(id: number): Observable<BlogObject | null> {
     return this.http.get<BlogObject>(
       `${environment.apiURL}/api/blogs/${id}`
+    ).pipe(
+      catchError(err => of(null))
     );
   }
 
@@ -123,5 +132,4 @@ export class BlogService {
       `${environment.apiURL}/api/comments/${blogId}?offset=${offset}`
     );
   }
-
 }

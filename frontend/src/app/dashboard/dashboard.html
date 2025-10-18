@@ -41,7 +41,7 @@
           <mat-icon>block</mat-icon>
         </div>
         <h3 class="card-title">Ban User</h3>
-        <p class="card-description">Permanently ban a user account</p>
+        <p class="card-description">Remove a user account</p>
       </div>
 
       <form [formGroup]="DeleteUserForm" class="card-form" (ngSubmit)="onBanUser()">
@@ -115,7 +115,8 @@
               </span>
             </div>
 
-            <button mat-icon-button class="clear-btn" (click)="onClearReport(report.reportId)" matTooltip="Clear Report">
+            <button mat-icon-button class="clear-btn" (click)="onClearReport(report.reportId)"
+              matTooltip="Clear Report">
               <mat-icon>close</mat-icon>
             </button>
           </div>

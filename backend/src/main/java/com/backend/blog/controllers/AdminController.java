@@ -5,7 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.backend.blog.dto.ReportDto;
+import com.backend.blog.entities.User;
 import com.backend.blog.services.AdminService;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -41,18 +45,28 @@ public class AdminController {
     }
 
     @PutMapping("/users/{username}")
-    public ResponseEntity<Map<String, String>> escaleAdmin(@PathVariable String username) {
-        this.adminService.escaleIntoAdmin(username);
+    public ResponseEntity<Map<String, String>> escaleAdmin(@PathVariable String username, HttpServletRequest request) {
+        User user = (User) request.getAttribute("user");
         Map<String, String> res = new HashMap<>();
-        res.put("message", "admin escaled");
+        if (user.getUsername().equals(username)) {
+            res.put("message", "admin escaled");
+        } else {
+            this.adminService.escaleIntoAdmin(username);
+            res.put("message", "admin escaled");
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
 
     @DeleteMapping("/users/{username}")
-    public ResponseEntity<Map<String, String>> removeUser(@PathVariable String username) {
-        this.adminService.removeUser(username);
+    public ResponseEntity<Map<String, String>> removeUser(@PathVariable String username, HttpServletRequest request) {
+        User user = (User) request.getAttribute("user");
         Map<String, String> res = new HashMap<>();
-        res.put("message", "user removed");
+        if (user.getUsername().equals(username)) {
+            res.put("message", "Forbiden to remove your self");
+        } else {
+            this.adminService.removeUser(username);
+            res.put("message", "user removed");
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
 

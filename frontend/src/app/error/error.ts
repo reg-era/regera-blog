@@ -14,7 +14,14 @@ export class ErrorComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router
-  ) { }
+  ) {
+    const navigation = this.router.getCurrentNavigation();
+    const fromApp = navigation?.extras?.state?.['fromApp'];
+
+    if (!fromApp) {
+      this.router.navigate(['/']);
+    }
+  }
 
   ngOnInit(): void {
     let id = this.route.snapshot.paramMap.get('status');
@@ -25,6 +32,9 @@ export class ErrorComponent implements OnInit {
         break;
       case '500':
         this.message = '500 - Internal Server Error';
+        break;
+      case '401':
+        this.message = '401 - Unauthorized Access';
         break;
       default:
         this.message = 'Unexpected Error. Please try again later.';

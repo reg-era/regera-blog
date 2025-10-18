@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, SecurityContext } from '@angular/core';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -17,6 +17,7 @@ import { BehaviorSubject } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MediaService } from '../../services/media-service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-blog',
@@ -52,7 +53,9 @@ export class BlogComponent implements OnInit {
     private blogService: BlogService,
     private userService: UserService,
     private mediaService: MediaService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private sanitizer: DomSanitizer
+
   ) {
     this.blog$ = new BehaviorSubject<BlogObject | null>(null);
     this.comments$ = new BehaviorSubject<CommentObject[] | null>(null);
@@ -76,13 +79,17 @@ export class BlogComponent implements OnInit {
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) {
-      this.router.navigate(['/']);
+      this.router.navigate(['/error/404'], {
+        state: { fromApp: true }
+      });
       return;
     }
 
     const parsedId = Number.parseInt(id, 10);
     if (Number.isNaN(parsedId) || parsedId <= 0) {
-      this.router.navigate(['/']);
+      this.router.navigate(['/error/404'], {
+        state: { fromApp: true }
+      });
       return;
     }
 
@@ -94,6 +101,11 @@ export class BlogComponent implements OnInit {
         this.mediaService.urlToBlobImageUrl(blog.media).subscribe((url) => {
           this.blogMedia$.next(url);
         })
+      } else {
+        this.router.navigate(['/error/404'], {
+          state: { fromApp: true }
+        });
+        return;
       }
     });
     this.blogService.getComments(parsedId, this.commentPage++).subscribe((comments) => {
@@ -163,5 +175,10 @@ export class BlogComponent implements OnInit {
       ADD_TAGS: ['figure', 'figcaption', 'details', 'summary'],
       ADD_ATTR: ['target', 'rel']
     });
+  }
+
+  public superSanitization(html: string): string {
+    if (!html) return '';
+    return this.sanitizer.sanitize(SecurityContext.HTML, html) || '';
   }
 }

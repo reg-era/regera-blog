@@ -18,7 +18,7 @@
 
       <div class="notification-content">
         <p class="notification-text">{{ notification.content }}</p>
-        <span class="notification-time">{{ notification.createdAt }}</span>
+        <span class="notification-time">{{ formatDate(notification.createdAt) }}</span>
       </div>
 
       <button class="delete-btn" mat-icon-button (click)="deleteNotification(notification.id)"

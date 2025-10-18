@@ -156,6 +156,13 @@
   font-size: 1.125rem;
   line-height: 1.8;
   color: var(--text);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+  white-space: normal;
+  line-height: 1.6;
 
   ::ng-deep {
     p {
