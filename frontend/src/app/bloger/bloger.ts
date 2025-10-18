@@ -73,8 +73,7 @@ export class BlogerComponent implements OnInit, OnDestroy {
     if (this.router.url == '/profile') {
       this.isOwner = true;
     } else {
-      const ping = this.credentialService.CheckAuthentication();
-      ping.subscribe(obj => {
+      this.credentialService.CheckAuthentication().subscribe(obj => {
         if (obj) {
           if (username == obj.username) {
             this.router.navigate(['/profile']);

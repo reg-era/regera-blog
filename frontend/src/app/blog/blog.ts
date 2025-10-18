@@ -18,6 +18,7 @@ import { AsyncPipe } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MediaService } from '../../services/media-service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { CredentialService } from '../../services/credential-service';
 
 @Component({
   selector: 'app-blog',
@@ -47,8 +48,11 @@ export class BlogComponent implements OnInit {
 
   private md: MarkdownIt;
 
+  private authenticated: boolean = false;
+
   constructor(
     private router: Router,
+    private credentialService: CredentialService,
     private route: ActivatedRoute,
     private blogService: BlogService,
     private userService: UserService,
@@ -74,6 +78,10 @@ export class BlogComponent implements OnInit {
     });
 
     this.CommentFrom = this.fb.group({ comment: ['', Validators.max(150)] })
+
+    this.credentialService.CheckAuthentication().subscribe((res) => {
+      if (res) this.authenticated = true;
+    })
   }
 
   ngOnInit() {
@@ -114,6 +122,10 @@ export class BlogComponent implements OnInit {
   }
 
   toggleLike() {
+    if (!this.authenticated) {
+      this.router.navigate(['/login']);
+      return;
+    }
     if (this.blog$.value) {
       this.userService.makeLike(this.blog$.value.id).subscribe((res) => {
         if (res) {
@@ -128,6 +140,10 @@ export class BlogComponent implements OnInit {
   }
 
   submitComment() {
+    if (!this.authenticated) {
+      this.router.navigate(['/login']);
+      return;
+    }
     if (this.CommentFrom.valid) {
 
       const newComment: string = this.CommentFrom.get('comment')?.getRawValue();
