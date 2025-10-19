@@ -33,6 +33,18 @@
               Username is required
             </mat-error>
             }
+            @if(registerForm.get('username')?.hasError('minlength')) {
+            <mat-error>
+              <mat-icon>error</mat-icon>
+              Username too short
+            </mat-error>
+            }
+            @if(registerForm.get('username')?.hasError('maxlength')) {
+            <mat-error>
+              <mat-icon>error</mat-icon>
+              Username too long
+            </mat-error>
+            }
           </mat-form-field>
         </div>
 
@@ -48,7 +60,7 @@
               Email is required
             </mat-error>
             }
-            @if(registerForm.get('email')?.hasError('email')) {
+            @if(registerForm.get('email')?.hasError('pattern')) {
             <mat-error>
               <mat-icon>error</mat-icon>
               Invalid email address
@@ -76,10 +88,10 @@
               <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
             </button>
 
-            @if(registerForm.get('password')?.hasError('required')) {
+            @if(registerForm.get('password')?.hasError('pattern')) {
             <mat-error>
               <mat-icon>error</mat-icon>
-              Password required at lease 1 alpha 1 digit 1 super character
+              Password must contain at least one letter, one number, and one special character.
             </mat-error>
             }
             @if(registerForm.get('password')?.hasError('minlength')) {
@@ -106,12 +118,6 @@
             <mat-error>
               <mat-icon>error</mat-icon>
               Confirmation is required
-            </mat-error>
-            }
-            @if(passwordMismatch) {
-            <mat-error>
-              <mat-icon>error</mat-icon>
-              Passwords do not match
             </mat-error>
             }
           </mat-form-field>

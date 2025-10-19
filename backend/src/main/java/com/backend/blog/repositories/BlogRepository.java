@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BlogRepository extends JpaRepository<Blog, Long> {
-
     Optional<Blog> findById(Long id);
 
     List<Blog> findTop5ByOrderByCreatedAtDesc();

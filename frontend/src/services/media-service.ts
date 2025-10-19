@@ -26,4 +26,11 @@ export class MediaService {
 
     return blob$;
   }
+
+  urlToBlobMedia(imageUrl: string): Observable<Blob | string> {
+    return this.http.get(`${environment.apiURL}${imageUrl}`, { responseType: 'blob' })
+      .pipe(
+        catchError(() => of('/error-media.gif'))
+      );
+  }
 }

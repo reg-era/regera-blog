@@ -1,6 +1,5 @@
 package com.backend.blog.config;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.springframework.beans.factory.annotation.Value;

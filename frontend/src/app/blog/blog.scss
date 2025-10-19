@@ -102,6 +102,12 @@
   padding: 3rem;
 
   .blog-title {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    white-space: normal;
     font-size: 3rem;
     font-weight: 800;
     color: var(--text);

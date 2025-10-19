@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.backend.blog.dto.BlogDto;
@@ -98,7 +99,11 @@ public class BlogService {
         return this.blogRepository.save(blog);
     }
 
-    public void updateBlog(Long userId, Long blogId, String title, String description, String content) {
+    public void updateBlog(Long userId, Long blogId,
+            String title,
+            String description,
+            String content,
+            MultipartFile media) {
         Optional<Blog> blog = this.blogRepository.findById(blogId);
 
         if (!blog.isPresent())
@@ -115,6 +120,14 @@ public class BlogService {
         Optional<String> validation = newBlog.isValidBlog();
         if (!validation.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, validation.get());
+        }
+
+        if (media != null && !media.isEmpty()) {
+            this.mediaService.clearMedia(newBlog.getCover());
+            this.mediaService.clearMedia(newBlog.getMedia());
+            MediaService.InnerMediaService path = this.mediaService.downloadMedia(media);
+            newBlog.setCover(path.cover());
+            newBlog.setMedia(path.media());
         }
 
         this.blogRepository.save(newBlog);

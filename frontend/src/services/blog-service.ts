@@ -63,11 +63,15 @@ export class BlogService {
     )
   }
 
-  updateBlog(id: number, blog: BlogFormModel): Observable<string | null> {
+  updateBlog(id: number, blog: BlogFormModel, mediaChanged: boolean): Observable<string | null> {
     const formData = new FormData();
     formData.append('title', blog.title);
     formData.append('description', blog.description);
     formData.append('content', blog.content);
+
+    if (mediaChanged && blog.media) {
+      formData.append('media', blog.media);
+    }
 
     const headers = new HttpHeaders({
       Authorization: `Bearer ${localStorage.getItem('auth_token') || ''}`

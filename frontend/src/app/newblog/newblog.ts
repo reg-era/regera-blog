@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
@@ -9,6 +9,9 @@ import { CredentialService } from '../../services/credential-service';
 import { ViewChild, ElementRef } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MediaService } from '../../services/media-service';
+import { AsyncPipe } from '@angular/common';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-newblog',
@@ -18,7 +21,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatCardModule,
     MatIconModule,
     MatInputModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    AsyncPipe
   ],
   templateUrl: './newblog.html',
   styleUrl: './newblog.scss'
@@ -33,9 +37,12 @@ export class NewblogComponent implements OnInit, OnDestroy {
   blogEditing: number = 0;
 
   selectedFile: File | null = null;
-  imagePreview: string | null = null;
+  mediaPreview$: BehaviorSubject<string | null>;
+  fileExistForEditing: boolean = false;
 
-  maxFileSizeImage = 100 * 1024 * 1024;   // 5MB
+  changeTriggred: boolean = false;
+
+  maxFileSizeImage = 5 * 1024 * 1024;   // 5MB
   maxFileSizeVideo = 15 * 1024 * 1024;  // 15MB
   allowedImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
   allowedVideoTypes = ['video/mp4', 'video/webm'];
@@ -50,8 +57,11 @@ export class NewblogComponent implements OnInit, OnDestroy {
     private blogService: BlogService,
     private credentialService: CredentialService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private mediaService: MediaService,
+    private changeDetector: ChangeDetectorRef,
   ) {
+    this.mediaPreview$ = new BehaviorSubject<string | null>(null);
     this.blogForm = this.formBuilder.group<BlogFormModel>({
       title: ['', [
         Validators.required,
@@ -91,9 +101,10 @@ export class NewblogComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.imagePreview) {
-      URL.revokeObjectURL(this.imagePreview);
+    if (this.mediaPreview$.value) {
+      URL.revokeObjectURL(this.mediaPreview$.value);
     }
+    this.mediaPreview$.unsubscribe();
   }
 
   private loadBlogForEditing(blogId: number) {
@@ -102,6 +113,21 @@ export class NewblogComponent implements OnInit, OnDestroy {
         this.blogForm.get('title')?.setValue(blog.title);
         this.blogForm.get('description')?.setValue(blog.description);
         this.blogForm.get('content')?.setValue(blog.content);
+
+        if (!blog.media.includes("default-blog")) {
+          this.fileExistForEditing = true;
+          this.mediaService.urlToBlobMedia(blog.media).subscribe(blob => {
+            const file = blog.media.endsWith("mp4")
+              ? new File([blob], 'video.mp4', { type: 'video/mp4' })
+              : new File([blob], 'image.jpeg', { type: 'image/jpeg' });
+
+            this.selectedFile = file;
+            this.blogForm.get('media')?.setValue(file);
+
+            this.createImagePreview(file);
+            this.changeDetector.markForCheck();
+          });
+        }
       }
     })
   }
@@ -129,27 +155,28 @@ export class NewblogComponent implements OnInit, OnDestroy {
       return;
     }
 
-
     this.selectedFile = file;
     this.blogForm.get('media')?.setValue(file);
 
-    if (this.isImage(file)) {
-      this.createImagePreview(file);
-    }
+    this.createImagePreview(file);
 
     this.showMessage('File selected successfully', 'success');
+    this.changeTriggred = true;
   }
 
   isImage(file: File): boolean {
     return this.allowedImageTypes.includes(file.type);
   }
 
-  private createImagePreview(file: File): void {
-    if (this.imagePreview && this.imagePreview.startsWith('blob:')) {
-      URL.revokeObjectURL(this.imagePreview);
-    }
+  isVideo(file: File): boolean {
+    return this.allowedVideoTypes.includes(file.type);
+  }
 
-    this.imagePreview = URL.createObjectURL(file);
+  private createImagePreview(file: File): void {
+    if (this.mediaPreview$.value && this.mediaPreview$.value.startsWith('blob:')) {
+      URL.revokeObjectURL(this.mediaPreview$.value);
+    }
+    this.mediaPreview$.next(URL.createObjectURL(file));
   }
 
   private resetFileInput(): void {
@@ -169,7 +196,7 @@ export class NewblogComponent implements OnInit, OnDestroy {
     }
 
     if (this.onEditing) {
-      this.blogService.updateBlog(this.blogEditing, this.blogForm.getRawValue()).subscribe((res) => {
+      this.blogService.updateBlog(this.blogEditing, this.blogForm.getRawValue(), this.changeTriggred).subscribe((res) => {
         if (res) {
           this.showMessage(res, 'error');
         } else {

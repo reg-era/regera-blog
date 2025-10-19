@@ -5,4 +5,4 @@ CREATE TABLE IF NOT EXISTS likes (
     blog_id BIGINT NOT NULL REFERENCES blogs(id) ON DELETE CASCADE,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     UNIQUE (user_id, blog_id)
-);
+);                                                                              

@@ -25,6 +25,18 @@
             Title is required
           </mat-error>
           }
+          @if(blogForm.get('title')?.hasError('minlength')) {
+          <mat-error>
+            <mat-icon>error</mat-icon>
+            Title is too short
+          </mat-error>
+          }
+          @if(blogForm.get('title')?.hasError('maxlength')) {
+          <mat-error>
+            <mat-icon>error</mat-icon>
+            Title is too long
+          </mat-error>
+          }
         </mat-form-field>
         <div class="character-counter" [class.warning]="blogForm.get('title')?.value?.length > 80"
           [class.danger]="blogForm.get('title')?.value?.length > 95">
@@ -32,21 +44,27 @@
         </div>
       </div>
 
-      @if(!onEditing) {
+      <!-- @if(!onEditing) { -->
 
       <!-- Enhanced Cover Image Upload -->
       <div class="form-group">
         <div class="cover-image-upload">
-          @if (!selectedFile) {
+          <input #fileInput type="file" accept="image/*,video/*" (change)="onFileSelected($event)" hidden />
+
+          @if (!selectedFile && (!onEditing || !fileExistForEditing)) {
           <div class="upload-area" (click)="fileInput.click()">
             <mat-icon class="upload-icon">cloud_upload</mat-icon>
             <div class="upload-text">Click to upload media</div>
-            <div class="upload-subtext">Supports JPG, JEPG, PNG, WebP, MP4, WebM up to 15MB</div>
+            <div class="upload-subtext">Supports JPG, JEPG, PNG up to 5MB or WebP, MP4, WebM up to 15MB</div>
           </div>
-          } @else {
+          }
+          @if (selectedFile) {
+          @if ( mediaPreview$ | async;as mediaPreview) {
           <div class="file-preview">
             @if (isImage(selectedFile)) {
-            <img [src]="imagePreview" alt="Cover preview" class="preview-image">
+            <img [src]="mediaPreview" alt="Cover preview" class="preview-image">
+            }@else if (isVideo(selectedFile)) {
+            <video [src]="mediaPreview" controls playsinline class="preview-image"></video>
             } @else {
             <div class="file-info">
               <mat-icon class="file-icon">videocam</mat-icon>
@@ -59,10 +77,10 @@
             </button>
           </div>
           }
-          <input #fileInput type="file" accept="image/*,video/*" (change)="onFileSelected($event)" hidden />
+          }
         </div>
       </div>
-      }
+      <!-- } -->
 
       <!-- Short Description with Counter -->
       <div class="form-group">
@@ -70,6 +88,24 @@
           <input matInput placeholder="Write a compelling summary that hooks your readers..."
             formControlName="description" maxlength="200" />
           <mat-icon matSuffix class="field-icon">description</mat-icon>
+          @if(blogForm.get('description')?.hasError('required')) {
+          <mat-error>
+            <mat-icon>error</mat-icon>
+            Description is required
+          </mat-error>
+          }
+          @if(blogForm.get('description')?.hasError('minlength')) {
+          <mat-error>
+            <mat-icon>error</mat-icon>
+            Description is too short
+          </mat-error>
+          }
+          @if(blogForm.get('description')?.hasError('maxlength')) {
+          <mat-error>
+            <mat-icon>error</mat-icon>
+            Description is too long
+          </mat-error>
+          }
         </mat-form-field>
         <div class="character-counter" [class.warning]="blogForm.get('description')?.value?.length > 160"
           [class.danger]="blogForm.get('description')?.value?.length > 190">
@@ -87,6 +123,18 @@
           <mat-error>
             <mat-icon>error</mat-icon>
             Content is required to publish your blog
+          </mat-error>
+          }
+          @if(blogForm.get('content')?.hasError('minlength')) {
+          <mat-error>
+            <mat-icon>error</mat-icon>
+            Content is too short
+          </mat-error>
+          }
+          @if(blogForm.get('content')?.hasError('maxlength')) {
+          <mat-error>
+            <mat-icon>error</mat-icon>
+            Content is too long
           </mat-error>
           }
         </mat-form-field>

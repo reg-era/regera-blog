@@ -1,4 +1,4 @@
-import { Component, OnInit, SecurityContext } from '@angular/core';
+import { Component, OnDestroy, OnInit, SecurityContext } from '@angular/core';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -35,7 +35,7 @@ import { CredentialService } from '../../services/credential-service';
   styleUrl: './blog.scss'
 })
 
-export class BlogComponent implements OnInit {
+export class BlogComponent implements OnInit, OnDestroy {
   public blog$: BehaviorSubject<BlogObject | null>;
   public comments$: BehaviorSubject<CommentObject[] | null>;
 
@@ -119,6 +119,12 @@ export class BlogComponent implements OnInit {
     this.blogService.getComments(parsedId, this.commentPage++).subscribe((comments) => {
       this.comments$.next(comments);
     });
+  }
+
+  ngOnDestroy(): void {
+    this.blog$.unsubscribe();
+    this.comments$.unsubscribe();
+    this.blogMedia$.unsubscribe();
   }
 
   toggleLike() {

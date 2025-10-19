@@ -87,10 +87,11 @@ public class BlogController {
             @RequestParam String title,
             @RequestParam String description,
             @RequestParam String content,
+            @RequestParam(required = false) MultipartFile media,
             HttpServletRequest request) {
 
         User user = (User) request.getAttribute("user");
-        this.blogService.updateBlog(user.getId(), blogId, title, description, content);
+        this.blogService.updateBlog(user.getId(), blogId, title, description, content,media);
 
         Map<String, Object> res = new HashMap<>();
         res.put("id", blogId);

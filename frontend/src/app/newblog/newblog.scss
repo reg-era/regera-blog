@@ -438,7 +438,7 @@ form {
 .change-file {
   position: absolute;
   bottom: 8px;
-  left: 8px;
+  right: 8px;
   color: var(--text);
   background: linear-gradient(135deg, var(--background) 0%, var(--bg) 100%);
   backdrop-filter: blur(10px);

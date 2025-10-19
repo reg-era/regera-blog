@@ -47,7 +47,7 @@ export class RegisterComponent implements OnInit {
     })
     this.registerForm = this.formBuilder.nonNullable.group<RegisterFormModel>({
       username: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(20)]],
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, Validators.pattern(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i)]],
       bio: ['', [Validators.maxLength(200)]],
       password: ['', [Validators.required, Validators.minLength(8), Validators.pattern("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]+$")]],
       confirmPassword: ['', [Validators.required]],
@@ -56,11 +56,14 @@ export class RegisterComponent implements OnInit {
     });
   }
 
-  passwordsMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  passwordsMatchValidator(control: AbstractControl): ValidationErrors | null {
     const password = control.get('password')?.value;
-    const confirm = control.get('confirmPassword')?.value;
+    const confirmPassword = control.get('confirmPassword')?.value;
 
-    return password === confirm ? null : { passwordMismatch: true };
+    if (password && confirmPassword && password !== confirmPassword) {
+      return { passwordMismatch: true };
+    }
+    return null;
   };
 
   onSubmit() {
@@ -76,11 +79,6 @@ export class RegisterComponent implements OnInit {
         })
 
     }
-  }
-
-  get passwordMismatch() {
-    return this.registerForm.errors?.['passwordMismatch'] &&
-      this.registerForm.get('confirmPassword')?.touched;
   }
 
   goLogin() {
