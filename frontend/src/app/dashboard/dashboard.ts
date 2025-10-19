@@ -39,6 +39,7 @@ export class DashboardComponent implements OnInit {
   DeleteBlogForm!: FormGroup;
 
   reports$: BehaviorSubject<ReportObject[] | null>;
+  statistic$: BehaviorSubject<{ users: number, blogs: number } | null>;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -56,6 +57,7 @@ export class DashboardComponent implements OnInit {
     })
 
     this.reports$ = new BehaviorSubject<ReportObject[] | null>(null);
+    this.statistic$ = new BehaviorSubject<{ users: number, blogs: number } | null>(null);
 
     this.EscalateForm = this.formBuilder.group({ username: ['', Validators.required] })
     this.DeleteUserForm = this.formBuilder.group({ username: ['', Validators.required] })
@@ -63,9 +65,12 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.adminService.getReports().subscribe((reports) => {
-      if (reports) {
-        this.reports$.next(reports);
+    this.adminService.getReports().subscribe((adminData) => {
+      if (adminData) {
+        console.log({ users: adminData.users, blogs: adminData.blogs });
+
+        this.reports$.next(adminData.reports);
+        this.statistic$.next({ users: adminData.users, blogs: adminData.blogs })
       }
     })
   }

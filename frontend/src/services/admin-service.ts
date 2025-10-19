@@ -3,39 +3,45 @@ import { environment } from '../environments/environment.development';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { catchError, map, Observable, of } from 'rxjs';
 
-
-export interface ReportObject {
+export type ReportObject = {
   reportId: number,
   reporter: string,
   reported: string,
   content: string,
   createAt: string,
-}
+};
+
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
   constructor(private http: HttpClient) { }
 
-  getReports(): Observable<ReportObject[] | null> {
+  getReports(): Observable<{ users: number, blogs: number, reports: ReportObject[] } | null> {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
     });
 
-    return this.http.get<ReportObject[]>(
+    return this.http.get<{ users: number, blogs: number, reports: ReportObject[] }>(
       `${environment.apiURL}/api/admin/reports`, { headers }
     ).pipe(
-      map(reports => reports.map(report => {
+      map(adminData => {
+        const reports = adminData.reports.map(report => {
+          return {
+            ...report,
+            createAt: new Intl.DateTimeFormat('en-US', {
+              year: 'numeric',
+              month: 'short',
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit',
+            }).format(new Date(report.createAt))
+          };
+        })
         return {
-          ...report,
-          createAt: new Intl.DateTimeFormat('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-          }).format(new Date(report.createAt))
+          ...adminData,
+          reports: reports,
         }
-      })),
+      }),
       catchError((err: any) => {
         return of(null);
       })

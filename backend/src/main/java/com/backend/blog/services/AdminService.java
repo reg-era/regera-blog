@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.backend.blog.dto.AdminDashboard;
 import com.backend.blog.dto.ReportDto;
 import com.backend.blog.entities.Blog;
 import com.backend.blog.entities.Report;
@@ -36,7 +37,9 @@ public class AdminService {
         this.mediaService = mediaService;
     }
 
-    public List<ReportDto> readRepports() {
+    public AdminDashboard readRepports() {
+        Long users = this.userRepository.count();
+        Long blogs = this.blogRepository.count();
         List<ReportDto> res = this.reportRepository.findAll().stream()
                 .map(rep -> new ReportDto(rep.getId(),
                         rep.getUser().getUsername(),
@@ -45,7 +48,7 @@ public class AdminService {
                         rep.getCreatedAt()))
                 .toList();
 
-        return res;
+        return new AdminDashboard(users, blogs, res);
     }
 
     public void removeRepport(Long reportId) {

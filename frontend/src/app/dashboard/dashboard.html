@@ -1,11 +1,27 @@
 <div class="dashboard-page">
-
   <div class="dashboard-header">
     <h1 class="page-title">
       <mat-icon>admin_panel_settings</mat-icon>
       Admin Dashboard
     </h1>
     <p class="page-subtitle">Manage users, content, and review reports</p>
+
+    <div class="stats">
+      @if (statistic$ | async;as statistic ) {
+      <div class="stat-item">
+        <mat-icon>group</mat-icon>
+        <span class="stat-value">{{statistic.users}}</span>
+        <span class="stat-label">Users</span>
+      </div>
+      <div class="stat-item">
+        <mat-icon>article</mat-icon>
+        <span class="stat-value">{{statistic.blogs}}</span>
+        <span class="stat-label">Blogs</span>
+      </div>
+      }@else {
+      <mat-spinner></mat-spinner>
+      }
+    </div>
   </div>
 
   <div class="dashboard-grid">

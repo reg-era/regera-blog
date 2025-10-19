@@ -1,10 +1,9 @@
 package com.backend.blog.controllers;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import com.backend.blog.dto.ReportDto;
+import com.backend.blog.dto.AdminDashboard;
 import com.backend.blog.entities.User;
 import com.backend.blog.services.AdminService;
 
@@ -30,8 +29,8 @@ public class AdminController {
     }
 
     @GetMapping("/reports")
-    public ResponseEntity<List<ReportDto>> getRepports() {
-        List<ReportDto> reports = this.adminService.readRepports();
+    public ResponseEntity<AdminDashboard> getRepports() {
+        AdminDashboard reports = this.adminService.readRepports();
         return ResponseEntity.ok(reports);
     }
 
