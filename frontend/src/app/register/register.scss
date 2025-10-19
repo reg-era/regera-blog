@@ -288,12 +288,6 @@
     font-weight: 500;
     animation: slideInUp 0.3s ease-out;
     position: relative;
-
-    &::before {
-      content: '⚠️';
-      margin-right: 0.5rem;
-      font-size: 1.1rem;
-    }
   }
 
   // Responsive Design

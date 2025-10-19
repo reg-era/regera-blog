@@ -42,29 +42,16 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   }
 
   deleteNotification(id: number) {
-    const oldNotif = this.notifications$.value
-    let index = -1;
-    if (!oldNotif) return;
-    for (let i = 0; i < oldNotif.length; i++) {
-      if (oldNotif[i].id == id) {
-        index = i;
-        break;
-      }
-    }
-    if (index > -1) {
-      this.userService.deletetNotifications(id).subscribe((res) => {
-        if (res) {
-          if (index == 0) {
-            this.notifications$.next([]);
-          } else {
-            const newNots = oldNotif.splice(index, 1);
-            if (newNots) {
-              this.notifications$.next(newNots);
-            }
-          }
+    this.userService.deletetNotifications(id).subscribe((res) => {
+      if (res && this.notifications$.value) {
+        const newNots: NotificationObject[] = [];
+        for (let i = 0; i < this.notifications$.value.length; i++) {
+          if (this.notifications$.value[i].id == id) continue;
+          newNots.push(this.notifications$.value[i]);
         }
-      });
-    }
+        this.notifications$.next(newNots);
+      }
+    });
   }
 
   formatDate(date: string): string {

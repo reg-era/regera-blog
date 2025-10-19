@@ -72,7 +72,7 @@ export class RegisterComponent implements OnInit {
       this.credentialService
         .RegisterService(this.registerForm.getRawValue())
         .subscribe(res => {
-          if (!res) {
+          if (res) {
             this.errorMessage = res || 'Oops something is wrong';
             this.registerForm.reset();
           }

@@ -40,14 +40,11 @@ export class CredentialService {
       }),
       map((res: any) => {
         if ('token' in res) {
-          return null; // success → no error
+          return null;
         }
         return res.error; // backend error
       }),
-      catchError((err) => {
-        console.error('Error: ', err);
-        return of('Sorry something is wrong');
-      })
+      catchError((err) => of(err.error.error))
     );
   }
 
