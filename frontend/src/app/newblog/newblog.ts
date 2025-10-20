@@ -117,9 +117,9 @@ export class NewblogComponent implements OnInit, OnDestroy {
     });
     this.blogService.getBlog(blogId).subscribe((blog) => {
       if (blog) {
-        this.blogForm.get('title')?.setValue(blog.title);
-        this.blogForm.get('description')?.setValue(blog.description);
-        this.blogForm.get('content')?.setValue(blog.content);
+        this.blogForm.get('title')?.setValue(blog.title.trim());
+        this.blogForm.get('description')?.setValue(blog.description.trim());
+        this.blogForm.get('content')?.setValue(blog.content.trim());
 
         if (!blog.media.includes("default-blog")) {
           this.fileExistForEditing = true;

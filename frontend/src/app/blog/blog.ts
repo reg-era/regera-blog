@@ -77,7 +77,7 @@ export class BlogComponent implements OnInit {
       },
     });
 
-    this.CommentFrom = this.fb.group({ comment: ['', Validators.max(150)] })
+    this.CommentFrom = this.fb.group({ comment: ['', [Validators.required, Validators.max(150)]] })
 
     this.credentialService.CheckAuthentication().subscribe((res) => {
       if (res) this.authenticated = true;
@@ -146,7 +146,7 @@ export class BlogComponent implements OnInit {
     }
     if (this.CommentFrom.valid) {
 
-      const newComment: string = this.CommentFrom.get('comment')?.getRawValue();
+      const newComment: string = this.CommentFrom.get('comment')?.getRawValue().trim();
       if (this.blog$.value && newComment && newComment.length > 0) {
         this.userService.makeComment(this.blog$.value.id, newComment).subscribe((comment) => {
           if (this.comments$.value && comment) {

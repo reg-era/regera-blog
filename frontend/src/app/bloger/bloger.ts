@@ -72,24 +72,30 @@ export class BlogerComponent implements OnInit, OnDestroy {
 
     if (this.router.url == '/profile') {
       this.isOwner = true;
-    } else {
-      this.credentialService.CheckAuthentication().subscribe(obj => {
-        if (obj) {
-          if (username == obj.username) {
-            this.router.navigate(['/profile']);
-            return
-          }
-          this.isAuthenticated = true;
-        }
-      })
     }
 
-    this.userService.getBloger(username).subscribe((data) => {
-      if (data) {
-        this.blogger$.next(data.profile);
-        this.blogs$.next(data.blogs);
+    this.credentialService.CheckAuthentication().subscribe(obj => {
+      if (obj) {
+        if (username == obj.username) {
+          this.router.navigate(['/profile']);
+          return
+        }
+        this.isAuthenticated = true;
+      } else {
+        if (this.router.url == '/profile') {
+          this.router.navigate(['/login']);
+          return
+        }
       }
-    });
+
+      this.userService.getBloger(username).subscribe((data) => {
+        if (data) {
+          this.blogger$.next(data.profile);
+          this.blogs$.next(data.blogs);
+        }
+      });
+    })
+
   }
 
   ngOnDestroy(): void {

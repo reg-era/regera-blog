@@ -55,11 +55,7 @@ export class BlogService {
       { headers }
     ).pipe(
       map((res) => null),
-      catchError((err) => {
-        console.log("from error: ", err);
-
-        return of(err.error.error)
-      })
+      catchError((err) => of(err.error.error))
     )
   }
 

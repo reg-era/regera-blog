@@ -72,10 +72,6 @@ export class BlogCardComponent {
   }
 
   onConfirmDelet() {
-    this.blogService.deletBlog(this.blog.id).subscribe((res)=>{
-      if (res) {
-        console.log(res);
-      }
-    });
+    this.blogService.deletBlog(this.blog.id)
   }
 }
