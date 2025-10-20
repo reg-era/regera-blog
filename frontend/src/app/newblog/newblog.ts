@@ -108,6 +108,13 @@ export class NewblogComponent implements OnInit, OnDestroy {
   }
 
   private loadBlogForEditing(blogId: number) {
+    this.blogService.canEditBlog(blogId).subscribe((res) => {
+      if (!res) {
+        this.router.navigate(['/error/401'], {
+          state: { fromApp: true }
+        });
+      }
+    });
     this.blogService.getBlog(blogId).subscribe((blog) => {
       if (blog) {
         this.blogForm.get('title')?.setValue(blog.title);
@@ -173,6 +180,7 @@ export class NewblogComponent implements OnInit, OnDestroy {
   }
 
   private createImagePreview(file: File): void {
+    if (this.mediaPreview$.closed) return;
     if (this.mediaPreview$.value && this.mediaPreview$.value.startsWith('blob:')) {
       URL.revokeObjectURL(this.mediaPreview$.value);
     }

@@ -123,6 +123,18 @@ export class BlogService {
     )
   }
 
+  canEditBlog(id: number): Observable<boolean> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${localStorage.getItem('auth_token') || ''}`
+    });
+
+    return this.http.get<boolean>(
+      `${environment.apiURL}/api/blogs/ping/${id}`, { headers }
+    ).pipe(
+      catchError(() => of(false))
+    );
+  }
+
   getBlog(id: number): Observable<BlogObject | null> {
     return this.http.get<BlogObject>(
       `${environment.apiURL}/api/blogs/${id}`

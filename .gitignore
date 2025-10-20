@@ -11,4 +11,3 @@ backend/target
 *.webm
 
 !**/media/images/default-blog.jpg
-!**/media/images/default-profile.jpg

@@ -21,4 +21,9 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
             "LOWER(b.description) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
             "LOWER(b.content) LIKE LOWER(CONCAT('%', :query, '%'))")
     List<Blog> searchBlogs(@Param("query") String query);
+
+    @Query("SELECT CASE WHEN COUNT(b) > 0 THEN TRUE ELSE FALSE END FROM Blog b " +
+            "WHERE b.id = :blog_id AND b.user.id = :user_id")
+    Boolean ownerOfBlog(@Param("blog_id") Long blogId, @Param("user_id") Long userId);
+
 }

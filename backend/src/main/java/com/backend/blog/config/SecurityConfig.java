@@ -48,6 +48,7 @@ public class SecurityConfig {
 
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/api/users/ping", "/api/users").authenticated()
+                        .requestMatchers("/api/blogs/ping/**").authenticated()
                         .requestMatchers("/api/users/**").permitAll()
 
                         .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()

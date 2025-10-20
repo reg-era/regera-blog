@@ -1,7 +1,7 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-field';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -67,8 +67,6 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.adminService.getReports().subscribe((adminData) => {
       if (adminData) {
-        console.log({ users: adminData.users, blogs: adminData.blogs });
-
         this.reports$.next(adminData.reports);
         this.statistic$.next({ users: adminData.users, blogs: adminData.blogs })
       }

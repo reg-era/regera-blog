@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, SecurityContext } from '@angular/core';
+import { Component, OnInit, SecurityContext } from '@angular/core';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -35,7 +35,7 @@ import { CredentialService } from '../../services/credential-service';
   styleUrl: './blog.scss'
 })
 
-export class BlogComponent implements OnInit, OnDestroy {
+export class BlogComponent implements OnInit {
   public blog$: BehaviorSubject<BlogObject | null>;
   public comments$: BehaviorSubject<CommentObject[] | null>;
 
@@ -102,12 +102,12 @@ export class BlogComponent implements OnInit, OnDestroy {
     }
 
     this.blogService.getBlog(parsedId).subscribe((blog) => {
-      if (blog) {
+      if (blog && !this.blog$.closed) {
         this.blog$.next(blog);
         this.IsVideo = blog.media.includes('video');
 
         this.mediaService.urlToBlobImageUrl(blog.media).subscribe((url) => {
-          this.blogMedia$.next(url);
+          if (!this.blog$.closed) this.blogMedia$.next(url);
         })
       } else {
         this.router.navigate(['/error/404'], {
@@ -119,12 +119,6 @@ export class BlogComponent implements OnInit, OnDestroy {
     this.blogService.getComments(parsedId, this.commentPage++).subscribe((comments) => {
       this.comments$.next(comments);
     });
-  }
-
-  ngOnDestroy(): void {
-    this.blog$.unsubscribe();
-    this.comments$.unsubscribe();
-    this.blogMedia$.unsubscribe();
   }
 
   toggleLike() {

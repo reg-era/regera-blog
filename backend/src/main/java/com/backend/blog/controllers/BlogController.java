@@ -82,6 +82,12 @@ public class BlogController {
         return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
 
+    @GetMapping("/ping/{blogId}")
+    public ResponseEntity<Boolean> canEditBlog(@PathVariable Long blogId, HttpServletRequest request) {
+        User user = (User) request.getAttribute("user");
+        return ResponseEntity.ok(this.blogService.canEdit(blogId, user));
+    }
+
     @PutMapping("/{blogId}")
     public ResponseEntity<Map<String, Object>> updateBlog(@PathVariable Long blogId,
             @RequestParam String title,
@@ -91,7 +97,7 @@ public class BlogController {
             HttpServletRequest request) {
 
         User user = (User) request.getAttribute("user");
-        this.blogService.updateBlog(user.getId(), blogId, title, description, content,media);
+        this.blogService.updateBlog(user.getId(), blogId, title, description, content, media);
 
         Map<String, Object> res = new HashMap<>();
         res.put("id", blogId);

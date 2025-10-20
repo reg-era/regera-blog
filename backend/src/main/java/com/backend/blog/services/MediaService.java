@@ -38,7 +38,6 @@ public class MediaService {
     private String mediaLocation;
 
     public static final String DEFAULT_BLOG = "/media/images/default-blog.jpg";
-    public static final String DEFAULT_USER = "/media/images/default-profile.jpg";
 
     public String getBasePath() {
         return new File(mediaLocation).getAbsolutePath();
@@ -98,7 +97,7 @@ public class MediaService {
             return false;
         }
 
-        if (mediaPath.equals(DEFAULT_BLOG) || mediaPath.equals(DEFAULT_USER))
+        if (mediaPath.equals(DEFAULT_BLOG))
             return true;
 
         try {

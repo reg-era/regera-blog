@@ -99,6 +99,10 @@ public class BlogService {
         return this.blogRepository.save(blog);
     }
 
+    public Boolean canEdit(Long blog, User user) {
+        return this.blogRepository.ownerOfBlog(blog, user.getId());
+    }
+
     public void updateBlog(Long userId, Long blogId,
             String title,
             String description,
