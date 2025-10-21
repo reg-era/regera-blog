@@ -84,8 +84,8 @@ export class DashboardComponent implements OnInit {
   }
 
   onEscalateUser() {
-    if (this.EscalateForm.valid) {
-      const username = this.EscalateForm.get('username')?.getRawValue();
+    const username = this.EscalateForm.get('username')?.getRawValue().trim();
+    if (this.EscalateForm.valid && username.length > 0) {
       this.confirmAction({
         title: 'Escaling User',
         message: `Are you sure to escale ${username} into admin`,
@@ -103,8 +103,8 @@ export class DashboardComponent implements OnInit {
   }
 
   onBanUser() {
-    if (this.DeleteUserForm.valid) {
-      const username = this.DeleteUserForm.get('username')?.getRawValue();
+    const username = this.DeleteUserForm.get('username')?.getRawValue().trim();
+    if (this.DeleteUserForm.valid && username.length > 0) {
       this.confirmAction({
         title: 'Removing user',
         message: `Are you sure to remove ${username}`,

@@ -25,6 +25,7 @@ run-backend:
     SPRING_DATASOURCE_USERNAME=$(PSQ_USER) \
     SPRING_DATASOURCE_PASSWORD=$(PSQ_PASS) \
     SERVER_PORT=$(BACKEND_PORT) \
+	JWT_SECRET=$(JWT_SECRET) \
 	ADMIN_NAME=$(ADMIN_NAME) ADMIN_EMAIL=$(ADMIN_EMAIL) ADMIN_PASSWORD=$(ADMIN_PASSWORD) \
 	mvn spring-boot:run
 
@@ -37,6 +38,15 @@ docker-up:
 
 docker-down:
 	docker compose down
+
+docker-clean:
+	docker container rm blog-frontend -f | true
+	docker container rm blog-backend -f | true
+	docker container rm postgres-server -f | true
+	docker image rm regera-blog-frontend | true
+	docker image rm regera-blog-backend | true
+	docker image rm postgres:15 | true
+	docker volume rm regera-blog_postgres_data | true
 
 clean:
 	cd backend && mvn clean

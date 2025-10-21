@@ -67,10 +67,7 @@ export class UserService {
 
         return forkJoin({ profile: profile$, blogs: blogs$ });
       }),
-      catchError(error => {
-        console.error("Error getting bloger: ", error);
-        return of(null);
-      })
+      catchError(error => of(null))
     );
 
   }

@@ -20,10 +20,7 @@ export class SearchService {
       `${environment.apiURL}/api/search`,
       query
     ).pipe(
-      catchError(err => {
-        console.error('Failed to perform search', err);
-        return of(null); // fallback in case of error
-      })
+      catchError(err => of(null))
     );
   }
 }

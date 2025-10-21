@@ -37,9 +37,9 @@ export class BlogService {
   sendBlog(blog: BlogFormModel): Observable<string | null> {
     const formData = new FormData();
 
-    formData.append('title', blog.title);
-    formData.append('description', blog.description);
-    formData.append('content', blog.content);
+    formData.append('title', blog.title.trim());
+    formData.append('description', blog.description.trim());
+    formData.append('content', blog.content.trim());
 
     if (blog.media) {
       formData.append('media', blog.media);
@@ -61,9 +61,9 @@ export class BlogService {
 
   updateBlog(id: number, blog: BlogFormModel, mediaChanged: boolean): Observable<string | null> {
     const formData = new FormData();
-    formData.append('title', blog.title);
-    formData.append('description', blog.description);
-    formData.append('content', blog.content);
+    formData.append('title', blog.title.trim());
+    formData.append('description', blog.description.trim());
+    formData.append('content', blog.content.trim());
 
     if (mediaChanged && blog.media) {
       formData.append('media', blog.media);
@@ -112,10 +112,7 @@ export class BlogService {
 
         return forkJoin(blogsWithCovers$);
       }),
-      catchError((err) => {
-        console.error("Error getting blogs: ", err);
-        return of(null);
-      })
+      catchError((err) =>  of(null))
     )
   }
 

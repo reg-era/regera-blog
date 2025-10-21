@@ -92,6 +92,10 @@ export class BlogerComponent implements OnInit, OnDestroy {
         if (data) {
           this.blogger$.next(data.profile);
           this.blogs$.next(data.blogs);
+        } else {
+          this.router.navigate(['/error/404'], {
+            state: { fromApp: true }
+          });
         }
       });
     })
@@ -112,11 +116,11 @@ export class BlogerComponent implements OnInit, OnDestroy {
       .map((checked: boolean, i: number) => checked ? this.availableReasons[i] : null)
       .filter((v: string | null) => v !== null);
 
-    if (selectedReasons.length > 0 || this.ReportForm.value.details.length > 0) {
+    if (selectedReasons.length > 0 || this.ReportForm.value.details.trim().length > 0) {
       this.userService.makeReport(
         this.blogger$.value?.username || '',
         selectedReasons,
-        this.ReportForm.value.details || ''
+        this.ReportForm.value.details.trim() || ''
       ).subscribe((res => {
         this.showReport = false;
         this.displayToast(res);
@@ -153,10 +157,6 @@ export class BlogerComponent implements OnInit, OnDestroy {
         }
       });
     }
-  }
-
-  getBlogs(): BlogObject[] {
-    return [];
   }
 
   formatDate(date: string): string {

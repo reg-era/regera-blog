@@ -67,7 +67,6 @@ export class BlogCardComponent {
   }
 
   onEdit() {
-    localStorage.setItem(`blog-${this.blog.id}`, JSON.stringify(this.blog))
     this.router.navigate([`/newblog/${this.blog.id}`])
   }
 

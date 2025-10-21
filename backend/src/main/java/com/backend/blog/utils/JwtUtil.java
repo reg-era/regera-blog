@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public class JwtUtil {
 
-    private static final String SECRET = "8H6M6z2fv9YjVkjXB1doI/E6Cn2Vv2o6C5eEZYC9tUg="; // HS256 base-32
+    private static final String SECRET = System.getenv("JWT_SECRET"); // HS256 base-32
     private static final long EXPIRATION = 1000 * 60 * 60 * 24; // 24h
 
     private static final SecretKey key = Keys.hmacShaKeyFor(SECRET.getBytes());
