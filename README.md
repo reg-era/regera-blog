@@ -1,8 +1,8 @@
-# 📝 Regera-Blog
+# 📝 RegBlog
 
 ## Overview
 
-**Regera-Blog** is a fullstack **social blogging platform** that enables students to document their learning journey, share discoveries, and interact with peers.  
+**RegBlog** is a fullstack **social blogging platform** that enables students to document their learning journey, share discoveries, and interact with peers.  
 It’s built with **Spring Boot (Java)** for the backend, **Angular** for the frontend, and **PostgreSQL** for data persistence — all **dockerized** and orchestrated using **Docker Compose**, with a **Makefile** to simplify builds and runs.
 
 Database schema evolution is handled automatically using **Flyway migrations**, and the Angular build is served efficiently via **Nginx**.
